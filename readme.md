@@ -50,7 +50,8 @@ tabela: igraci
 - odeljenje (text, default '') -- više se ne unosi
 - zvezde (numeric, default 3) -- rang tima 0.5–5.0
 - firma (text) -- iz mejla, deo posle @ (kartica igrača)
-- plasman_prosle (text) -- prošlogodišnji plasman, unosi se u adminu
+- plasman_prosle (text) -- prošlogodišnji plasman, unosi se u adminu ("1. mesto"… → medalja)
+- sezona (integer, default 2) -- koja je ovo sezona igrača u ligi
 
 tabela: mecevi
 - id (serial, PK)
@@ -115,7 +116,10 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
 
 ### Kartica igrača (pop-up)
 - Fotografija igrača na vrhu kartice: folder `igraci/`, fajl `Ime_Prezime.webp` bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
-- Klik na ime igrača bilo gde (tabele, kartice, Mečevi, Strelci, Playoff) → veliko ime, firma, rang tima, prošla sezona, ova sezona (mesto, bodovi, W-D-L, gol razlika), forma
+- Klik na ime igrača bilo gde (tabele, kartice, Mečevi, Strelci, Playoff) → fotografija, veliko ime (+ medalja), firma, rang tima i koja je sezona igrača, prošla sezona, ova sezona (mesto, bodovi, W-D-L, gol razlika), golovi, najveća pobeda, najveći poraz (liga), forma
+- Medalje za prošlogodišnji plasman (🥇🥈🥉 i plava oznaka "4"): iz `plasman_prosle` koji počinje sa "1."–"4."; prikaz uz ime u tabelama i u kartici
+- Sezona igrača: kolona `igraci.sezona` (1 = prva); dok je nema u bazi, 2 za sve osim liste `PRVA_SEZONA`
+- Fotografije su isečene jednako za sve (cela glava + dres, odnos 1.26:1) automatskim prepoznavanjem glave i ramena
 - Imena imaju `data-igrac="ID"`; jedan klik-handler (`otvoriIgraca`); zatvaranje: ×, klik van kartice, Esc
 
 ### Tabela
@@ -365,6 +369,19 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [29.09.2026] — Kartica igrača: statistika, sezona, medalje; jednake fotografije
+
+**Urađeno:**
+- Fotografije ponovo isečene jednako (cela glava + dres) za svih 18 igrača
+- Kartica: golovi, najveća pobeda, najveći poraz, "N. sezona" pored ranga; ime ispod fotografije da se vidi dres
+- Medalje za prošlu sezonu (Berkes 🥇, Zedi 🥈, Bilić 🥉, Cetina "4") u tabelama i kartici
+- Admin: polje "Sezona u ligi" u izmeni igrača
+- SQL: kolona `igraci.sezona` + podaci za prošlogodišnji plasman i prvu sezonu (Bodiroga, Gojković)
+
+**Fajlovi:** `index.html` + `admin/index.html` + `readme.md` + `supabase/00-nova-baza.sql` + folder `igraci/`
+
 ---
 
 ### [29.09.2026] — Fotografije igrača u kartici
