@@ -119,7 +119,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
 ### Kartica igrača (pop-up)
 - Fotografija igrača na vrhu kartice: fajl `Ime_Prezime.webp` u korenu repo-a bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
 - Klik na ime igrača bilo gde (tabele, kartice, Mečevi, Strelci, Playoff) → fotografija, veliko ime + nalepnica-medalja za 1.–4. mesto prošle sezone (desno od imena), firma, rang tima, oznaka "N. sezona" (desno, odvojeno), golovi, najveća pobeda, najveći poraz (liga), forma
-- Medalje za prošlogodišnji plasman: iz `plasman_prosle` koji počinje sa "1."–"4.", a ako nije upisan — iz liste `PROSLA_SEZONA` u kodu (Berkes 1, Zedi 2, Bilić 3, Cetina 4); u tabelama emoji uz ime (🥇🥈🥉, plava "4"), u kartici nalepnica `1.webp`–`4.webp` (koren repo-a)
+- Medalje za prošlogodišnji plasman: iz `plasman_prosle` koji počinje sa "1."–"4.", a ako nije upisan — iz liste `PROSLA_SEZONA` u kodu (Berkes 1, Zedi 2, Bilić 3, Cetina 4); u tabelama samo trofej 🏆 uz ime prvaka (Berkes), u kartici nalepnica `1.webp`–`4.webp` (koren repo-a)
 - Sezona igrača: kolona `igraci.sezona` (1 = prva: Bodiroga, Gojković, Radosavljević); dok je nema u bazi, 2 za sve osim liste `PRVA_SEZONA`
 - Fotografije su isečene jednako za sve (odnos 1.15:1, ~12% prostora iznad glave, ceo grb i natpis na dresu) automatskim prepoznavanjem glave i ramena; `FOTO_VERZIJA` u kodu povećati kad se slike zamene (da browser ne prikaže stare)
 - Imena imaju `data-igrac="ID"`; jedan klik-handler (`otvoriIgraca`); zatvaranje: ×, klik van kartice, Esc
@@ -131,7 +131,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
 - Hover: sloj `background-image` na `td` (vidi se i na obojenim zonama)
 
 ### Mečevi
-- Filter po igračima; grupisano po kolima
+- Filter po igračima; grupisano po kolima; prikazuju se prva 3 kola + "Učitaj još kola" — kad se otvore sva, ostaju otvorena i posle unosa rezultata/osvežavanja (`MEC_SVA`), zatvaraju se tek kad se napusti tab
 - Srednja kolona fiksne širine (150px desktop, 112px telefon) — imena na istim pozicijama i za unos i za odigran meč
 - Unos rezultata: samo cifre (`samoBroj`, max 2), numerička tastatura, Enter snima, plutajuće dugme SNIMI REZULTAT na telefonu (main ima 96px donjeg razmaka)
 
@@ -373,6 +373,25 @@ Format unosa:
 ## Changelog / Projektni dnevnik
 ---
 
+### [30.09.2026] — Trofej u tabeli, kola ostaju otvorena
+
+**Urađeno:**
+- Tabele: uklonjene medalje 2.–4.; samo 🏆 uz ime prvaka prošle sezone (Berkes)
+- Mečevi: posle "Učitaj još kola" sva kola ostaju otvorena i posle unosa rezultata; zatvaraju se kad se napusti tab
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Fotografija za Nenada Gojkovića
+
+**Urađeno:**
+- `Nenad_Gojkovic.webp` (isto kadriranje kao ostali), dodat u `FOTO_IGRACA`
+
+**Fajlovi:** `index.html` + `Nenad_Gojkovic.webp` + `readme.md`
+
+---
+
 ### [30.09.2026] — Nalepnica medalje pored imena
 
 **Urađeno:**
@@ -428,7 +447,7 @@ Format unosa:
 - Povezivanje po imenu bez obzira na kvačice i redosled (npr. `Boris_Zmaher` = Žmaher Boris)
 
 **Nije završeno:**
-- Nema fotografije za Nenada Gojkovića; fotografije Dragana Belegića i Gorana Jankovića su spremne (prikazaće se kad budu u bazi)
+- Fotografije Dragana Belegića i Gorana Jankovića su spremne (prikazaće se kad budu u bazi)
 
 **Fajlovi:** `index.html` + `readme.md` + novi folder `igraci/`
 

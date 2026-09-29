@@ -760,6 +760,7 @@ function tab(name, btn) {
   if(name==='playoff') requestAnimationFrame(()=>renderPlayoff());
   document.body.classList.toggle('po-wide', name==='playoff');
   decoPostavi(name);
+  if(name!=='mecevi' && MEC_SVA){ MEC_SVA=false; renderMecevi(); }   // zatvori sva kola tek kad se napusti tab
   // aktivni tab uvek vidljiv u navigaciji na telefonu
   const ni=btn.parentElement;
   if(ni && ni.scrollWidth>ni.clientWidth) ni.scrollTo({left: btn.offsetLeft - ni.clientWidth/2 + btn.offsetWidth/2, behavior:'smooth'});
@@ -1016,7 +1017,7 @@ function renderMecevi(){
   if(id1||id2){
     document.getElementById('mecevi-wrap').innerHTML=kolaKeys.map(k=>buildKolo(k,kola[k],igM)).join('')||'<div class="empty" style="padding:2rem">Nema mečeva</div>';
   } else {
-    const first=kolaKeys.slice(0,3), rest=kolaKeys.slice(3);
+    const first=MEC_SVA?kolaKeys:kolaKeys.slice(0,3), rest=MEC_SVA?[]:kolaKeys.slice(3);
     let mh=first.map(k=>buildKolo(k,kola[k],igM)).join('');
     if(rest.length) mh+=`<div id="lazy-more" style="text-align:center;padding:1.5rem"><button onclick="loadMoreKola()" style="background:none;border:1px solid var(--border2);border-radius:8px;color:var(--muted);padding:8px 20px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer">Učitaj još kola (${rest.length} preostalo) ↓</button></div>`;
     document.getElementById('mecevi-wrap').innerHTML=mh||'<div class="empty" style="padding:2rem">Nema mečeva</div>';
@@ -1024,7 +1025,9 @@ function renderMecevi(){
   }
 }
 
+let MEC_SVA = false;   // true = korisnik je otvorio sva kola; ostaje otvoreno dok ne napusti tab Mečevi
 function loadMoreKola(){
+  MEC_SVA = true;
   const rest=window._lzK||[], kola=window._lzD||{}, igM=window._lzI||{};
   document.getElementById('lazy-more')?.remove();
   document.getElementById('mecevi-wrap').insertAdjacentHTML('beforeend', rest.map(k=>buildKolo(k,kola[k],igM)).join(''));
@@ -1274,7 +1277,7 @@ function pravilaHtml(tekst){
 // ── Kartica igrača (klik na ime bilo gde na sajtu) ──
 // Fotografije su u korenu repo-a (pored index.html) — ime fajla = ime igrača bez kvačica, sa _ (npr. Goran_Bilic.webp).
 // Redosled imena nije bitan (Boris_Zmaher = Žmaher Boris). Nova slika: dovoljno je dodati fajl Ime_Prezime.webp pored index.html.
-const FOTO_IGRACA = ["Bojan_Zmijanjac", "Boris_Zmaher", "Dalibor_Birkas", "Danijel_Berkes", "Dejan_Bodiroga", "Dragan_Belegic", "Goran_Bilic", "Goran_Jankovic", "Goran_Vojnic_Hajduk", "Janos_Zedi", "Milenko_Jaric", "Milos_Cetina", "Nemanja_Sili_Todorovic", "Srdjan_Mutlak", "Tamas_Horvat", "Veselin_Radosavljevic", "Vukasin_Plavsic", "Zoran_Grcic"];
+const FOTO_IGRACA = ["Bojan_Zmijanjac", "Boris_Zmaher", "Dalibor_Birkas", "Danijel_Berkes", "Dejan_Bodiroga", "Dragan_Belegic", "Goran_Bilic", "Goran_Jankovic", "Goran_Vojnic_Hajduk", "Janos_Zedi", "Milenko_Jaric", "Milos_Cetina", "Nemanja_Sili_Todorovic", "Nenad_Gojkovic", "Srdjan_Mutlak", "Tamas_Horvat", "Veselin_Radosavljevic", "Vukasin_Plavsic", "Zoran_Grcic"];
 function kljucImena(t){
   return String(t||'').replace(/[đĐ]/g,'dj').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().split(' ').filter(Boolean).sort().join(' ');
@@ -1295,10 +1298,9 @@ function mestoProsle(ig){
   if(m) return Number(m[1]);
   return PROSLA_SEZONA[kljucImena(ig&&ig.ime)]||null;
 }
+// U tabelama: samo trofej za prvaka prošle sezone (nalepnice za 1.–4. mesto su u kartici igrača)
 function medaljaHtml(ig){
-  const n=mestoProsle(ig); if(!n||n>4) return '';
-  const t=`Prošla sezona: ${n}. mesto`;
-  return n===4 ? `<span class="med med4" title="${t}">4</span>` : `<span class="med" title="${t}">${['🥇','🥈','🥉'][n-1]}</span>`;
+  return mestoProsle(ig)===1 ? `<span class="med" title="Šampion prošle sezone">🏆</span>` : '';
 }
 // Sezona u ligi: kolona igraci.sezona; dok je nema u bazi — 2, osim igrača kojima je ovo prva sezona
 const PRVA_SEZONA = ['bodiroga dejan','gojkovic nenad','radosavljevic veselin'];
