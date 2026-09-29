@@ -118,8 +118,8 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
 
 ### Kartica igrača (pop-up)
 - Fotografija igrača na vrhu kartice: fajl `Ime_Prezime.webp` u korenu repo-a bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
-- Klik na ime igrača bilo gde (tabele, kartice, Mečevi, Strelci, Playoff) → fotografija (sa nalepnicom-medaljom za 1.–4. mesto prošle sezone u donjem desnom uglu), veliko ime, firma, rang tima, oznaka "N. sezona" (desno, odvojeno), golovi, najveća pobeda, najveći poraz (liga), forma
-- Medalje za prošlogodišnji plasman: iz `plasman_prosle` koji počinje sa "1."–"4."; u tabelama emoji uz ime (🥇🥈🥉, plava "4"), u kartici nalepnica `1.webp`–`4.webp` (koren repo-a)
+- Klik na ime igrača bilo gde (tabele, kartice, Mečevi, Strelci, Playoff) → fotografija, veliko ime + nalepnica-medalja za 1.–4. mesto prošle sezone (desno od imena), firma, rang tima, oznaka "N. sezona" (desno, odvojeno), golovi, najveća pobeda, najveći poraz (liga), forma
+- Medalje za prošlogodišnji plasman: iz `plasman_prosle` koji počinje sa "1."–"4.", a ako nije upisan — iz liste `PROSLA_SEZONA` u kodu (Berkes 1, Zedi 2, Bilić 3, Cetina 4); u tabelama emoji uz ime (🥇🥈🥉, plava "4"), u kartici nalepnica `1.webp`–`4.webp` (koren repo-a)
 - Sezona igrača: kolona `igraci.sezona` (1 = prva: Bodiroga, Gojković, Radosavljević); dok je nema u bazi, 2 za sve osim liste `PRVA_SEZONA`
 - Fotografije su isečene jednako za sve (odnos 1.15:1, ~12% prostora iznad glave, ceo grb i natpis na dresu) automatskim prepoznavanjem glave i ramena; `FOTO_VERZIJA` u kodu povećati kad se slike zamene (da browser ne prikaže stare)
 - Imena imaju `data-igrac="ID"`; jedan klik-handler (`otvoriIgraca`); zatvaranje: ×, klik van kartice, Esc
@@ -371,6 +371,16 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Nalepnica medalje pored imena
+
+**Urađeno:**
+- Nalepnica (1.webp–4.webp) premeštena sa fotografije pored imena u kartici
+- Plasman prošle sezone radi i bez podatka u bazi (lista `PROSLA_SEZONA`)
+
+**Fajlovi:** `index.html` + `readme.md` + `1.webp`–`4.webp`
+
 ---
 
 ### [30.09.2026] — Ravna struktura repo-a (bez foldera)

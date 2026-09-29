@@ -384,9 +384,10 @@
   .pm-v { margin-top: 3px; font-size: 16px; font-weight: 700; color: #fff; }
   .pm-v b { font-family: 'Barlow Condensed', sans-serif; font-size: 22px; color: var(--green); }
   .pm-s { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .pm-stiker { position: absolute; right: 14px; bottom: -26px; width: 96px; z-index: 4; transform: rotate(8deg); filter: drop-shadow(0 6px 12px rgba(0,0,0,0.55)); pointer-events: none; }
-  .pm-card:not(.sa-fotom) .pm-stiker { position: absolute; top: 14px; right: 56px; bottom: auto; width: 72px; }
-  .pm-card.sa-fotom .pm-name { padding-right: 96px; }
+  .pm-head { display: flex; align-items: center; gap: 14px; position: relative; z-index: 2; }
+  .pm-head .pm-name { padding-right: 0; }
+  .pm-stiker { height: 72px; width: auto; margin: -10px 0 -4px; flex-shrink: 0; transform: rotate(6deg); filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5)); }
+  .pm-card:not(.sa-fotom) .pm-head { padding-right: 36px; }
   .pm-rang { flex-wrap: wrap; row-gap: 8px; }
   .pm-sez { margin-left: auto; font-size: 12.5px; font-weight: 700; color: var(--teal); background: rgba(0,200,150,0.1); border: 1px solid rgba(0,200,150,0.3); border-radius: 999px; padding: 4px 11px; white-space: nowrap; }
   .pm-grid3 { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; margin-top: 16px; }
@@ -417,8 +418,7 @@
     .two-col { grid-template-columns: 1fr; }
     :root { --pad: 1rem; }
     .pm-name { font-size: 32px; }
-    .pm-stiker { width: 80px; bottom: -22px; }
-    .pm-card.sa-fotom .pm-name { padding-right: 80px; }
+    .pm-stiker { height: 60px; margin: -8px 0 -2px; }
     .tim-grid { gap: 6px; }
     .tim-grid .tim-card { padding: 0.85rem 0.2rem; gap: 6px; border-radius: 10px; }
     .tim-grid .tim-stars svg { width: 10px; height: 10px; }
@@ -1288,10 +1288,16 @@ function fotoIgraca(ime){
   return f?f+'.webp?v='+FOTO_VERZIJA:null;
 }
 // Medalja za prošlogodišnji plasman (plasman_prosle počinje sa "1." … "4.")
-function mestoProsle(ig){ const m=/^\s*(\d+)\s*\./.exec(ig&&ig.plasman_prosle||''); return m?Number(m[1]):null; }
+// Prošla sezona (FC26): ako plasman nije upisan u bazi (admin → plasman), koristi se ova lista
+const PROSLA_SEZONA = { 'berkes danijel':1, 'janos zedi':2, 'bilic goran':3, 'cetina milos':4 };
+function mestoProsle(ig){
+  const m=/^\s*(\d+)\s*\./.exec(ig&&ig.plasman_prosle||'');
+  if(m) return Number(m[1]);
+  return PROSLA_SEZONA[kljucImena(ig&&ig.ime)]||null;
+}
 function medaljaHtml(ig){
   const n=mestoProsle(ig); if(!n||n>4) return '';
-  const t=`Prošla sezona: ${String(ig.plasman_prosle).replace(/"/g,'&quot;')}`;
+  const t=`Prošla sezona: ${n}. mesto`;
   return n===4 ? `<span class="med med4" title="${t}">4</span>` : `<span class="med" title="${t}">${['🥇','🥈','🥉'][n-1]}</span>`;
 }
 // Sezona u ligi: kolona igraci.sezona; dok je nema u bazi — 2, osim igrača kojima je ovo prva sezona
@@ -1319,9 +1325,9 @@ function otvoriIgraca(id){
   document.getElementById('pm-card').classList.toggle('sa-fotom',!!foto);
   document.getElementById('pm-card').innerHTML=`
     <button class="pm-x" onclick="zatvoriIgraca()" aria-label="Zatvori">×</button>
-    ${foto?`<div class="pm-photo"><img src="${foto}" alt="${esc(ig.ime)}" onerror="this.parentNode.remove();document.getElementById('pm-card').classList.remove('sa-fotom')">${mesto?`<img class="pm-stiker" src="${mesto}.webp" alt="${mesto}. mesto prošle sezone" title="Prošla sezona: ${esc(ig.plasman_prosle)}">`:''}</div>`:(mesto?`<img class="pm-stiker" src="${mesto}.webp" alt="${mesto}. mesto prošle sezone">`:'')}
+    ${foto?`<div class="pm-photo"><img src="${foto}" alt="${esc(ig.ime)}" onerror="this.parentNode.remove();document.getElementById('pm-card').classList.remove('sa-fotom')"></div>`:''}
     ${grb?`<img class="pm-crest" src="${grb.getAttribute('src')}" alt="">`:''}
-    <div class="pm-name">${esc(ig.ime)}</div>
+    <div class="pm-head"><div class="pm-name">${esc(ig.ime)}</div>${mesto?`<img class="pm-stiker" src="${mesto}.webp?v=4" alt="${mesto}. mesto prošle sezone" title="Prošla sezona: ${mesto}. mesto">`:''}</div>
     ${ig.firma?`<div class="pm-firma">${esc(ig.firma)}</div>`:''}
     <div class="pm-rang"><span style="display:inline-flex;gap:2px">${starsHtml(ig.zvezde||3,14)}</span><span>rang tima ${Number(ig.zvezde||3)} ★</span><span class="pm-sez">${sez}. sezona</span></div>
     <div class="pm-grid3">
