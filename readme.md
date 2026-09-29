@@ -4,96 +4,90 @@
 
 Pre nego što počneš bilo šta:
 1. Pročitaj CELI ovaj dokument — strukturu, poznate greške, workflow, changelog
-2. Identifikuj na kojoj grani se radi (Mile će navesti, ili pitaj pre nego što menjaš išta)
+2. Radi se na grani `main` (jedina grana)
 3. Uvek traži trenutni ZIP pre izmena — nikad ne radi na osnovu pretpostavke o stanju fajlova
 4. Ne predlažaj izmene dok nisi siguran da razumeš kontekst projekta
-5. Mile ne radi manuelne izmene koda — sve izmene su isključivo tvoja odgovornost
+5. Goran ne radi manuelne izmene koda — sve izmene su isključivo tvoja odgovornost
 6. Na kraju sesije — obavezno upiši handoff u Changelog pre pakovanja ZIP-a
 
 **Proaktivna primena konteksta:**
-Poznavanje konteksta nije dovoljno — mora se primeniti bez čekanja da Mile pita. Primeri:
-- Kada daješ uputstvo za upload, uvek navedi SVE relevantne grane (`main`, `razvoj-mile1`, `demo`) bez čekanja da se pita
+Poznavanje konteksta nije dovoljno — mora se primeniti bez čekanja da Goran pita. Primeri:
+- Kada daješ uputstvo za upload, navedi tačno koje fajlove treba zameniti na GitHub-u (grana `main`)
 - Kada menjaš fajl koji postoji na više grana, odmah sugeriši sync
 - Ako primetiš potencijalni problem van trenutnog zadatka, napomeni ga
 - **Sve što postoji i na javnom sajtu i u adminu (npr. Playoff prikaz) menja se SINHRONO na obe strane i mora izgledati isto.** Zajednički kod je označen komentarom `(identičan u index.html i admin/index.html)` — posle izmene proveriti da su blokovi u oba fajla identični
 
-Cilj: Mile ne bi trebalo da mora da pita za stvari koje agent može da zaključi iz konteksta.
+Cilj: Goran ne bi trebalo da mora da pita za stvari koje agent može da zaključi iz konteksta.
 
 ---
 
 ## Projekat
 Interni EA FC 27 turnir (sezona 2026/27; prethodna sezona igrana na FC 26) za ~20 kolega u firmi INSPIRA.
 Javni live sajt + admin panel za unos rezultata.
-Mile (PM, bez programerskog iskustva) vodi razvoj kroz Claude chat.
+Goran (bez programerskog iskustva) vodi razvoj kroz Claude chat.
 
 ## Stack
 - **Frontend**: čisti HTML/CSS/JS (bez frameworka), 2 fajla
 - **Baza**: Supabase (PostgreSQL + real-time subscriptions)
 - **Hosting**: Vercel (auto-deploy sa GitHub)
-- **GitHub**: `github.com/milenkojaric90/INSPIRA-FIFA-2026-`
-- **Live sajt**: `inspira-fifa-2026.vercel.app` (main grana)
-- **Razvoj**: `inspira-fifa-2026-git-razvoj-mile1-milenkojaric90s-projects.vercel.app`
+- **Vlasnik**: Goran (GitHub, Vercel i Supabase na Goranovim nalozima; prvobitno napravio Mile)
+- **GitHub**: repo `fc27-liga` (Goranov nalog), grana `main`
+- **Live sajt**: `https://inspira-fc27liga.vercel.app` — admin: `https://inspira-fc27liga.vercel.app/admin`
 
 ## Supabase
+- **Projekat**: `fc27-liga` (Central EU, Frankfurt, Free plan)
 - **URL**: `https://yvyuqxlzbvcjdogeerdu.supabase.co`
-- **Anon key**: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJvYnNiY3dvcGl4a3BodXdvaWJhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5Njk2MDcsImV4cCI6MjA5MDU0NTYwN30.1n4TQlRQkfzGWwHcjl1DEWapEnWTNdBmwbt38ejdc0s`
+- **Publishable key**: `sb_publishable_oE-JUQcjaJiGh13-DIUWag_YHCginrZ` (javni ključ, sme da stoji na sajtu; secret/service_role ključ NIKAD ne ide na sajt)
+- Baza se pravi fajlom `supabase/00-nova-baza.sql` (SQL Editor → Run)
+- Free plan: posle 7 dana bez aktivnosti projekat se "uspava" → supabase.com → Restore project (podaci ostaju)
 
 ## Šema baze
-```sql
+Pravi je fajl `supabase/00-nova-baza.sql` (za prazan projekat; bezbedno i više puta).
+```
 tabela: igraci
-- id (serial, primary key)
+- id (serial, PK)
 - ime (text, not null)
-- odeljenje (text)
-- zvezde (numeric) -- rang tima 0.5-5.0
+- odeljenje (text, default '') -- više se ne unosi
+- zvezde (numeric, default 3) -- rang tima 0.5–5.0
+- firma (text) -- iz mejla, deo posle @ (kartica igrača)
+- plasman_prosle (text) -- prošlogodišnji plasman, unosi se u adminu
 
 tabela: mecevi
-- id (serial, primary key)
-- kolo (integer, not null)
-- domacin (integer, FK -> igraci.id, ON DELETE CASCADE)
-- gost (integer, FK -> igraci.id, ON DELETE CASCADE)
-- gol_domacin (integer, default null)
-- gol_gost (integer, default null)
-- playoff_runda (text, null = liga meč) -- 'O1-1','O1-2','O1-3' ... 'C4-3','P2-3', 'F', '3M'
-- uneto_at (timestamptz, null) -- vreme PRVOG unosa rezultata; koristi se za "Poslednji rezultati"
+- id (serial, PK)
+- kolo (integer, not null, default 0) -- playoff mečevi imaju kolo 0
+- domacin, gost (integer, FK -> igraci.id, ON DELETE CASCADE)
+- gol_domacin, gol_gost (integer, null = neodigran)
+- playoff_runda (text, null = liga) -- 'O1-1','O1-2','O1-3' … 'P2-3', 'F', '3M'
+- uneto_at (timestamptz) -- vreme PRVOG unosa rezultata ("Poslednji rezultati", forma)
 
 tabela: log
-- id, vreme, akcija, detalji, izvor ('admin'/'live'), napomena
+- id, vreme (default now()), akcija, detalji, izvor ('admin'/'live'), napomena
 
 tabela: pravila
-- id (int, primary key) -- uvek 1 red, id=1
-- tekst (text)
-- azurirano (timestamptz)
-```
+- id (uvek 1), tekst, azurirano
 
-**Tabela pravila** (SQL Editor, prod baza — jednom):
-```sql
-create table if not exists pravila (id int primary key, tekst text, azurirano timestamptz default now());
-alter table pravila enable row level security;
-create policy "pravila_select" on pravila for select using (true);
-create policy "pravila_all" on pravila for all using (true) with check (true);
+tabela: igraci_kontakt  -- PRIVATNO
+- igrac_id (PK, FK -> igraci.id, ON DELETE CASCADE), email
+- javno (publishable ključ) sme SAMO insert; čitanje/izmena/brisanje zabranjeni
+- funkcija kontakt_status() vraća samo maskiran mejl (g***@4zida.rs) za admin
 ```
-Bez ove tabele sajt prikazuje ugrađeni podrazumevani tekst (`PRAVILA_DEFAULT`), a admin ne može da snima.
-
-**Nova sezona / dodavanje kolone** (SQL Editor, prod baza):
-```sql
-alter table mecevi add column if not exists uneto_at timestamptz;
-truncate mecevi, igraci, log restart identity cascade;
-```
-Ako kolona `uneto_at` ne postoji, kod i dalje radi (automatski je preskače), ali "Poslednji rezultati" tada ne mogu da se poređaju po vremenu unosa.
-
-RLS je enabled, sve politike su javne (SELECT i ALL za oba).
-CASCADE delete je dodat naknadno — bez toga brisanje igrača bacalo je FK grešku.
+- RLS uključen; igraci, mecevi, log, pravila: javne politike (sajt i admin koriste javni ključ — admin nema login)
+- Realtime uključen za igraci, mecevi, pravila, log
+- Brisanje za novu sezonu: `supabase/02-nova-sezona-brisanje.sql` (briše igrače, mečeve, log, mejlove; pravila ostaju)
 
 ## Struktura fajlova
 ```
 repo/
-├── index.html        ← javni sajt
+├── index.html                      ← javni sajt (slike ugrađene kao base64)
+├── igraci/                         ← fotografije igrača za karticu (Ime_Prezime.webp, ~35 KB)
+├── readme.md                       ← ovaj fajl
 ├── supabase/
-│   ├── 00-nova-baza.sql             ← SVE tabele, dozvole i funkcije za prazan Supabase projekat (bezbedno i više puta)
-│   └── 02-nova-sezona-brisanje.sql  ← briše igrače, mečeve, log i mejlove (nova sezona)
+│   ├── 00-nova-baza.sql            ← sve tabele, dozvole i funkcije
+│   └── 02-nova-sezona-brisanje.sql ← brisanje podataka za novu sezonu
 └── admin/
-    └── index.html    ← admin panel
+    └── index.html                  ← admin panel
 ```
+Jedini folder sa slikama je `igraci/` (fotografije za karticu); grb, fotografija igrača, baner Timova, isečeni fudbaleri i favicon su ugrađeni u HTML (`data:` URI), pa sajt radi i kad se preuzme samo `index.html`.
 
 ---
 
@@ -102,161 +96,127 @@ repo/
 ### Tabovi
 Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
 
-
 ### Zaglavlje i navigacija
-- Desktop (>900px): jedna sticky traka — grb + "FC27 LIGA" levo, tabovi (pilule) centrirani, LIVE desno; `<header>` je sakriven. Traka je uvek iste širine (1240px) na svim tabovima, i na Playoffu. `html { overflow-y: scroll }` — prostor za scrollbar je uvek rezervisan, pa se zaglavlje ne pomera između dugih i kratkih strana (isto i u adminu)
-- Telefon: `<header>` sa grbom i nazivom, ispod sticky red sa tabovima (horizontalni skrol, aktivni tab se sam centrira, fade na desnoj ivici)
-- Širina sadržaja `--wrap: 1240px`; na Playoff tabu samo sadržaj ide na 1900px (`body.po-wide`), zaglavlje ostaje isto
-
-### Fudbaleri sa strane (dekoracija)
-- 3 isečena igrača (bez pozadine, WebP, ugrađeni u `DECO_IGRACI`), providnost 24%
-- Na svakom tabu (osim Playoffa) tačno 2 igrača: jedan u sredini levog, jedan u sredini desnog bočnog prostora, iste visine
-- Svih 6 kombinacija parova (A-B, B-A, A-C, C-A, B-C, C-B) nasumično raspoređeno na 6 tabova pri svakom učitavanju (`DECO_RASPORED`, `decoPostavi()` u `tab()`)
-- Prikazuju se samo na ekranima širim od 1500px; sakriveni na Playoffu (koristi celu širinu) i telefonu
+- Desktop (>900px): jedna sticky traka — grb + "FC27 LIGA" levo, tabovi (pilule) centrirani, LIVE desno; `<header>` sakriven. Traka je uvek iste širine (1240px) na svim tabovima
+- Telefon: `<header>` sa grbom i nazivom, ispod sticky red tabova (horizontalni skrol, aktivni tab se centrira, fade desno)
+- `html { overflow-y: scroll }` — zaglavlje se ne pomera između dugih i kratkih strana
+- Širina sadržaja `--wrap: 1240px`; na Playoff tabu samo sadržaj ide na 1900px (`body.po-wide`)
 - `goTab(name)` — prelazak na tab iz dugmadi na stranici
-- Swipe na telefonu radi kroz svih 7 tabova (koristi listu `.ntab` dugmadi)
-
-### Pregled — raspored
-1. Baner `#hero` (~190px): grb, naziv, sezona i 4 statistike koje se računaju iz podataka (Odigrano, Lider, Najbolji napad, Najbolja odbrana — najmanje primljenih golova među igračima koji su igrali; kod istog broja prednost ima onaj sa više odigranih mečeva; klik vodi na odgovarajući tab); fotografija igrača desno. Statički HTML, render puni samo `#hero-prog`. Telefon: slika 132px + statistike 2×2
-2. Ispod: levo Tabela (skraćena na 10), desno Poslednji rezultati i Sledeći mečevi. Telefon: prvo rezultati i mečevi, pa tabela
-   - Mini tabela na telefonu: samo #, Igrač, Forma (W/D/L, najnoviji levo) i Pts — `tblHtml(..., mini=true)`, kolone `.mob-only` / `.mh`. Desktop prikaz mini tabele nepromenjen
-- Slike (grb, igrači, favicon) su UGRAĐENE u HTML kao base64 (`data:` URI) — nema foldera `img/`, sajt radi i kad se preuzme samo `index.html`. Za zamenu slike: novu sliku konvertovati u base64 i zameniti `src` (grb se pojavljuje 3× u index.html i 1× u adminu)
-- Ako slika ne postoji: blok se prikazuje bez nje (`onerror` uklanja sliku), bez praznih površina
-
-### Pravila
-- Samo čitanje; tekst iz tabele `pravila` (fallback `PRAVILA_DEFAULT`), render `pravilaHtml()` — isti kod u oba fajla
-- Formatiranje: 1. linija = naslov, `N. NASLOV VELIKIM SLOVIMA` = sekcija (kartica), `* ` / `- ` = lista, `1. tekst` malim slovima = numerisana lista, red ceo velikim = istaknut
+- Swipe levo/desno na telefonu kroz sve tabove (lista `.ntab`), ne radi dok je otvorena kartica igrača
 
 ### Pregled
-- Poslednji rezultati i Sledeći mečevi: ista mreža kolona u obe kartice (domaćin | rezultat 84px | gost | kolo 72px) — sve u liniji; Poslednji rezultati prikazuju i kolo (ili rundu plej-ofa)
-- Poslednji rezultati (5) — sortirani po vremenu unosa (najnoviji prvi): `mecVreme()` = `uneto_at`, a ako kolone nema ili je prazna → vreme iz loga `REZULTAT_UNET` (ključ "Domaćin vs Gost"). Realtime osvežavanje ide sa 0.9s odlaganja (`zakaziLoad`) da stigne i log; isto vreme koristi i forma u tabeli, uključuju i playoff mečeve (oznaka npr. "ČF · M2"). Izmena postojećeg rezultata NE pomera meč na vrh (čuva se vreme prvog unosa); reset briše `uneto_at`. Log se više ne koristi za ovaj box.
-- Sledeći mečevi (5) — (1) igrači se ne ponavljaju u listi, (2) prednost imaju mečevi igrača koji značajno zaostaju (2+ odigrana meča manje od najaktivnijeg; prikazuje se "zaostaje N"), (3) redosled kola. Ako nema 5 mečeva sa različitim igračima, lista se dopunjuje ostalima.
-- Tabela (naslov "Tabela") — cela liga tabela skraćena na prvih 10 (`MINI_LIMIT`), senka (fade) preko poslednjih redova i dugme "Prikaži celu tabelu (još N)" / "Prikaži manje"; stanje ostaje i posle realtime osvežavanja (klasa `mini-open` na `#mini-tbl`); ista legenda i boje kao Tabela tab
+1. Baner `#hero` (~190px): grb, naziv, sezona, 4 statistike (Odigrano, Lider, Najbolji napad, Najbolja odbrana — najmanje primljenih golova; kod istog broja prednost ima više odigranih) i fotografija igrača. Statički HTML, render puni samo `#hero-prog`
+2. Levo Tabela (prvih 10, fade + "Prikaži celu tabelu"; stanje ostaje posle osvežavanja), desno Poslednji rezultati i Sledeći mečevi. Telefon: prvo rezultati i mečevi, pa tabela
+   - Mini tabela na telefonu: #, Igrač, Forma, Pts (`tblHtml(..., mini=true)`); desktop: P W D L GF GA GD Pts
+- Poslednji rezultati i Sledeći mečevi: ista mreža kolona (domaćin | rezultat 84px | gost | kolo 72px) — sve u liniji; poraženi igrač priglušen
+- Poslednji rezultati (5): po vremenu unosa, najnoviji prvi — `mecVreme()` = `uneto_at`, a ako ga nema → vreme iz loga `REZULTAT_UNET`; uključeni i playoff mečevi (oznaka npr. "ČF · M2")
+- Sledeći mečevi (5): igrači se ne ponavljaju; prednost igračima koji zaostaju 2+ meča ("zaostaje N"); zatim redosled kola
+- Realtime osvežavanje sa 0.9s odlaganja (`zakaziLoad`)
 
-### Tabela (Liga tabela)
-- Kompletna tabela svih igrača
-- Kolone: #, Igrač (zvezde + ime + odeljenje), Forma (W/D/L poslednjih 5 — NAJNOVIJI PRVI/levo, sa prstenom; redosled po vremenu unosa `uneto_at`, pa kolo), P, W, D, L, GF, GA, GD, Pts
-- Sortiranje: bodovi → gol razlika → postignuti golovi → ime
-- Highlight: 1.–4. ista zelena boja (povlašćeni — direktno u četvrtfinale); 5.–12. ista plava boja (osmina finala); isprekidana linija ispod 12. mesta; 13+ neutralno. Legenda ispod tabele
-- Na mobilnom skrivene kolone: Forma, P, GF, GA (ostaje: #, Igrač, W, D, L, GD, Pts)
+### Kartica igrača (pop-up)
+- Fotografija igrača na vrhu kartice: folder `igraci/`, fajl `Ime_Prezime.webp` bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
+- Klik na ime igrača bilo gde (tabele, kartice, Mečevi, Strelci, Playoff) → veliko ime, firma, rang tima, prošla sezona, ova sezona (mesto, bodovi, W-D-L, gol razlika), forma
+- Imena imaju `data-igrac="ID"`; jedan klik-handler (`otvoriIgraca`); zatvaranje: ×, klik van kartice, Esc
 
-### Mečevi (Raspored i rezultati)
-- Filter: dva dropdowna Igrač 1 vs Igrač 2
-  - Oba odabrana = 2 meča između njih (domaćin/gost)
-  - Samo jedan = svi mečevi tog igrača
-  - Nijedan = svi mečevi
-- Lazy load: bez filtera prikazuje prva 3 kola + dugme "Učitaj još"
-- Sa filterom: učitava sve odjednom (malo podataka)
-- D/G badge: zeleno "D" za domaćina, teal "G" za gosta
-- Neodigrani: input polja za unos, Enter potvrđuje
-- Odigrani: samo prikaz rezultata (javni sajt ne može da menja)
-- Floating "SNIMI REZULTAT" dugme na mobilnom — pojavljuje se kad fokusiraš input
+### Tabela
+- Kolone: #, Igrač (zvezde + ime), Forma (5, najnoviji levo sa prstenom), P, W, D, L, GF, GA, GD, Pts
+- Sortiranje: bodovi → gol razlika → dati golovi → ime
+- Zone: 1.–4. zelena (direktno u četvrtfinale), 5.–12. plava (osmina finala), isprekidana linija ispod 12.; legenda ispod
+- Hover: sloj `background-image` na `td` (vidi se i na obojenim zonama)
+
+### Mečevi
+- Filter po igračima; grupisano po kolima
+- Srednja kolona fiksne širine (150px desktop, 112px telefon) — imena na istim pozicijama i za unos i za odigran meč
+- Unos rezultata: samo cifre (`samoBroj`, max 2), numerička tastatura, Enter snima, plutajuće dugme SNIMI REZULTAT na telefonu (main ima 96px donjeg razmaka)
 
 ### Strelci
-- Ranking po postignutim golovima — prikazuju se SAMO igrači sa bar 1 golom
-- Prikazuje: zvezde, ime, odeljenje, GF/GA tekst, progress bar, broj golova, broj mečeva
+- Samo igrači sa bar 1 golom, rang po datim golovima
 
 ### Timovi
-- Baner na vrhu: vezene zakrpe Inspira grupa + EA Sports FC 27 (ugrađena slika, `.tim-banner`); generator link je uklonjen
-- 10 kartica sa zvezdama (0.5★ do 5★) → klik otvara SoFIFA filter za taj rang
-- SoFIFA linkovi: 5★=oah86, 4.5★=oah82, 4★=oah78, 3.5★=oah74, 3★=oah70, 2.5★=oah68, 2★=oah66, 1.5★=oah64, 1★=oah62, 0.5★=oah59
+- Baner (zakrpe Inspira grupa + EA Sports FC 27) + 10 kartica rangova u 2 reda po 5 (5★ → 0.5★, linkovi na SoFIFA)
 
 ### Playoff
-- Bracket za top 12 iz lige tabele (osmina 8v9, 5v12, 6v11, 7v10; 1–4 čekaju u četvrtfinalu)
-- Osmina, četvrtfinale, polufinale: serija od 2 meča, pobednik po zbiru golova. 3. meč se igra samo ako je zbir golova posle 2 meča izjednačen (npr. 1:3 + 3:1 = 4:4). Finale i meč za 3. mesto: 1 meč
-- Odlučujući meč (3. meč, finale, 3. mesto) ne može biti nerešen — unosi se rezultat posle penala
-- Teniski prikaz (isti na sajtu i u adminu, `poKartica()` / `poBoardHtml()`): kartica para = zaglavlje (runda, M1 M2 M3 Σ) + red po igraču (seed, ime, rezultati po meču, zbir golova). Pobednik para zeleno, dobijeni meč beo/bold, nepotreban M3 šrafiran
-- Admin: u ćelijama su polja za unos, ispod kolone dugme ✓ (nesnimljeno) / × (snimljeno, briše) / 🔒 (zaključano). Javni sajt: samo prikaz
-- Desktop: 5 kolona (1/8, 1/4, SF, Finale, Pobednik), stranica šira na Playoff tabu (`body.po-wide`). Mobilni: izbor runde 1/8 · 1/4 · SF · F / 3.
-- Logika je u `PO_DEF` + `poIzracunaj()` — ISTI kod u oba fajla, menjati na oba mesta
-- Meč se računa samo ako igrači u redu odgovaraju trenutnom paru (ako se promeni pobednik ranije runde, stari mečevi sledeće runde se ignorišu)
+- Top 12: osmina 8v9, 5v12, 6v11, 7v10; 1–4 čekaju u četvrtfinalu
+- Osmina, četvrtfinale, polufinale: 2 meča, pobednik po zbiru golova; 3. meč samo kod izjednačenog zbira. Finale i 3. mesto: 1 meč. Odlučujući meč ne može biti nerešen (rezultat posle penala)
+- Teniski prikaz para (isti na sajtu i u adminu: `poKartica()`, `poBoardHtml()`); desktop 4 kolone (pobednik ispod finala), telefon: izbor runde 1/8 · 1/4 · SF · F / 3.
+- Logika `PO_DEF` + `poIzracunaj()` i prikaz su ISTI kod u oba fajla (komentar "identičan u index.html i admin/index.html")
+
+### Pravila
+- Tekst iz tabele `pravila` (fallback `PRAVILA_DEFAULT`), `pravilaHtml()` — isti kod u oba fajla
+- Formatiranje: 1. linija naslov, `N. NASLOV VELIKIM` sekcija, `* `/`- ` lista, `1. tekst` numerisana, red velikim slovima istaknut
+
+### Fudbaleri sa strane (dekoracija)
+- 3 isečena igrača (WebP, `DECO_IGRACI`), po jedan levo i desno u sredini bočnog prostora, iste visine; 6 kombinacija parova nasumično po tabovima (`DECO_RASPORED`, `decoPostavi()`)
+- Samo na ekranima >1500px; nema ih na Playoffu i telefonu
 
 ---
 
 ## Admin panel — admin/index.html
+Adresa: `/admin` (nema login — TODO)
 
 ### Tabovi
 Igrači · Rezultati · Playoff · Pravila · Log
 
 ### Igrači — unos
-- Čuvaju se SAMO 3 podatka: Ime i prezime, Mejl, Rang (zvezdice). Polje Odeljenje je uklonjeno; u zbirnom unosu ostale kolone (sektor i sl.) se preskaču
+- Čuvaju se SAMO: Ime i prezime, Mejl, Rang (zvezdice)
+- Pojedinačno: ime, mejl, rang (Enter dodaje)
+- Zbirno: paste iz tabele — kolone Ime · Mejl · Rang; kolona sa zvezdicama (★☆) i ostale kolone se preskaču; zaglavlje i redni brojevi se ignorišu; pregled pre čuvanja; postojeći igrač → "dopuna" (dodaje mejl ako ga nema, ažurira rang); duplikati se preskaču
+- Firma se računa iz mejla (`firmaIzMejla`; poznati domeni: 4zida, Polovni automobili, Infostud, HelloWorld, Inspira grupa); igračima bez firme popunjava se automatski pri otvaranju admina
+- Ako kolone `firma`/`plasman_prosle` ne postoje, unos radi bez njih (poruka za SQL dopunu)
 
-### Igrači — mejlovi
-- Pojedinačni unos ima polje Mejl; zbirni unos prepoznaje kolonu sa mejlom (sadrži @), rang (0.5–5) i preskače kolonu sa zvezdicama (★☆)
-- Postojeći igrač u paste-u → "dopuna": dodaje mejl ako ga nema i ažurira rang ako je drugačiji
-- Mejl se upisuje u privatnu tabelu `igraci_kontakt` (javno: samo insert; čitanje/izmena/brisanje zabranjeni); za sada se ne koristi nigde na sajtu. Admin vidi samo maskiran mejl (`kontakt_status`): ✉ na čipu igrača, "+✉" = nema mejla (klik za dodavanje)
-- Izmena postojećeg mejla samo kroz SQL (primer u `00-nova-baza.sql`)
+### Igrači — izmena
+- Klik na ime u listi → prozor: ime, rang, firma, prošlogodišnji plasman, mejl (samo ako ga nema)
+- Na čipu: ✉ = ima mejl (maskiran u tooltip-u), +✉ = nema (klik za dodavanje)
+- Izmena postojećeg mejla samo preko SQL-a: `update igraci_kontakt set email='...' where igrac_id=...;`
+- Generiši raspored (dupli krug) — briše sve mečeve i pravi nove
 
+### Rezultati
+- Svi / Neodigrani / Odigrani; unos i reset rezultata (samo cifre)
 
-### Pravila tab
-- Textarea (nalepi/izmeni) + uživo pregled identičan sajtu; Sačuvaj (upsert id=1) / Poništi izmene; upozorenje pri zatvaranju stranice ako ima nesačuvanih izmena; log `PRAVILA_IZMENJENA`
+### Playoff
+- Unos po mečevima (M1, M2, M3 / REZ); M2 posle M1, M3 samo kad je zbir izjednačen; ✓ nesnimljeno / × briše / 🔒 zaključano
+- Log: PLAYOFF_REZULTAT, PLAYOFF_POBEDNIK, PLAYOFF_REZULTAT_OBRISAN, PLAYOFF_RESETOVAN
 
-### Playoff tab
-- Desktop: šira stranica (`body.po-wide`, max 1560px), grid sa 5 kolona (1/8, 1/4, SF, Finale, Pobednik), meč za 3. mesto ispod
-- Mobilni (≤700px): dugmad 1/8 · 1/4 · SF · F / 3. prikazuju jednu rundu; žuta tačka = runda ima neodigrane mečeve; podrazumevano se otvara prva nezavršena runda. Prikaz se menja pri resize-u preko granice
-- Polja za unos rezultata ispod svakog para (M1, M2, M3 za serije; REZ za finale i 3. mesto)
-- M2 se otključava posle M1; M3 samo kad je zbir golova izjednačen; broj pored igrača = ukupno golova u dvomeču; zaključana polja imaju 🔒
-- × briše taj meč i sve naredne u seriji; ako izmena M1/M2 reši seriju, M3 se automatski briše
-- Log: `PLAYOFF_REZULTAT`, `PLAYOFF_POBEDNIK`, `PLAYOFF_REZULTAT_OBRISAN`, `PLAYOFF_RESETOVAN`
+### Pravila
+- Tekst + pregled uživo; Sačuvaj / Poništi izmene; upozorenje pri zatvaranju sa nesačuvanim izmenama
 
-### Igrači tab
-- Dodaj igrača: ime, odeljenje, rang zvezde (0.5-5.0, klikabilne zvezdice)
-- Dva režima unosa (prekidač Pojedinačno / Zbirno):
-  - Pojedinačno: kao ranije, Enter u polju takođe dodaje
-  - Zbirno: textarea za paste iz Excela/Google Sheets (TSV). Jedan red = jedan igrač; prva tekst kolona = ime, druga tekst kolona = odeljenje, broj 0.5–5 = rang, email (sadrži @) i redni brojevi se preskaču, zaglavlje "Ime i prezime" se ignoriše. Pregled pre dodavanja; duplikati i već prijavljeni igrači se preskaču. Igrači bez ranga dobijaju rang izabran zvezdicama. Jedan `insert` za sve + po jedan `IGRAC_DODAT` log unos po igraču
-- Lista prijavljenih kao chip-ovi sa × za brisanje
-- Dugme "Generiši raspored (dupli krug)" — confirm dialog pre akcije koji upozorava da briše sve mečeve i rezultate
-- Raspored = round-robin dupli krug (svako sa svakim domaćin i gost)
-- Neparan broj igrača → BYE sistem (automatski slobodan igrač po kolu)
-
-### Rezultati tab
-- Isti filter kao javni sajt (Igrač1 vs Igrač2 + Svi/Neodigrani/Odigrani)
-- Slobodan igrač prikazan samo kada nema filtera
-- Odigrani mečevi: inputi popunjeni sa rezultatom, mogu da se menjaju
-- Neodigrani: prazni inputi
-- Dugme ✓ na desktopu snima, × resetuje rezultat na null
-- Floating "SNIMI REZULTAT" dugme na mobilnom
-- Enter na inputu = snimanje
+### Log
+- Istorija svih izmena sa filterima i napomenama
 
 ---
 
 ## Dizajn
 
-### Paleta (nepromenjena)
+### Paleta
 - Pozadina `#0f1420`, kartice `#161d2e`, sekundarne površine `#1c253a`
 - Zelena `#ADFF2F`, teal `#00C896`, crvena `#ff4060`, žuta `#ffc800`
-- Plej-of zone u tabeli: 1.–4. zelena, 5.–12. plava `rgba(120,150,255,…)`
+- Tabela: 1.–4. zelena, 5.–12. plava `rgba(120,150,255,…)`
 
 ### Tipografija
-- Barlow Condensed (italic 800–900): naslovi sekcija, naziv lige, rezultati, bodovi
+- Barlow Condensed (italic 800–900): naslovi, naziv lige, rezultati, bodovi
 - Barlow (500–700): navigacija, imena, podaci, opisi, zaglavlja tabela
-- Cifre ujednačene širine (`font-variant-numeric: tabular-nums`) u tabelama i rezultatima
-- Manje velikih slova i razmaka između slova u sitnim oznakama; zaglavlje tabele 12px
+- `font-variant-numeric: tabular-nums` u tabelama i rezultatima
 
-### Komponente
-- Kartice: radius 12px, diskretni separatori `rgba(255,255,255,0.06)`
-- Rezultat: `.rscore` (min-width 70px — staje i 10 : 12), poraženi igrač priglušen
-- Hover u tabeli: sloj `background-image` na `td` (vidljiv i na obojenim zonama)
-- Aurora u zaglavlju prigušena
-
-### Mobile
-- Tabovi: sticky na vrhu, horizontalni scroll bez scrollbara, centrirani
-- Swipe levo/desno menja tab (ignoriše scrollable elemente)
-- Swipe desno (nazad) uvek radi
-- Swipe levo blokiran ako element ima horizontalni scroll koji nije na kraju
-- Mečevi: igrači u jednom redu, inputi ispod (grid layout)
-- Floating dugme za snimanje; `main` ima 96px donjeg razmaka na telefonu da dugme ne prekrije sadržaj
-
----
+### Principi
+- Sve u linijama i simetrično: fiksne kolone za rezultate/kolo, iste širine u svim redovima
+- Sajt i admin: ono što postoji na oba mesta (Playoff, Pravila) menja se sinhrono i izgleda isto
+- Umereni efekti (bez jakog neona i animacija)
 
 ## Poznate greške i rešenja
 
 ### 11. Zaglavlje se pomera na kratkim stranama
-**Šta se desilo**: Na kratkim tabovima (Strelci, Timovi) nema vertikalnog scrollbara, pa je stranica ~15px šira i centrirano zaglavlje se pomeri. U headless testovima se ne vidi (tamo nema scrollbara).
+**Šta se desilo**: Na kratkim tabovima (Strelci, Timovi) nema vertikalnog scrollbara, pa je stranica ~15px šira i centrirano zaglavlje se pomeri. U headless testovima se ne vidi.
 
-**Rešenje**: `html { overflow-y: scroll; }` — scrollbar je uvek prisutan.
+**Rešenje**: `html { overflow-y: scroll; }` — scrollbar je uvek prisutan (sajt i admin).
 
-**Lekcija**: Kad se nešto centrirano "pomera" između tabova, prvo proveriti razliku u visini strane / scrollbar.
+**Lekcija**: Kad se nešto centrirano "pomera" između tabova, prvo proveriti scrollbar / visinu strane.
+
+### 12. Readme skraćen greškom pri izmeni
+**Šta se desilo**: Zamena teksta "od A do B" u readme-u obrisala je sve sekcije između (šema, opis sajta, dizajn, greške).
+
+**Rešenje**: Sekcije vraćene iz originalnog readme-a i ažurirane.
+
+**Lekcija**: Pri izmeni readme-a menjati samo tačno određene redove; posle izmene proveriti listu naslova (`grep "^#"`).
 
 ### 10. Agent zna kontekst ali ga ne primenjuje proaktivno
 **Šta se desilo**: Agent je znao da postoje tri grane (`main`, `razvoj-mile1`, `demo`) ali je dao uputstvo za upload samo na `main`. Mile je morao da pita — što je tačno vrsta back-and-forth koji treba eliminisati.
@@ -359,35 +319,23 @@ ME = (b.data||[]).map(m=>({...m, gol_domacin: m.gol_domacin??null, gol_gost: m.g
 
 ## Workflow
 
-### Kako Mile radi
-1. Otvori Claude chat, pošalji kontekst MD + trenutni ZIP
+### Kako se radi
+1. Otvori Claude chat, pošalji ovaj readme + trenutni ZIP (ili fajlove)
 2. Opiši šta treba da se promeni
 3. Claude menja fajlove, pakuje ZIP
-4. Mile raspakuje, uploada na GitHub (`razvoj-mile1` grana)
-5. Vercel auto-deployuje preview
-6. Testira na preview URL-u
-7. Kad OK → merge na `main`
+4. Goran raspakuje i uploaduje SADRŽAJ foldera na GitHub (`main`) — Add file → Upload files → Commit changes
+5. Vercel sam objavi novu verziju za ~1 min
 
 ### Git grane
-- `main` — produkcija, live sajt, prod baza
-- `razvoj-mile1` — razvoj i testiranje, ista prod baza
-- `demo` — prezentacijska grana, potpuno odvojena demo baza
-
-### Baze podataka
-- **Prod baza**: `https://yvyuqxlzbvcjdogeerdu.supabase.co` — koriste je `main` i `razvoj-mile1`
-- **Demo baza**: `https://pzqwzhvqbmeazbvuditj.supabase.co` — koristi je samo `demo` grana
-- Demo baza ima iste igrače i mečeve kao prod (snapshot od 08.04.2025.)
-- Demo baza se ne dira osim kada svesno odlučimo da je ažuriramo
+- `main` — jedina grana, live sajt (Vercel auto-deploy)
+- Stare grane (`razvoj-mile1`, `demo`) i Miletova/demo baza su ostali na Miletovom nalogu i više se ne koriste
 
 ### Važna pravila
-- Uvek uploadovati na `razvoj-mile1` prvo, nikad direktno na `main`
-- Uvek proveriti na preview URL pre merge-a
-- Kad menjamo `index.html` i `admin/index.html` — navesti koji se menja
-- ZIP treba da sadrži samo folder projekta bez extras
-- Nikad ne mergati `demo` u `main` (različiti Supabase keyevi!)
-- Za izmene na `demo` grani — Claude pravi poseban ZIP sa demo keyevima
-
----
+- Radi se na `main`; posle upload-a proveriti sajt na live adresi
+- Uvek navesti koji fajlovi su menjani (`index.html`, `admin/index.html`, `readme.md`, `supabase/…`)
+- ZIP sadrži samo folder projekta; na GitHub se uploaduje SADRŽAJ foldera
+- Publishable ključ sme na sajt; secret/service_role ključ NIKAD
+- SQL izmene uvek dodati i u `supabase/00-nova-baza.sql`
 
 ## TODO / Buduće dorade
 - [ ] Login za admin panel (Supabase Auth — oko 30 min posla)
@@ -410,9 +358,7 @@ Format unosa:
 **Ispravljeno:** ...
 **Nije završeno:** ...
 **Fajlovi:** `index.html` / `admin/index.html` / oba / `readme.md`
-**Grana:** `razvoj-mile1` → merged ✅ / čeka merge ⏳
-         / `demo` (demo Supabase keyevi!) ⚠️
-         / samo `readme.md`, bez deploy-a
+**Grana:** `main` → objavljeno ✅ / čeka upload ⏳
 ---
 ```
 
@@ -420,6 +366,41 @@ Format unosa:
 
 ## Changelog / Projektni dnevnik
 ---
+
+### [29.09.2026] — Fotografije igrača u kartici
+
+**Urađeno:**
+- 18 fotografija (isečene, WebP) u folderu `igraci/`; kartica igrača prikazuje fotografiju na vrhu sa imenom preko nje
+- Povezivanje po imenu bez obzira na kvačice i redosled (npr. `Boris_Zmaher` = Žmaher Boris)
+
+**Nije završeno:**
+- Nema fotografije za Nenada Gojkovića; fotografije Dragana Belegića i Gorana Jankovića su spremne (prikazaće se kad budu u bazi)
+
+**Fajlovi:** `index.html` + `readme.md` + novi folder `igraci/`
+
+---
+
+### [29.09.2026] — Kartica igrača, Timovi 2×5, readme vraćen
+
+**Urađeno:**
+- Klik na ime igrača otvara karticu (ime, firma iz mejla, rang, prošlogodišnji plasman, ova sezona, forma) — na sajtu svuda gde se ime prikazuje
+- Admin: klik na ime igrača → izmena (ime, rang, firma, prošlogodišnji plasman, mejl ako ga nema)
+- Timovi: 2 reda po 5 kartica, od najvećeg ranga
+- SQL: kolone `igraci.firma` i `igraci.plasman_prosle` (dodate i u `00-nova-baza.sql`)
+- Readme: vraćene i ažurirane sekcije (šema, sajt, admin, dizajn, greške) koje su greškom bile obrisane
+
+**Ispravljeno:** /
+
+**Nije završeno:**
+- Uneti prošlogodišnje plasmane (admin → Igrači → klik na ime)
+
+**Fajlovi:** `index.html` + `admin/index.html` + `readme.md` + `supabase/00-nova-baza.sql`
+
+---
+
+### [29.09.2026] — Prelazak na Goranove naloge — SAJT UŽIVO
+
+- Live: `https://inspira-fc27liga.vercel.app` (Goranov GitHub + Vercel), baza: Goranov Supabase `fc27-liga`
 
 ### [29.09.2026] — Prelazak na Goranove naloge (nova Supabase baza)
 

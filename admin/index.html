@@ -57,6 +57,15 @@
   .btn-g{background:var(--green);color:#07090f;border-color:var(--green)}
   .btn-g:hover{opacity:0.85}
   .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .chip-name{cursor:pointer;border-bottom:1px dotted rgba(255,255,255,0.35)}
+  .chip-name:hover{color:var(--green);border-color:var(--green)}
+  .am{position:fixed;inset:0;background:rgba(5,8,14,0.72);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:200;padding:16px}
+  .am.on{display:flex}
+  .am-card{background:var(--surf);border:1px solid var(--border2);border-radius:14px;padding:20px;width:100%;max-width:440px;display:flex;flex-direction:column;gap:12px}
+  .am-card h3{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:22px}
+  .am-card select{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;font-size:14px;background:var(--surf2);color:#fff;outline:none}
+  .am-row{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+  .am-note{font-size:12px;color:var(--muted)}
   .chip{padding:5px 12px;background:var(--surf2);border:1px solid var(--border2);border-radius:20px;font-size:13px;display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8)}
   .chip-rm{cursor:pointer;color:var(--muted);font-size:18px;line-height:1}
   .chip-rm:hover{color:var(--red)}
@@ -351,6 +360,17 @@
     <div id="rezultati-lista"><div class="empty">Nema mečeva</div></div>
   </div>
 </main>
+<div class="am" id="am" onclick="if(event.target===this)zatvoriIzmenu()">
+  <div class="am-card">
+    <h3>Izmena igrača</h3>
+    <div><label>Ime i prezime</label><input type="text" id="am-ime"></div>
+    <div><label>Rang tima</label><select id="am-rang"></select></div>
+    <div><label>Firma</label><input type="text" id="am-firma" placeholder="npr. 4zida"><div class="am-note">Automatski iz mejla (deo posle @); može da se izmeni.</div></div>
+    <div><label>Prošlogodišnji plasman</label><input type="text" id="am-plasman" placeholder="npr. 3. mesto, polufinale, nije učestvovao"></div>
+    <div id="am-mail-wrap"></div>
+    <div class="am-row"><button class="btn" onclick="zatvoriIzmenu()">Otkaži</button><button class="btn btn-g" onclick="sacuvajIzmenu()">Sačuvaj</button></div>
+  </div>
+</div>
 <div class="toast" id="toast"><span class="ti">✓</span><span id="toast-msg">Sačuvano!</span></div>
 <script>
 const SB_URL = 'https://yvyuqxlzbvcjdogeerdu.supabase.co';
@@ -537,6 +557,8 @@ async function loadAll(){
   ]);
   KONTAKT_OK=!k.error; KONTAKT={}; (k.data||[]).forEach(r=>KONTAKT[r.igrac_id]=r.maska);
   IG=a.data||[];
+  if(!loadAll._firme){ loadAll._firme=true; if(await dopuniFirme()) { const a2=await db.from('igraci').select('*').order('id'); if(!a2.error) a.data=a2.data; } }
+  IG=a.data||[];
   ME=b.data||[];
   PO_MECEVI=c.data||[];
   PO=poIzracunaj(calcTableAdmin().slice(0,12),PO_MECEVI);
@@ -629,7 +651,65 @@ function vratiPravila(){
 window.addEventListener('beforeunload',e=>{if(pravilaDirty()){e.preventDefault();e.returnValue='';}});
 
 // ── Igrači ────────────────────────────────────────────────────────────────
-let KONTAKT={}, KONTAKT_OK=true;
+let KONTAKT={}, KONTAKT_OK=true, FIRMA_OK=true;
+// Firma iz mejla: deo posle @ (poznati domeni imaju lepše ime)
+const FIRME={'4zida.rs':'4zida','polovniautomobili.com':'Polovni automobili','infostud.com':'Infostud','helloworld.rs':'HelloWorld','inspiragrupa.com':'Inspira grupa'};
+function firmaIzMejla(m){
+  const d=String(m||'').toLowerCase().split('@').pop().replace(/^www\./,'').trim();
+  if(!d||!d.includes('.')) return '';
+  if(FIRME[d]) return FIRME[d];
+  const n=d.split('.')[0]; return n.charAt(0).toUpperCase()+n.slice(1);
+}
+// Upis igrača; ako kolone firma/plasman_prosle još ne postoje u bazi, upisuje bez njih
+async function insertIgraci(redovi){
+  let r=await db.from('igraci').insert(redovi).select('id,ime');
+  if(r.error&&/firma|plasman_prosle/.test(r.error.message||'')){
+    FIRMA_OK=false; toast('Firma nije sačuvana — pokreni SQL dopunu iz readme-a');
+    r=await db.from('igraci').insert(redovi.map(({firma,plasman_prosle,...x})=>x)).select('id,ime');
+  }
+  return r;
+}
+// Jednokratno: igračima bez firme popuni firmu iz (maskiranog) mejla
+async function dopuniFirme(){
+  if(!FIRMA_OK||!IG.length||!('firma' in IG[0])) { if(IG.length&&!('firma' in IG[0])) FIRMA_OK=false; return false; }
+  const za=IG.filter(i=>!i.firma&&KONTAKT[i.id]).map(i=>({id:i.id,firma:firmaIzMejla(KONTAKT[i.id])})).filter(x=>x.firma);
+  for(const x of za){ await db.from('igraci').update({firma:x.firma}).eq('id',x.id); }
+  return za.length>0;
+}
+const RANGOVI=[5,4.5,4,3.5,3,2.5,2,1.5,1,0.5];
+let AM_ID=null;
+function urediIgraca(id){
+  const i=IG.find(x=>x.id===id); if(!i) return; AM_ID=id;
+  document.getElementById('am-ime').value=i.ime||'';
+  document.getElementById('am-rang').innerHTML=RANGOVI.map(r=>`<option value="${r}"${Number(i.zvezde)===r?' selected':''}>${r} ★</option>`).join('');
+  document.getElementById('am-firma').value=i.firma||(KONTAKT[id]?firmaIzMejla(KONTAKT[id]):'');
+  document.getElementById('am-plasman').value=i.plasman_prosle||'';
+  document.getElementById('am-mail-wrap').innerHTML=KONTAKT[id]
+    ?`<label>Mejl</label><div class="am-note" style="font-size:13px">${escH(KONTAKT[id])} (izmena mejla samo preko SQL-a)</div>`
+    :`<label>Mejl</label><input type="text" id="am-mail" placeholder="ime.prezime@firma.rs" oninput="const f=document.getElementById('am-firma');if(!f.dataset.rucno)f.value=firmaIzMejla(this.value)">`;
+  document.getElementById('am-firma').oninput=function(){this.dataset.rucno='1';};
+  document.getElementById('am-firma').dataset.rucno='';
+  if(!FIRMA_OK){document.getElementById('am-firma').disabled=true;document.getElementById('am-plasman').disabled=true;}
+  document.getElementById('am').classList.add('on');
+  setTimeout(()=>document.getElementById('am-plasman').focus(),50);
+}
+function zatvoriIzmenu(){document.getElementById('am').classList.remove('on');AM_ID=null;}
+async function sacuvajIzmenu(){
+  const i=IG.find(x=>x.id===AM_ID); if(!i) return;
+  const ime=document.getElementById('am-ime').value.trim(); if(!ime){toast('Ime ne može biti prazno');return;}
+  const upd={ime,zvezde:Number(document.getElementById('am-rang').value)};
+  if(FIRMA_OK){ upd.firma=document.getElementById('am-firma').value.trim(); upd.plasman_prosle=document.getElementById('am-plasman').value.trim(); }
+  const mailEl=document.getElementById('am-mail'); const mail=mailEl?mailEl.value.trim().toLowerCase():'';
+  if(mail&&!MAIL_RE.test(mail)){toast('Mejl nije ispravan');return;}
+  let{error}=await db.from('igraci').update(upd).eq('id',i.id);
+  if(error&&/firma|plasman_prosle/.test(error.message||'')){ FIRMA_OK=false; delete upd.firma; delete upd.plasman_prosle; ({error}=await db.from('igraci').update(upd).eq('id',i.id)); toast('Firma/plasman nisu sačuvani — pokreni SQL dopunu'); }
+  if(error){toast('Greška: '+error.message);return;}
+  if(mail){ const r=await sacuvajMejlove([{igrac_id:i.id,email:mail}]); if(r.greska){toast('Mejl nije sačuvan: '+r.greska);} }
+  const promene=[i.ime!==ime?`ime → ${ime}`:'',Number(i.zvezde)!==upd.zvezde?`rang ${upd.zvezde}★`:'',upd.firma!==undefined&&(i.firma||'')!==upd.firma?`firma ${upd.firma||'—'}`:'',upd.plasman_prosle!==undefined&&(i.plasman_prosle||'')!==upd.plasman_prosle?`prošla sezona: ${upd.plasman_prosle||'—'}`:'',mail?'mejl dodat':''].filter(Boolean);
+  if(promene.length) await logujAkciju('IGRAC_IZMENJEN',`${i.ime} — ${promene.join(', ')}`);
+  zatvoriIzmenu(); toast('Igrač sačuvan'); loadAll();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('am')?.classList.contains('on'))zatvoriIzmenu();});
 const MAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 // Mejlovi se čuvaju u privatnoj tabeli igraci_kontakt (javno se ne mogu pročitati ni izmeniti)
 async function sacuvajMejlove(parovi){ // [{igrac_id,email}]
@@ -643,7 +723,7 @@ async function dodajIgraca(){
   const mail=document.getElementById('inp-mail').value.trim().toLowerCase();
   if(!ime)return;
   if(mail&&!MAIL_RE.test(mail)){toast('Mejl nije ispravan');return;}
-  const{data,error}=await db.from('igraci').insert({ime,odeljenje:dept,zvezde:selectedStars}).select('id');
+  const{data,error}=await insertIgraci([{ime,odeljenje:dept,zvezde:selectedStars,firma:firmaIzMejla(mail)}]);
   if(error){toast('Greška: '+error.message);return;}
   let mailMsg='';
   if(mail&&data&&data[0]){ const r=await sacuvajMejlove([{igrac_id:data[0].id,email:mail}]); if(r.greska) mailMsg=' (mejl nije sačuvan: '+r.greska+')'; }
@@ -749,8 +829,8 @@ async function dodajZbirno(){
   const mejlovi=[]; let greske=[];
   // 1) novi igrači
   if(novi.length){
-    const redovi=novi.map(r=>({ime:r.ime,odeljenje:r.odeljenje,zvezde:r.zvezde??selectedStars}));
-    const{data,error}=await db.from('igraci').insert(redovi).select('id,ime');
+    const redovi=novi.map(r=>({ime:r.ime,odeljenje:r.odeljenje,zvezde:r.zvezde??selectedStars,firma:firmaIzMejla(r.email)}));
+    const{data,error}=await insertIgraci(redovi);
     if(error){btn.disabled=false;toast('Greška: '+error.message);renderBulkPreview();return;}
     const poImenu={}; (data||[]).forEach(d=>poImenu[normIme(d.ime)]=d.id);
     novi.forEach(r=>{ if(r.email&&poImenu[normIme(r.ime)]) mejlovi.push({igrac_id:poImenu[normIme(r.ime)],email:r.email}); });
@@ -759,7 +839,7 @@ async function dodajZbirno(){
   // 2) dopune postojećih: rang + mejl
   for(const r of dop){
     if(r.dopuna.rang){ const{error}=await db.from('igraci').update({zvezde:r.zvezde}).eq('id',r.dopuna.id); if(error) greske.push(r.ime+': '+error.message); }
-    if(r.dopuna.mejl) mejlovi.push({igrac_id:r.dopuna.id,email:r.email});
+    if(r.dopuna.mejl){ mejlovi.push({igrac_id:r.dopuna.id,email:r.email}); if(FIRMA_OK) await db.from('igraci').update({firma:firmaIzMejla(r.email)}).eq('id',r.dopuna.id); }
   }
   if(dop.length){ try{ await db.from('log').insert(dop.map(r=>({akcija:'IGRAC_IZMENJEN',detalji:`${r.ime} — ${[r.dopuna.mejl?'mejl dodat':'',r.dopuna.rang?'rang '+r.zvezde+'★':''].filter(Boolean).join(', ')}`,izvor:'admin'}))); }catch(e){} }
   // 3) mejlovi (privatna tabela)
@@ -783,7 +863,7 @@ function renderIgraci(){
   const el=document.getElementById('igraci-chips');
   if(!IG.length){el.innerHTML='<div class="empty" style="padding:0.5rem">Nema igrača</div>';return;}
   el.innerHTML=IG.map(i=>`<div class="chip">
-    ${i.ime}
+    <span class="chip-name" onclick="urediIgraca(${i.id})" title="Klikni za izmenu">${escH(i.ime)}</span>${i.firma?`<span style="font-size:11px;color:var(--teal)">${escH(i.firma)}</span>`:''}
     <span style="display:inline-flex;gap:1px;align-items:center">${starsHtml(i.zvezde||3,13)}</span>
     ${KONTAKT_OK?(KONTAKT[i.id]?`<span class="chip-mail" title="${escH(KONTAKT[i.id])}">✉</span>`:`<span class="chip-mail nema" title="Nema mejla — klikni da dodaš" onclick="dodajMejl(${i.id})">+✉</span>`):''}
     <span class="chip-rm" onclick="ukloniIgraca(${i.id})">×</span>
@@ -1127,7 +1207,7 @@ function poKartica(S,key,ed){
     }).join('');
     const zbir=sum?`<span class="tc-sum">${st.games[0]?(s==='a'?st.ptsA:st.ptsB):''}</span>`:'';
     const ime=p?poEsc(p.ime):'???';
-    return `<div class="tc-r tc-p${win?' win':''}${p?'':' tbd'}" ${cols}><span class="tc-name">${seed?`<span class="tc-seed">${seed}</span>`:''}<span class="tc-nm" title="${ime}">${ime}</span>${win?'<span class="tc-ok">✓</span>':''}</span>${cells}${zbir}</div>`;
+    return `<div class="tc-r tc-p${win?' win':''}${p?'':' tbd'}" ${cols}><span class="tc-name">${seed?`<span class="tc-seed">${seed}</span>`:''}<span class="tc-nm" title="${ime}" data-igrac="${p?p.id:''}">${ime}</span>${win?'<span class="tc-ok">✓</span>':''}</span>${cells}${zbir}</div>`;
   };
   let akcije='';
   if(ed&&par){

@@ -11,6 +11,8 @@ create table if not exists igraci (
   odeljenje text default '',
   zvezde    numeric default 3
 );
+alter table igraci add column if not exists firma text;            -- firma iz mejla (prikaz u kartici igrača)
+alter table igraci add column if not exists plasman_prosle text;   -- prošlogodišnji plasman (unosi se u adminu)
 
 -- Mečevi (liga + playoff)
 create table if not exists mecevi (
