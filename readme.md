@@ -80,7 +80,8 @@ tabela: igraci_kontakt  -- PRIVATNO
 ```
 repo/
 ├── index.html                      ← javni sajt (slike ugrađene kao base64)
-├── igraci/                         ← fotografije igrača za karticu (Ime_Prezime.webp, ~35 KB)
+├── igraci/                         ← fotografije igrača za karticu (Ime_Prezime.webp, ~40 KB)
+├── medalje/                        ← nalepnice 1.webp–4.webp (prošlogodišnji plasman)
 ├── readme.md                       ← ovaj fajl
 ├── supabase/
 │   ├── 00-nova-baza.sql            ← sve tabele, dozvole i funkcije
@@ -116,10 +117,10 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
 
 ### Kartica igrača (pop-up)
 - Fotografija igrača na vrhu kartice: folder `igraci/`, fajl `Ime_Prezime.webp` bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
-- Klik na ime igrača bilo gde (tabele, kartice, Mečevi, Strelci, Playoff) → fotografija, veliko ime (+ medalja), firma, rang tima i koja je sezona igrača, prošla sezona, ova sezona (mesto, bodovi, W-D-L, gol razlika), golovi, najveća pobeda, najveći poraz (liga), forma
-- Medalje za prošlogodišnji plasman (🥇🥈🥉 i plava oznaka "4"): iz `plasman_prosle` koji počinje sa "1."–"4."; prikaz uz ime u tabelama i u kartici
-- Sezona igrača: kolona `igraci.sezona` (1 = prva); dok je nema u bazi, 2 za sve osim liste `PRVA_SEZONA`
-- Fotografije su isečene jednako za sve (cela glava + dres, odnos 1.26:1) automatskim prepoznavanjem glave i ramena
+- Klik na ime igrača bilo gde (tabele, kartice, Mečevi, Strelci, Playoff) → fotografija (sa nalepnicom-medaljom za 1.–4. mesto prošle sezone u donjem desnom uglu), veliko ime, firma, rang tima, oznaka "N. sezona" (desno, odvojeno), golovi, najveća pobeda, najveći poraz (liga), forma
+- Medalje za prošlogodišnji plasman: iz `plasman_prosle` koji počinje sa "1."–"4."; u tabelama emoji uz ime (🥇🥈🥉, plava "4"), u kartici nalepnica iz foldera `medalje/` (1.webp–4.webp)
+- Sezona igrača: kolona `igraci.sezona` (1 = prva: Bodiroga, Gojković, Radosavljević); dok je nema u bazi, 2 za sve osim liste `PRVA_SEZONA`
+- Fotografije su isečene jednako za sve (odnos 1.15:1, ~12% prostora iznad glave, ceo grb i natpis na dresu) automatskim prepoznavanjem glave i ramena; `FOTO_VERZIJA` u kodu povećati kad se slike zamene (da browser ne prikaže stare)
 - Imena imaju `data-igrac="ID"`; jedan klik-handler (`otvoriIgraca`); zatvaranje: ×, klik van kartice, Esc
 
 ### Tabela
@@ -369,6 +370,18 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Kartica: nalepnice medalja, sezona odvojena, novo kadriranje
+
+**Urađeno:**
+- Nalepnice medalja (folder `medalje/`) u donjem desnom uglu fotografije za 1.–4. mesto prošle sezone
+- "N. sezona" kao posebna oznaka desno od ranga; uklonjeni boksovi "Prošla sezona" i "Ova sezona"
+- Fotografije ponovo isečene: više prostora iznad glave, ceo natpis na dresu; `?v=3` da browser povuče nove
+- Veselin Radosavljević: 1. sezona
+
+**Fajlovi:** `index.html` + `readme.md` + folderi `igraci/` i `medalje/`
+
 ---
 
 ### [29.09.2026] — Kartica igrača: statistika, sezona, medalje; jednake fotografije
