@@ -15,7 +15,7 @@ Poznavanje konteksta nije dovoljno — mora se primeniti bez čekanja da Goran p
 - Kada daješ uputstvo za upload, navedi tačno koje fajlove treba zameniti na GitHub-u (grana `main`)
 - Kada menjaš fajl koji postoji na više grana, odmah sugeriši sync
 - Ako primetiš potencijalni problem van trenutnog zadatka, napomeni ga
-- **Sve što postoji i na javnom sajtu i u adminu (npr. Playoff prikaz) menja se SINHRONO na obe strane i mora izgledati isto.** Zajednički kod je označen komentarom `(identičan u index.html i admin/index.html)` — posle izmene proveriti da su blokovi u oba fajla identični
+- **Sve što postoji i na javnom sajtu i u adminu (npr. Playoff prikaz) menja se SINHRONO na obe strane i mora izgledati isto.** Zajednički kod je označen komentarom `(identičan u index.html i admin/index.html)` (admin je sada `admin.html`) — posle izmene proveriti da su blokovi u oba fajla identični
 
 Cilj: Goran ne bi trebalo da mora da pita za stvari koje agent može da zaključi iz konteksta.
 
@@ -38,11 +38,11 @@ Goran (bez programerskog iskustva) vodi razvoj kroz Claude chat.
 - **Projekat**: `fc27-liga` (Central EU, Frankfurt, Free plan)
 - **URL**: `https://yvyuqxlzbvcjdogeerdu.supabase.co`
 - **Publishable key**: `sb_publishable_oE-JUQcjaJiGh13-DIUWag_YHCginrZ` (javni ključ, sme da stoji na sajtu; secret/service_role ključ NIKAD ne ide na sajt)
-- Baza se pravi fajlom `supabase/00-nova-baza.sql` (SQL Editor → Run)
+- Baza se pravi fajlom `00-nova-baza.sql` (SQL Editor → Run)
 - Free plan: posle 7 dana bez aktivnosti projekat se "uspava" → supabase.com → Restore project (podaci ostaju)
 
 ## Šema baze
-Pravi je fajl `supabase/00-nova-baza.sql` (za prazan projekat; bezbedno i više puta).
+Pravi je fajl `00-nova-baza.sql` (za prazan projekat; bezbedno i više puta).
 ```
 tabela: igraci
 - id (serial, PK)
@@ -74,22 +74,23 @@ tabela: igraci_kontakt  -- PRIVATNO
 ```
 - RLS uključen; igraci, mecevi, log, pravila: javne politike (sajt i admin koriste javni ključ — admin nema login)
 - Realtime uključen za igraci, mecevi, pravila, log
-- Brisanje za novu sezonu: `supabase/02-nova-sezona-brisanje.sql` (briše igrače, mečeve, log, mejlove; pravila ostaju)
+- Brisanje za novu sezonu: `02-nova-sezona-brisanje.sql` (briše igrače, mečeve, log, mejlove; pravila ostaju)
 
 ## Struktura fajlova
+Sve je u KORENU repo-a, bez foldera (lakši upload: označi sve fajlove i prevuci).
 ```
 repo/
-├── index.html                      ← javni sajt (slike ugrađene kao base64)
-├── igraci/                         ← fotografije igrača za karticu (Ime_Prezime.webp, ~40 KB)
-├── medalje/                        ← nalepnice 1.webp–4.webp (prošlogodišnji plasman)
-├── readme.md                       ← ovaj fajl
-├── supabase/
-│   ├── 00-nova-baza.sql            ← sve tabele, dozvole i funkcije
-│   └── 02-nova-sezona-brisanje.sql ← brisanje podataka za novu sezonu
-└── admin/
-    └── index.html                  ← admin panel
+├── index.html                    ← javni sajt
+├── admin.html                    ← admin panel (adresa /admin zahvaljujući vercel.json)
+├── vercel.json                   ← {"cleanUrls": true} — /admin otvara admin.html
+├── readme.md                     ← ovaj fajl
+├── Ime_Prezime.webp …            ← fotografije igrača za karticu (npr. Goran_Bilic.webp)
+├── 1.webp … 4.webp               ← nalepnice medalja (prošlogodišnji plasman)
+├── 00-nova-baza.sql              ← sve tabele, dozvole i funkcije (Supabase)
+└── 02-nova-sezona-brisanje.sql   ← brisanje podataka za novu sezonu
 ```
-Jedini folder sa slikama je `igraci/` (fotografije za karticu); grb, fotografija igrača, baner Timova, isečeni fudbaleri i favicon su ugrađeni u HTML (`data:` URI), pa sajt radi i kad se preuzme samo `index.html`.
+Grb, baner igrača, baner Timova, isečeni fudbaleri i favicon su ugrađeni u HTML (`data:` URI).
+⚠️ U repo-u NE sme da postoji folder `admin/` (sukob sa /admin). Stari folderi `igraci/`, `medalje/`, `supabase/` se ne koriste.
 
 ---
 
@@ -116,9 +117,9 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
 - Realtime osvežavanje sa 0.9s odlaganja (`zakaziLoad`)
 
 ### Kartica igrača (pop-up)
-- Fotografija igrača na vrhu kartice: folder `igraci/`, fajl `Ime_Prezime.webp` bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
+- Fotografija igrača na vrhu kartice: fajl `Ime_Prezime.webp` u korenu repo-a bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
 - Klik na ime igrača bilo gde (tabele, kartice, Mečevi, Strelci, Playoff) → fotografija (sa nalepnicom-medaljom za 1.–4. mesto prošle sezone u donjem desnom uglu), veliko ime, firma, rang tima, oznaka "N. sezona" (desno, odvojeno), golovi, najveća pobeda, najveći poraz (liga), forma
-- Medalje za prošlogodišnji plasman: iz `plasman_prosle` koji počinje sa "1."–"4."; u tabelama emoji uz ime (🥇🥈🥉, plava "4"), u kartici nalepnica iz foldera `medalje/` (1.webp–4.webp)
+- Medalje za prošlogodišnji plasman: iz `plasman_prosle` koji počinje sa "1."–"4."; u tabelama emoji uz ime (🥇🥈🥉, plava "4"), u kartici nalepnica `1.webp`–`4.webp` (koren repo-a)
 - Sezona igrača: kolona `igraci.sezona` (1 = prva: Bodiroga, Gojković, Radosavljević); dok je nema u bazi, 2 za sve osim liste `PRVA_SEZONA`
 - Fotografije su isečene jednako za sve (odnos 1.15:1, ~12% prostora iznad glave, ceo grb i natpis na dresu) automatskim prepoznavanjem glave i ramena; `FOTO_VERZIJA` u kodu povećati kad se slike zamene (da browser ne prikaže stare)
 - Imena imaju `data-igrac="ID"`; jedan klik-handler (`otvoriIgraca`); zatvaranje: ×, klik van kartice, Esc
@@ -156,7 +157,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
 
 ---
 
-## Admin panel — admin/index.html
+## Admin panel — admin.html
 Adresa: `/admin` (nema login — TODO)
 
 ### Tabovi
@@ -337,10 +338,10 @@ ME = (b.data||[]).map(m=>({...m, gol_domacin: m.gol_domacin??null, gol_gost: m.g
 
 ### Važna pravila
 - Radi se na `main`; posle upload-a proveriti sajt na live adresi
-- Uvek navesti koji fajlovi su menjani (`index.html`, `admin/index.html`, `readme.md`, `supabase/…`)
-- ZIP sadrži samo folder projekta; na GitHub se uploaduje SADRŽAJ foldera
+- Uvek navesti koji fajlovi su menjani (`index.html`, `admin.html`, `readme.md`, slike, SQL)
+- ZIP sadrži samo fajlove (bez foldera); na GitHub se uploaduju SVI fajlovi iz ZIP-a odjednom (označi sve → prevuci)
 - Publishable ključ sme na sajt; secret/service_role ključ NIKAD
-- SQL izmene uvek dodati i u `supabase/00-nova-baza.sql`
+- SQL izmene uvek dodati i u `00-nova-baza.sql`
 
 ## TODO / Buduće dorade
 - [ ] Login za admin panel (Supabase Auth — oko 30 min posla)
@@ -362,7 +363,7 @@ Format unosa:
 **Urađeno:** ...
 **Ispravljeno:** ...
 **Nije završeno:** ...
-**Fajlovi:** `index.html` / `admin/index.html` / oba / `readme.md`
+**Fajlovi:** `index.html` / `admin.html` / oba / `readme.md`
 **Grana:** `main` → objavljeno ✅ / čeka upload ⏳
 ---
 ```
@@ -370,6 +371,19 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Ravna struktura repo-a (bez foldera)
+
+**Urađeno:**
+- `admin/index.html` → `admin.html` + `vercel.json` (`cleanUrls`) — adresa /admin ostaje ista
+- Fotografije, nalepnice i SQL fajlovi premešteni u koren repo-a; putanje u kodu prilagođene
+
+**Ispravljeno:**
+- Na GitHub-u je admin (`admin/index.html`) prepisao glavnu `index.html` jer su fajlovi prevučeni bez foldera — sada nijedan fajl nema isto ime
+
+**Fajlovi:** svi (vidi Struktura fajlova)
+
 ---
 
 ### [30.09.2026] — Kartica: nalepnice medalja, sezona odvojena, novo kadriranje

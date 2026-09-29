@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — FC27 Liga</title>
+<link rel="icon" type="image/png" href="data:image/png;base64,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" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;1,700;1,800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{--bg:#0f1420;--surf:#161d2e;--surf2:#1c253a;--border:rgba(255,255,255,0.09);--border2:rgba(255,255,255,0.14);--green:#ADFF2F;--teal:#00C896;--red:#ff4060;--yellow:#ffc800;--muted:rgba(255,255,255,0.5)}
+  html{overflow-y:scroll}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:#fff;font-family:'Barlow',sans-serif;min-height:100vh}
+  header{position:relative;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 2rem;overflow:hidden;border-bottom:1px solid var(--border)}
+  .aurora{position:absolute;inset:0;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(45px)}
+  .b1{width:280px;height:180px;background:rgba(0,210,120,0.22);top:-70px;left:-50px}
+  .b2{width:200px;height:150px;background:rgba(0,190,210,0.16);top:-50px;left:120px}
+  .b3{width:160px;height:120px;background:rgba(160,230,0,0.13);top:-40px;right:100px}
+  .logo{position:relative;z-index:2;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:26px;letter-spacing:-1px;display:flex;align-items:center;gap:10px}
+  .logo span{color:var(--green)}
+  .abadge{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:11px;letter-spacing:2px;background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);padding:3px 10px;border-radius:20px}
+  .back{position:relative;z-index:2;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:13px;letter-spacing:1px;color:var(--muted);text-decoration:none}
+  .back:hover{color:var(--green)}
+  .tabs{background:var(--surf);border-bottom:1px solid var(--border);display:flex;padding:0 2rem;position:relative}
+  .tabs::after{content:'';position:absolute;bottom:0;left:2rem;right:2rem;height:1px;background:linear-gradient(90deg,transparent,rgba(173,255,47,0.4),rgba(0,200,150,0.4),transparent)}
+  .tab{padding:13px 20px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:13px;letter-spacing:2px;color:var(--muted);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;text-transform:uppercase;transition:all 0.2s;margin-bottom:-1px}
+  .tab:hover{color:rgba(255,255,255,0.65)}
+  .tab.on{color:var(--green);border-bottom-color:var(--green)}
+  main{max-width:900px;margin:0 auto;padding:1.5rem 2rem}
+  .section{display:none}.section.on{display:block}
+  .stitle{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:16px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.9);margin-bottom:1rem;display:flex;align-items:center;gap:10px}
+  .stitle::before{content:'';width:3px;height:16px;background:linear-gradient(180deg,var(--green),var(--teal));border-radius:2px;flex-shrink:0}
+  .card{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+  label{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:5px}
+  input[type=text],input[type=number]{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;font-size:14px;background:var(--surf2);color:#fff;outline:none;font-family:'Barlow',sans-serif}
+  input[type=text]:focus,input[type=number]:focus{border-color:var(--green)}
+  textarea{width:100%;min-height:150px;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;font-size:14px;background:var(--surf2);color:#fff;outline:none;font-family:'Barlow',sans-serif;resize:vertical;line-height:1.5}
+  textarea:focus{border-color:var(--green)}
+  .bulk-hint{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+  .bulk-sum{font-size:13px;color:rgba(255,255,255,0.8);margin:12px 0 6px}
+  .bulk-list{display:flex;flex-direction:column;gap:4px;max-height:260px;overflow-y:auto}
+  .bulk-row{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--surf2);border:1px solid var(--border);border-radius:8px;font-size:13px}
+  .bulk-row .bn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bulk-row .bd{color:var(--muted);font-size:12px}
+  .bulk-row.skip{opacity:0.45}
+  .bulk-row.skip .bn{text-decoration:line-through}
+  .bulk-mail{color:var(--teal);font-size:12px;margin-left:6px}
+  .bulk-tag.dop{color:var(--teal)}
+  .chip-mail{font-size:12px;cursor:default;opacity:0.85}
+  .chip-mail.nema{cursor:pointer;color:var(--yellow);opacity:1}
+  .bulk-tag{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);flex-shrink:0}
+  .btn{padding:9px 18px;border:1px solid var(--border2);border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:none;color:#fff;transition:all 0.2s;white-space:nowrap}
+  .btn:hover{background:var(--surf2)}
+  .btn-g{background:var(--green);color:#07090f;border-color:var(--green)}
+  .btn-g:hover{opacity:0.85}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .chip-name{cursor:pointer;border-bottom:1px dotted rgba(255,255,255,0.35)}
+  .chip-name:hover{color:var(--green);border-color:var(--green)}
+  .am{position:fixed;inset:0;background:rgba(5,8,14,0.72);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:200;padding:16px}
+  .am.on{display:flex}
+  .am-card{background:var(--surf);border:1px solid var(--border2);border-radius:14px;padding:20px;width:100%;max-width:440px;display:flex;flex-direction:column;gap:12px}
+  .am-card h3{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:22px}
+  .am-card select{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:8px;font-size:14px;background:var(--surf2);color:#fff;outline:none}
+  .am-row{display:flex;gap:8px;justify-content:flex-end;margin-top:4px}
+  .am-note{font-size:12px;color:var(--muted)}
+  .chip{padding:5px 12px;background:var(--surf2);border:1px solid var(--border2);border-radius:20px;font-size:13px;display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.8)}
+  .chip-rm{cursor:pointer;color:var(--muted);font-size:18px;line-height:1}
+  .chip-rm:hover{color:var(--red)}
+  .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.5rem}
+  .ms{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:12px 16px;position:relative;overflow:hidden}
+  .ms::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--teal))}
+  .ms-l{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+  .ms-v{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-size:30px;font-weight:800;line-height:1}
+  .cg{color:var(--green)}.ct{color:var(--teal)}
+  .fbar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+  .fbtn{padding:5px 14px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;border:1px solid var(--border2);border-radius:20px;background:none;color:var(--muted);cursor:pointer;transition:all 0.2s}
+  .fbtn.on{background:var(--green);color:#07090f;border-color:var(--green)}
+  .fbtn:hover:not(.on){color:rgba(255,255,255,0.7)}
+  .mc{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:8px;transition:border-color 0.2s}
+  .mc.saved{border-color:rgba(173,255,47,0.3)}
+  .mt{flex:1;min-width:0;font-size:13px;font-weight:500;color:rgba(255,255,255,0.85)}
+  .mt.r{text-align:right}
+  .md{font-size:11px;color:var(--muted);margin-top:1px}
+  .mts{display:flex;gap:1px;margin-bottom:2px}
+  .mt.r .mts{justify-content:flex-end}
+  .si{width:48px;height:42px;background:var(--surf2);border:1px solid var(--border2);border-radius:8px;color:#fff;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-size:22px;font-weight:800;text-align:center;outline:none;padding:0}
+  .si:focus{border-color:var(--green)}
+  .sp{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-size:20px;font-weight:800;color:var(--muted)}
+  .sb{width:36px;height:36px;border-radius:8px;border:1px solid var(--border2);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0}
+  .sb:hover{background:rgba(173,255,47,0.12);border-color:var(--green);color:var(--green)}
+  .sb.done{background:rgba(173,255,47,0.12);border-color:var(--green);color:var(--green)}
+  .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .dok{background:var(--green)}.dpend{background:var(--muted)}
+  .rl{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;padding:10px 0 4px;margin-top:4px}
+  table{width:100%;border-collapse:collapse}
+  th{padding:9px 12px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-size:10px;font-weight:800;letter-spacing:2px;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--surf2);text-align:left}
+  td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px;color:rgba(255,255,255,0.8)}
+  tr:last-child td{border-bottom:none}
+  .toast{position:fixed;bottom:24px;right:24px;background:var(--surf);border:1px solid var(--border2);border-radius:10px;padding:12px 20px;font-size:14px;transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:100;display:flex;align-items:center;gap:8px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;letter-spacing:1px}
+  .toast.show{transform:translateY(0);opacity:1}
+  .ti{color:var(--green)}
+  .empty{text-align:center;padding:2rem;color:var(--muted);font-size:14px}
+  .rg{background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px}
+  .rgh{background:var(--surf2);padding:9px 14px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between}
+  .rgb{font-size:11px;background:rgba(255,255,255,0.04);padding:2px 8px;border-radius:10px}
+  .rg-row:last-child{border-bottom:none!important}
+  /* Playoff bracket */
+  .bracket-wrap{overflow-x:auto;padding-bottom:1rem}
+  .bracket{display:flex;align-items:flex-start;gap:0;min-width:800px}
+  .b-col{display:flex;flex-direction:column;flex-shrink:0}
+  .b-col-title{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);text-align:center;padding-bottom:8px;min-width:178px}
+  .b-match{display:flex;flex-direction:column;position:relative}
+  .b-player{display:flex;align-items:center;gap:6px;background:var(--surf);border:1px solid var(--border2);padding:7px 10px;font-size:12px;font-weight:500;min-width:178px;max-width:178px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+  .b-player:first-child{border-radius:6px 6px 0 0;border-bottom:none}
+  .b-player:last-child{border-radius:0 0 6px 6px}
+  .b-player.winner{border-color:var(--green);background:rgba(173,255,47,0.08);color:var(--green);font-weight:700}
+  .b-player.tbd{color:var(--muted);font-style:italic}
+  .b-player.clickable{cursor:pointer}
+  .b-player.clickable:hover{border-color:rgba(173,255,47,0.6);background:rgba(173,255,47,0.05)}
+  .b-seed{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:11px;color:var(--muted);width:14px;flex-shrink:0}
+  .b-pts{margin-left:auto;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:12px;color:var(--muted);flex-shrink:0}
+  .b-player.winner .b-pts{color:var(--green)}
+  .po-games{display:flex;flex-direction:column;gap:4px;margin-top:6px;width:178px}
+  .po-g{display:flex;align-items:center;gap:4px}
+  .po-gl{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:11px;letter-spacing:1px;color:var(--muted);width:22px;flex-shrink:0}
+  .po-in{width:36px!important;padding:5px 4px!important;text-align:center;font-size:13px!important;font-family:'Barlow Condensed',sans-serif!important;font-weight:700}
+  .po-in:disabled{opacity:0.35;cursor:not-allowed}
+  .po-sp{color:var(--muted);font-weight:800}
+  .po-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--border2);background:none;color:var(--green);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0}
+  .po-btn:disabled{color:var(--muted);cursor:not-allowed;opacity:0.5}
+  .po-x{color:var(--red);border-color:rgba(255,64,96,0.3)}
+  .po-g.done .po-in{border-color:rgba(173,255,47,0.3)}
+  .po-g.g3 .po-gl{color:var(--yellow)}
+  .po-note{font-size:10px;color:var(--muted);font-style:italic;padding-left:26px}
+  /* ── Playoff prikaz (identičan u index.html i admin/index.html) ── */
+  body.po-wide main{max-width:1900px}
+  .pob-wrap{overflow-x:auto;padding-bottom:1rem;--tc-cell:38px;--tc-sum:34px}
+  .pob{display:grid;grid-template-columns:repeat(3,minmax(260px,1.25fr)) minmax(230px,1fr);column-gap:24px;align-items:stretch;min-width:1100px}
+  .pob-list.pob-fin{justify-content:center;gap:22px}
+  .pob-sub{font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;color:var(--muted2,rgba(255,255,255,0.68));text-align:center;margin-bottom:8px}
+  .pob-col{display:flex;flex-direction:column;min-width:0}
+  .pob-title{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:18px;letter-spacing:0.2px;color:rgba(255,255,255,0.9);text-align:center;padding-bottom:12px}
+  .pob-list{display:flex;flex-direction:column;justify-content:space-around;gap:28px;flex:1}
+  .pob-3m{margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+  .pob-3m .tc{width:340px}
+  .po-arrow{color:rgba(255,200,0,0.5);font-weight:700}
+  .tc{background:var(--surf);border:1px solid var(--border2);border-radius:12px;overflow:hidden}
+  .tc.done{border-color:rgba(173,255,47,0.35)}
+  .tc-r{display:grid;align-items:center;column-gap:4px;padding:0 8px 0 0}
+  .tc-h{background:var(--surf2);height:28px;font-family:'Barlow',sans-serif;font-weight:600;font-size:11.5px;letter-spacing:0.3px;text-transform:uppercase;color:rgba(255,255,255,0.62);text-align:center}
+  .tc-h .tc-rn{text-align:left;padding-left:12px}
+  .tc-h .tc-3{color:rgba(255,200,0,0.75)}
+  .tc-h .tc-na{opacity:0.3}
+  .tc-p{min-height:44px;border-top:1px solid var(--border)}
+  .tc-p.win{background:rgba(173,255,47,0.07)}
+  .tc-p.win .tc-nm{color:var(--green);font-weight:700}
+  .tc-p.tbd .tc-nm{color:var(--muted);font-style:italic}
+  .tc-name{display:flex;align-items:center;gap:7px;min-width:0;padding:5px 6px 5px 10px;font-size:14.5px;font-weight:600}
+  .tc-seed{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:var(--muted);width:16px;flex-shrink:0;font-variant-numeric:tabular-nums}
+  .tc-nm{overflow:hidden;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word}
+  .tc-ok{color:var(--green);font-size:13px;flex-shrink:0}
+  .tc-c{display:flex;align-items:center;justify-content:center;height:100%}
+  .tc-v{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:20px;color:rgba(255,255,255,0.55);font-variant-numeric:tabular-nums}
+  .tc-v.tc-gw{color:#fff;font-weight:900}
+  .tc-e{color:rgba(255,255,255,0.2);font-size:14px}
+  .tc-e.tc-na{background:repeating-linear-gradient(135deg,transparent 0 4px,rgba(255,255,255,0.03) 4px 8px)}
+  .tc-sum{display:flex;align-items:center;justify-content:center;height:100%;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:20px;font-variant-numeric:tabular-nums;color:var(--muted);border-left:1px solid var(--border)}
+  .tc-p.win .tc-sum{color:var(--green)}
+  .tc-a{min-height:38px;background:rgba(255,255,255,0.015);border-top:1px solid var(--border)}
+  .tc-note{font-size:12.5px;font-weight:600;color:var(--yellow);padding:7px 12px;border-top:1px solid var(--border)}
+  .tc .po-in{width:34px;height:32px;padding:0;text-align:center;background:var(--surf2);border:1px solid var(--border2);border-radius:6px;color:#fff;outline:none;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:18px}
+  .tc .po-in:focus{border-color:var(--green)}
+  .tc .po-in.saved{border-color:rgba(173,255,47,0.3)}
+  .tc .po-btn{width:32px;height:28px;border-radius:6px;border:1px solid var(--border2);background:none;color:var(--green);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;padding:0}
+  .tc .po-btn:disabled{color:var(--muted);cursor:not-allowed;opacity:0.5;font-size:11px}
+  .tc .po-btn.po-x{color:var(--red);border-color:rgba(255,64,96,0.3)}
+  .tc-bronze{border-color:rgba(255,200,0,0.25)}
+  .po-champ{display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(173,255,47,0.1);border:1px solid var(--green);border-radius:10px;padding:16px 18px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:22px;color:var(--green);text-align:center}
+  .po-bronze{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,200,0,0.05);border:1px solid rgba(255,200,0,0.2);border-radius:10px;padding:10px 16px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:16px;color:rgba(255,200,0,0.75)}
+  .pom{--tc-cell:44px;--tc-sum:34px}
+  .pom-tabs{display:flex;gap:6px;margin-bottom:14px;position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0}
+  .pom-tab{flex:1;padding:10px 4px;font-family:'Barlow',sans-serif;font-weight:700;font-size:14.5px;border:1px solid var(--border2);border-radius:20px;background:none;color:var(--muted);cursor:pointer;position:relative}
+  .pom-tab.on{background:var(--green);color:#07090f;border-color:var(--green)}
+  .pom-dot{position:absolute;top:6px;right:10px;width:6px;height:6px;border-radius:50%;background:var(--yellow)}
+  .pom-tab.on .pom-dot{background:#07090f}
+  .pom-list{display:flex;flex-direction:column;gap:14px}
+  .pom .pob-title{text-align:left;padding:4px 0 0;font-size:19px}
+  .pom .tc-p{min-height:50px}
+  .pom .tc-name{font-size:14px;padding-left:8px}
+  .pom .tc-ok{display:none}
+  .pom .po-in{width:40px;height:40px;font-size:19px}
+  .pom .po-btn{width:38px;height:34px;font-size:15px}
+  /* ── Pravila (identično u index.html i admin/index.html) ── */
+  .pr-title{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:30px;letter-spacing:1px;margin-bottom:18px;color:#fff}
+  .pr-grid{columns:2 380px;column-gap:16px}
+  .pr-card{break-inside:avoid;background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:16px;position:relative;overflow:hidden}
+  .pr-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--teal));opacity:0.6}
+  .pr-h{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:17px;letter-spacing:1.5px;text-transform:uppercase;color:#fff}
+  .pr-br{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;padding:0 6px;border-radius:6px;background:rgba(173,255,47,0.14);color:var(--green);font-size:15px;flex-shrink:0}
+  .pr-p{font-size:14px;line-height:1.6;color:rgba(255,255,255,0.82);margin:0 0 4px}
+  .pr-p.pr-jako{font-weight:700;color:#fff;letter-spacing:0.3px}
+  .pr-ul,.pr-ol{margin:6px 0 8px;padding-left:20px;font-size:14px;line-height:1.6;color:rgba(255,255,255,0.82)}
+  .pr-ul li::marker{color:var(--green)}
+  .pr-ol li::marker{color:var(--green);font-weight:700}
+  .pr-ul li,.pr-ol li{margin-bottom:2px}
+  @media(max-width:700px){.pr-title{font-size:24px}.pr-grid{columns:1}.pr-card{padding:14px}}
+  .pr-hint{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:14px;max-width:1100px}
+  .pr-hint b{color:rgba(255,255,255,0.8);font-weight:600}
+  .pr-edit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:24px;align-items:start}
+  #pravila-txt{min-height:72vh;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;line-height:1.55}
+  .pr-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px}
+  .pr-status{font-size:12px;color:var(--muted)}
+  .pr-status.dirty{color:var(--yellow);font-weight:600}
+  .pr-status.err{color:var(--red);font-weight:600}
+  .pr-edit-r{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;border:1px dashed var(--border2);border-radius:12px;padding:16px;background:rgba(0,0,0,0.12)}
+  .pr-prev-lbl{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  @media(max-width:900px){.pr-edit{grid-template-columns:1fr}#pravila-txt{min-height:50vh}.pr-edit-r{position:static;max-height:none}}
+  .logo-crest{height:34px;width:auto;vertical-align:middle;margin-right:10px;margin-top:-4px}
+  .b-champ{display:flex;align-items:center;gap:10px;background:rgba(173,255,47,0.1);border:1px solid var(--green);border-radius:8px;padding:12px 16px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:18px;color:var(--green);min-width:160px}
+  @media(max-width:700px){.desk-only{display:none!important}.mob-reset{display:block!important}.si{width:52px;height:44px;font-size:24px}}
+  @media(max-width:700px){
+    .mc{flex-wrap:wrap;gap:6px}
+    .mt{flex:1;min-width:120px}
+    .mc-inputs{width:100%;display:flex;justify-content:center;align-items:center;gap:6px;padding:4px 0}
+    .sb{display:none}
+    .si{width:52px;height:44px;font-size:24px}
+    .mts{display:none}
+    .md{display:none}
+  }
+
+  /* ── Star picker ── */
+  .star-picker-label{font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .star-picker-label span{color:#fff;font-style:italic}
+  .star-picker{display:flex;align-items:center;gap:2px;cursor:pointer;user-select:none}
+  .star-picker svg{transition:transform 0.1s}
+  .star-picker svg:hover{transform:scale(1.15)}
+</style>
+</head>
+<body>
+<header>
+  <div class="aurora"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+  <div class="logo"><img class="logo-crest" src="data:image/png;base64,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" alt="" onerror="this.remove()">FC27 <span>LIGA</span> <span class="abadge">ADMIN</span></div>
+  <a href="/" class="back">← Javni sajt</a>
+</header>
+<div class="tabs">
+  <button class="tab on" onclick="showTab('igraci',this)">Igrači</button>
+  <button class="tab" onclick="showTab('rezultati',this)">Rezultati</button>
+  <button class="tab" onclick="showTab('playoff',this)">Playoff</button>
+  <button class="tab" onclick="showTab('pravila',this)">Pravila</button>
+  <button class="tab" onclick="showTab('log',this)">Log</button>
+</div>
+<main>
+  <div id="tab-igraci" class="section on">
+    <div class="card">
+      <div class="stitle" style="justify-content:space-between;flex-wrap:wrap">Dodaj igrače
+        <div style="display:flex;gap:6px">
+          <button class="fbtn on" id="mode-poj" onclick="setUnosMode('poj')">Pojedinačno</button>
+          <button class="fbtn" id="mode-zb" onclick="setUnosMode('zb')">Zbirno</button>
+        </div>
+      </div>
+      <div id="unos-poj">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <div style="flex:2;min-width:140px"><label>Ime i prezime</label><input type="text" id="inp-ime" placeholder="npr. Marko Nikolić" onkeydown="if(event.key==='Enter')dodajIgraca()" /></div>
+          <div style="flex:2;min-width:180px"><label>Mejl</label><input type="text" id="inp-mail" placeholder="ime.prezime@firma.rs" autocomplete="off" onkeydown="if(event.key==='Enter')dodajIgraca()" /></div>
+        </div>
+      </div>
+      <div id="unos-zb" style="display:none;margin-bottom:12px">
+        <label>Nalepi iz tabele</label>
+        <textarea id="inp-bulk" placeholder="Selektuj ćelije u Excelu / Google Sheets, kopiraj (Ctrl+C) i nalepi ovde (Ctrl+V)" oninput="renderBulkPreview()"></textarea>
+        <div class="bulk-hint">Jedan igrač po redu — kopiraj kolone <b>Ime i prezime · Mejl · Rang</b> — samo ta 3 podatka se čuvaju (kolona sa zvezdicama i ostale kolone se preskaču). Mejl se čuva privatno (ne vidi se na sajtu). Broj od 0.5 do 5 je rang. Ako igrač već postoji, dopunjuje mu se mejl (ako ga nema) i ažurira rang. Zaglavlje i redni brojevi se ignorišu.</div>
+      </div>
+      <div class="star-picker-label"><span id="star-label-txt">Rang timova</span> — <span id="sel-val-label">3.0 ★</span></div>
+      <div class="star-picker" id="star-picker" onmouseleave="pickerHoverReset()"></div>
+      <div id="bulk-preview" style="display:none"></div>
+      <button class="btn btn-g" id="btn-dodaj" onclick="dodajIgraca()" style="margin-top:14px;width:100%">+ Dodaj igrača</button>
+    </div>
+    <div class="card">
+      <div class="stitle">Prijavljeni (<span id="igrac-count">0</span>)</div>
+      <div id="igraci-chips" class="chips"><div class="empty" style="padding:0.5rem">Nema igrača</div></div>
+    </div>
+    <button class="btn btn-g" onclick="generisiRaspored()" style="margin-top:0.5rem">Generiši raspored (dupli krug)</button>
+  </div>
+
+  <div id="tab-playoff" class="section">
+    <div class="stitle">Playoff bracket</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:1rem">Unesi rezultat meča i potvrdi sa ✓ ili Enter. Osmina, četvrtfinale i polufinale: igraju se 2 meča, a 3. meč se otključava samo ako je zbir golova iz oba meča izjednačen. Finale i meč za 3. mesto: jedan meč. Odlučujući meč ne može biti nerešen — unesi rezultat posle penala.</p>
+    <div id="admin-playoff-bracket"><div class="empty">Učitavanje...</div></div>
+    <div style="margin-top:1rem">
+      <button class="btn" onclick="resetujPlayoff()" style="color:var(--red);border-color:rgba(255,64,96,0.3)">× Resetuj ceo playoff</button>
+    </div>
+  </div>
+
+  <div id="tab-pravila" class="section">
+    <div class="stitle">Pravila lige</div>
+    <p class="pr-hint">Nalepi ili izmeni tekst i klikni <b>Sačuvaj pravila</b> — odmah se prikazuje na sajtu, tabu Pravila. Formatiranje je automatsko: prva linija je naslov, <b>"1. NASLOV VELIKIM SLOVIMA"</b> počinje novu sekciju, red koji počinje sa <b>"* "</b> ili <b>"- "</b> je stavka liste, <b>"1. tekst"</b> malim slovima je numerisana stavka, a red ceo velikim slovima je istaknut.</p>
+    <div class="pr-edit">
+      <div class="pr-edit-l">
+        <textarea id="pravila-txt" spellcheck="false" oninput="pravilaPreview()" placeholder="Nalepi pravila ovde..."></textarea>
+        <div class="pr-actions">
+          <button class="btn btn-g" onclick="sacuvajPravila()">Sačuvaj pravila</button>
+          <button class="btn" onclick="vratiPravila()">Poništi izmene</button>
+          <span id="pravila-status" class="pr-status"></span>
+        </div>
+      </div>
+      <div class="pr-edit-r">
+        <div class="pr-prev-lbl">Pregled — ovako izgleda na sajtu</div>
+        <div id="pravila-preview"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-log" class="section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px">
+      <div class="stitle" style="margin-bottom:0">Akcioni log</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <select id="log-filter-tip" onchange="renderLog()" style="background:var(--surf);border:1px solid var(--border2);border-radius:8px;color:#fff;padding:7px 10px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:12px;cursor:pointer;outline:none">
+          <option value="">— Sve akcije —</option>
+          <option value="REZULTAT">Rezultati</option>
+          <option value="IGRAC">Igrači</option>
+          <option value="RASPORED">Raspored</option>
+          <option value="PLAYOFF">Playoff</option>
+          <option value="PRAVILA">Pravila</option>
+        </select>
+        <select id="log-filter-izvor" onchange="renderLog()" style="background:var(--surf);border:1px solid var(--border2);border-radius:8px;color:#fff;padding:7px 10px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:12px;cursor:pointer;outline:none">
+          <option value="">— Svi izvori —</option>
+          <option value="live">Live sajt</option>
+          <option value="admin">Admin</option>
+        </select>
+        <input type="date" id="log-filter-datum" onchange="renderLog()" style="background:var(--surf);border:1px solid var(--border2);border-radius:8px;color:#fff;padding:7px 10px;font-family:'Barlow',sans-serif;font-size:12px;outline:none;cursor:pointer;color-scheme:dark">
+        <button class="btn" onclick="clearLogFilters()" style="font-size:11px;padding:7px 14px;color:var(--muted)">× Resetuj</button>
+        <button class="btn" onclick="loadLog()" style="font-size:11px;padding:7px 14px">↻ Osveži</button>
+      </div>
+    </div>
+    <div id="log-lista"><div class="empty">Učitavanje...</div></div>
+  </div>
+
+  <div id="tab-rezultati" class="section">
+    <div class="stat-row">
+      <div class="ms"><div class="ms-l">Ukupno</div><div class="ms-v" id="r-total">0</div></div>
+      <div class="ms"><div class="ms-l">Odigrano</div><div class="ms-v cg" id="r-played">0</div></div>
+      <div class="ms"><div class="ms-l">Preostalo</div><div class="ms-v ct" id="r-remain">0</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem;flex-wrap:wrap">
+      <select id="adm-filter1" onchange="renderRezultati()" style="background:var(--surf);border:1px solid var(--border2);border-radius:8px;color:#fff;padding:7px 10px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:13px;cursor:pointer;outline:none;flex:1;min-width:130px">
+        <option value="">— Igrač 1 —</option>
+      </select>
+      <span style="font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:14px;color:var(--muted);flex-shrink:0">vs</span>
+      <select id="adm-filter2" onchange="renderRezultati()" style="background:var(--surf);border:1px solid var(--border2);border-radius:8px;color:#fff;padding:7px 10px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:13px;cursor:pointer;outline:none;flex:1;min-width:130px">
+        <option value="">— Igrač 2 —</option>
+      </select>
+    </div>
+    <div class="fbar">
+      <button class="fbtn on" onclick="setFilter('svi',this)">Svi</button>
+      <button class="fbtn" onclick="setFilter('neodigrani',this)">Neodigrani</button>
+      <button class="fbtn" onclick="setFilter('odigrani',this)">Odigrani</button>
+    </div>
+    <div id="rezultati-lista"><div class="empty">Nema mečeva</div></div>
+  </div>
+</main>
+<div class="am" id="am" onclick="if(event.target===this)zatvoriIzmenu()">
+  <div class="am-card">
+    <h3>Izmena igrača</h3>
+    <div><label>Ime i prezime</label><input type="text" id="am-ime"></div>
+    <div><label>Rang tima</label><select id="am-rang"></select></div>
+    <div><label>Firma</label><input type="text" id="am-firma" placeholder="npr. 4zida"><div class="am-note">Automatski iz mejla (deo posle @); može da se izmeni.</div></div>
+    <div><label>Prošlogodišnji plasman</label><input type="text" id="am-plasman" placeholder="npr. 3. mesto, polufinale"><div class="am-note">Za medalju upiši "1. mesto", "2. mesto", "3. mesto" ili "4. mesto".</div></div>
+    <div><label>Sezona u ligi</label><select id="am-sezona"></select></div>
+    <div id="am-mail-wrap"></div>
+    <div class="am-row"><button class="btn" onclick="zatvoriIzmenu()">Otkaži</button><button class="btn btn-g" onclick="sacuvajIzmenu()">Sačuvaj</button></div>
+  </div>
+</div>
+<div class="toast" id="toast"><span class="ti">✓</span><span id="toast-msg">Sačuvano!</span></div>
+<script>
+const SB_URL = 'https://yvyuqxlzbvcjdogeerdu.supabase.co';
+const SB_KEY = 'sb_publishable_oE-JUQcjaJiGh13-DIUWag_YHCginrZ';
+const db=supabase.createClient(SB_URL,SB_KEY);
+let IG=[],ME=[],filter='svi',selectedStars=3.0;
+let LOG_DATA=[];
+
+// ── Logovanje ─────────────────────────────────────────────────────────────
+async function logujAkciju(akcija, detalji){
+  try {
+    await db.from('log').insert({akcija, detalji, izvor:'admin'});
+  } catch(e) { console.warn('Log greška:', e); }
+}
+
+async function loadLog(){
+  const {data}=await db.from('log').select('*').order('vreme',{ascending:false}).limit(200);
+  LOG_DATA=data||[];
+  renderLog();
+}
+
+async function sacuvajNapomenu(id){
+  const val=document.getElementById('nap-'+id)?.value?.trim()||null;
+  const{error}=await db.from('log').update({napomena:val}).eq('id',parseInt(id));
+  if(error){toast('Greška: '+error.message);return;}
+  const row=LOG_DATA.find(r=>r.id===id);
+  if(row) row.napomena=val;
+  toast(val?'Napomena sačuvana':'Napomena obrisana');
+  renderLog();
+}
+
+function clearLogFilters(){
+  document.getElementById('log-filter-tip').value='';
+  document.getElementById('log-filter-izvor').value='';
+  document.getElementById('log-filter-datum').value='';
+  renderLog();
+}
+
+function renderLog(){
+  const el=document.getElementById('log-lista');
+  if(!el) return;
+  const tip=document.getElementById('log-filter-tip')?.value||'';
+  const izvor=document.getElementById('log-filter-izvor')?.value||'';
+  const datum=document.getElementById('log-filter-datum')?.value||'';
+  let rows=LOG_DATA;
+  if(tip) rows=rows.filter(r=>r.akcija&&r.akcija.startsWith(tip));
+  if(izvor) rows=rows.filter(r=>r.izvor===izvor);
+  if(datum) rows=rows.filter(r=>{
+    const d=new Date(r.vreme);
+    const y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,'0'), day=String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`===datum;
+  });
+  if(!rows.length){el.innerHTML='<div class="empty">Nema akcija za odabrane filtere</div>';return;}
+
+  const tipColor={'REZULTAT':'var(--green)','IGRAC':'var(--teal)','RASPORED':'var(--yellow)','PLAYOFF':'#b794f4','PRAVILA':'#7cc4ff'};
+  const tipBg={'REZULTAT':'rgba(173,255,47,0.1)','IGRAC':'rgba(0,200,150,0.1)','RASPORED':'rgba(255,200,0,0.1)','PLAYOFF':'rgba(183,148,244,0.1)','PRAVILA':'rgba(124,196,255,0.1)'};
+  const izvorColor={'live':'var(--teal)','admin':'rgba(255,255,255,0.4)'};
+  const izvorBg={'live':'rgba(0,200,150,0.1)','admin':'rgba(255,255,255,0.05)'};
+  const izvorLabel={'live':'🌐 Live','admin':'⚙️ Admin'};
+
+  el.innerHTML=`<div style="background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+    <table style="width:100%">
+      <thead><tr>
+        <th style="width:150px">Vreme</th>
+        <th style="width:130px">Akcija</th>
+        <th style="width:80px">Izvor</th>
+        <th>Detalji / Napomena</th>
+      </tr></thead>
+      <tbody>
+        ${rows.map(r=>{
+          const prefix=r.akcija?.split('_')[0]||'';
+          const col=tipColor[prefix]||'rgba(255,255,255,0.5)';
+          const bg=tipBg[prefix]||'rgba(255,255,255,0.04)';
+          const iCol=izvorColor[r.izvor]||'rgba(255,255,255,0.4)';
+          const iBg=izvorBg[r.izvor]||'rgba(255,255,255,0.05)';
+          const iLbl=izvorLabel[r.izvor]||r.izvor||'—';
+          const dt=new Date(r.vreme);
+          const dateStr=dt.toLocaleDateString('sr-Latn',{day:'2-digit',month:'2-digit',year:'numeric'});
+          const timeStr=dt.toLocaleTimeString('sr-Latn',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+          const napomena=r.napomena||'';
+          return `<tr>
+            <td style="white-space:nowrap">
+              <div style="font-weight:600;color:rgba(255,255,255,0.7);font-size:12px">${timeStr}</div>
+              <div style="font-size:11px;color:var(--muted)">${dateStr}</div>
+            </td>
+            <td><span style="font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:11px;letter-spacing:1px;padding:3px 8px;border-radius:4px;background:${bg};color:${col};white-space:nowrap">${r.akcija||'—'}</span></td>
+            <td><span style="font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:11px;padding:3px 8px;border-radius:4px;background:${iBg};color:${iCol};white-space:nowrap">${iLbl}</span></td>
+            <td style="font-size:13px;color:rgba(255,255,255,0.8)">
+              <div>${r.detalji||'—'}</div>
+              ${r.izvor==='admin'?`<div style="margin-top:5px;display:flex;align-items:center;gap:6px">
+                <input type="text" id="nap-${r.id}" value="${napomena.replace(/"/g,'&quot;')}" placeholder="+ dodaj napomenu..."
+                  style="flex:1;background:${napomena?'rgba(173,255,47,0.05)':'rgba(255,255,255,0.03)'};border:1px solid ${napomena?'rgba(173,255,47,0.25)':'rgba(255,255,255,0.08)'};border-radius:6px;padding:4px 8px;font-size:11px;color:${napomena?'rgba(255,255,255,0.8)':'rgba(255,255,255,0.3)'};outline:none;font-family:'Barlow',sans-serif;min-width:0"
+                  onfocus="this.style.borderColor='rgba(173,255,47,0.5)';this.style.color='rgba(255,255,255,0.9)'"
+                  onblur="this.style.borderColor=this.value?'rgba(173,255,47,0.25)':'rgba(255,255,255,0.08)';this.style.color=this.value?'rgba(255,255,255,0.8)':'rgba(255,255,255,0.3)'"
+                  onkeydown="if(event.key==='Enter')sacuvajNapomenu(${r.id})">
+                <button onclick="sacuvajNapomenu(${r.id})" style="flex-shrink:0;padding:3px 8px;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:6px;color:var(--muted);font-size:11px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700" onmouseover="this.style.borderColor='rgba(173,255,47,0.4)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='var(--muted)'">✓</button>
+              </div>`:''}
+            </td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+  </div>`;
+}
+
+// ── SVG star helpers ──────────────────────────────────────────────────────
+function starSvg(size, fill, idx) {
+  const gold='#ffc800', empty='rgba(255,200,0,0.2)';
+  const id='sg'+idx+'_'+Math.random().toString(36).slice(2,5);
+  const path='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z';
+  if(fill===1) return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${gold}" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle"><path d="${path}"/></svg>`;
+  if(fill===0.5) return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle"><defs><linearGradient id="${id}" x1="0" x2="1" y1="0" y2="0"><stop offset="50%" stop-color="${gold}"/><stop offset="50%" stop-color="${empty}"/></linearGradient></defs><path d="${path}" fill="url(#${id})"/></svg>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="${empty}" xmlns="http://www.w3.org/2000/svg" style="display:inline-block;vertical-align:middle"><path d="${path}"/></svg>`;
+}
+
+function starsHtml(v, size) {
+  v=parseFloat(v)||3; size=size||12;
+  let s='';
+  for(let i=1;i<=5;i++){
+    const fill=v>=i?1:v>=i-0.5?0.5:0;
+    s+=starSvg(size,fill,i);
+  }
+  return s;
+}
+
+// ── Interactive star picker ───────────────────────────────────────────────
+// Each star is split into left half (i-0.5) and right half (i.0)
+// Hover previews, click selects
+const STAR_SIZE=28;
+let hoverVal=null;
+
+function buildStarPick(){
+  const el=document.getElementById('star-picker');
+  let html='';
+  for(let i=1;i<=5;i++){
+    // left half → i-0.5, right half → i
+    html+=`<span style="position:relative;display:inline-block;width:${STAR_SIZE}px;height:${STAR_SIZE}px">
+      <span style="position:absolute;left:0;top:0;width:50%;height:100%;z-index:2;cursor:pointer"
+        onmouseenter="pickerHover(${i-0.5})"
+        onclick="pickerSelect(${i-0.5})"></span>
+      <span style="position:absolute;right:0;top:0;width:50%;height:100%;z-index:2;cursor:pointer"
+        onmouseenter="pickerHover(${i})"
+        onclick="pickerSelect(${i})"></span>
+      <span id="pstar-${i}" style="pointer-events:none">${starSvg(STAR_SIZE,0,i)}</span>
+    </span>`;
+  }
+  el.innerHTML=html;
+  renderPickerStars(selectedStars);
+}
+
+function renderPickerStars(v){
+  for(let i=1;i<=5;i++){
+    const fill=v>=i?1:v>=i-0.5?0.5:0;
+    document.getElementById('pstar-'+i).innerHTML=starSvg(STAR_SIZE,fill,'p'+i);
+  }
+}
+
+function pickerHover(v){
+  hoverVal=v;
+  renderPickerStars(v);
+  document.getElementById('sel-val-label').textContent=v.toFixed(1)+' ★';
+}
+
+function pickerHoverReset(){
+  hoverVal=null;
+  renderPickerStars(selectedStars);
+  document.getElementById('sel-val-label').textContent=selectedStars.toFixed(1)+' ★';
+}
+
+function pickerSelect(v){
+  selectedStars=v;
+  renderPickerStars(v);
+  document.getElementById('sel-val-label').textContent=v.toFixed(1)+' ★';
+  renderBulkPreview();
+}
+
+// ── Core ──────────────────────────────────────────────────────────────────
+async function loadAll(){
+  const[a,b,c,k]=await Promise.all([
+    db.from('igraci').select('*').order('id'),
+    db.from('mecevi').select('*').is('playoff_runda',null).order('kolo').order('id'),
+    db.from('mecevi').select('*').not('playoff_runda','is',null),
+    db.rpc('kontakt_status')
+  ]);
+  KONTAKT_OK=!k.error; KONTAKT={}; (k.data||[]).forEach(r=>KONTAKT[r.igrac_id]=r.maska);
+  IG=a.data||[];
+  if(!loadAll._firme){ loadAll._firme=true; if(await dopuniFirme()) { const a2=await db.from('igraci').select('*').order('id'); if(!a2.error) a.data=a2.data; } }
+  IG=a.data||[];
+  ME=b.data||[];
+  PO_MECEVI=c.data||[];
+  PO=poIzracunaj(calcTableAdmin().slice(0,12),PO_MECEVI);
+  renderIgraci();renderRezultati();renderAdminPlayoff();
+}
+function showTab(t,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+t).classList.add('on');btn.classList.add('on');
+  document.body.classList.toggle('po-wide',t==='playoff'||t==='pravila');
+  if(t==='pravila') loadPravila();
+  if(t==='playoff') renderAdminPlayoff();
+  if(t==='log') loadLog();
+}
+function toast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ── Pravila (identično u index.html i admin/index.html) ────────────────────
+// Tekst se čuva u Supabase tabeli `pravila` (red id=1). Pravila formatiranja:
+// prva linija = naslov; "N. NASLOV VELIKIM SLOVIMA" = nova sekcija; "* " ili "- " = stavka liste;
+// "1. tekst" (malim slovima) = numerisana stavka; red ceo velikim slovima = istaknut; prazan red = razmak.
+const PRAVILA_DEFAULT = "🎮⚽ PRAVILA LIGE\n1. NAJVAŽNIJE PRAVILO\nIGRAČI MOGU DA SE DOGOVORE OKO SVEGA.\nAko se oba igrača slažu oko timova, ranga ili bilo kog drugog detalja – dogovor važi.\n👉 Ako nema dogovora, primenjuje se pravilnik.\n2. ODABIR TIMOVA\nSvaki igrač pre lige prijavljuje svoj default rang.\n🏠 Igra se po rangu domaćina.\nGost bira bilo koji drugi tim istog ranga.\nPrimer:\nDomaćin: ★★★☆☆\nGost: ★★★☆☆\n🚫 Isti timovi nisu dozvoljeni.\n3. PODEŠAVANJA UTAKMICE\n\n* Gameplay: Competitive\n* Presets: Competitive\n* Poluvreme: 6 min\n* Forma: Live Form\n* Kamera: Tactical\n\n4. KALENDAR\n▶️ Start lige: 1. oktobar\n🏁 Završnica lige: 21–22. decembar\n5. TABELA\nKod istog broja bodova redosled određuje:\n\n1. Bodovi\n2. Međusobni skor\n3. Ostali kriterijumi koje automatski obračunava tabela\n\n6. PLAY-OFF\nU Play-off ide Top 12.\n\n* 🥇 1–4. mesto: direktno u četvrtfinale\n* ⚔️ 5–12. mesto: igraju osminu finala\n\nFormat:\n\n* Osmina finala: 2 utakmice\n* Četvrtfinale: 2 utakmice\n* Polufinale: 1 utakmica\n* Finale: 1 utakmica\n\nKod meča koji se igra na jednu utakmicu, primenjuje se default rang bolje plasiranog igrača iz regularnog dela.\nAko je ukupan rezultat posle dve utakmice nerešen:\n\n* igra se treća utakmica\n* igra se po default rangu bolje plasiranog igrača\n* ako je nerešeno → produžeci\n* zatim → penali\n\n7. NAPUŠTANJE MEČA\nAko igrač namerno napusti utakmicu:\n\n* prvo poluvreme → protivniku +5 golova\n* drugo poluvreme → protivniku +3 gola\n\nIgraču koji napusti meč brišu se svi postignuti golovi.\n8. TEHNIČKI PROBLEM\nAko dođe do tehničkog problema, pucanja igre, konzole ili drugog nenamernog prekida:\n➡️ Utakmica kreće iz početka od 0:0.\n9. ODBIJANJE IGRANJA\nAko igrač neopravdano odbija da igra:\n\n* 1. odbijanje → evidentira se\n* 2. odbijanje → upozorenje\n* 3. odbijanje → 3:0 službeno\n\nDa bi se odbijanje priznalo, mora da postoji pisani trag poziva ili dogovora za utakmicu.\nAko igrač ukupno napusti ili odbije 10 utakmica / 25% lige → 🚫 DISKVALIFIKACIJA\n10. ZLOUPOTREBA SISTEMA\nAko organizator utvrdi da igrač namerno pokušava da zloupotrebi pravila, na primer:\n\n* zove protivnike kada zna da nisu dostupni\n* izbegava njihove pozive kada oni mogu da igraju\n* pokušava da napravi lažni utisak da protivnik odbija utakmice\n* na drugi način namerno „buši“ sistem\n\n⚠️ Prva opomena – upozorenje\n🚫 Druga opomena – diskvalifikacija\n11. SPORNE SITUACIJE\nSve situacije koje nisu jasno pokrivene pravilnikom rešava organizator lige.\nOdluka organizatora je konačna za taj slučaj.\n12. DISKVALIFIKACIJA\nAko igrač odustane ili bude diskvalifikovan:\nBrišu se svi njegovi rezultati kao da nije učestvovao u ligi.\n13. NAGRADE\n🥇 1. mesto – \n🥈 2. mesto – \n🥉 3. mesto – \n🏅 4. mesto – \nFER PLEJ  -";
+function pravilaHtml(tekst){
+  const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const velika=t=>t===t.toUpperCase()&&t!==t.toLowerCase();
+  const linije=String(tekst||'').replace(/\r/g,'').split('\n');
+  let naslov='', sekcije=[], uvod={blok:[]}, cur=uvod, lista=null;
+  const zatvoriListu=()=>{lista=null;};
+  const dodaj=h=>{zatvoriListu();cur.blok.push(h);};
+  linije.forEach(raw=>{
+    const l=raw.trim();
+    if(!l){zatvoriListu();return;}
+    if(!naslov&&!sekcije.length&&!uvod.blok.length){naslov=l;return;}
+    let m=l.match(/^(\d{1,2})\.\s+(.+)$/);
+    if(m&&velika(m[2])){zatvoriListu();cur={br:m[1],naziv:m[2],blok:[]};sekcije.push(cur);return;}
+    let b=l.match(/^[*•\-]\s+(.*)$/);
+    if(b){ if(!lista||lista.tip!=='ul'){zatvoriListu();lista={tip:'ul',st:[]};cur.blok.push(lista);} lista.st.push(esc(b[1]));return; }
+    if(m){ if(!lista||lista.tip!=='ol'){zatvoriListu();lista={tip:'ol',st:[],start:+m[1]};cur.blok.push(lista);} lista.st.push(esc(m[2]));return; }
+    dodaj(`<p class="pr-p${velika(l)?' pr-jako':''}">${esc(l)}</p>`);
+  });
+  const blok=bl=>bl.map(x=>typeof x==='string'?x:
+    (x.tip==='ul'?`<ul class="pr-ul">${x.st.map(s=>`<li>${s}</li>`).join('')}</ul>`
+                 :`<ol class="pr-ol" start="${x.start}">${x.st.map(s=>`<li>${s}</li>`).join('')}</ol>`)).join('');
+  if(!naslov&&!sekcije.length) return '<div class="empty">Pravila još nisu uneta.</div>';
+  return `<div class="pr">
+    ${naslov?`<div class="pr-title">${esc(naslov)}</div>`:''}
+    ${uvod.blok.length?`<div class="pr-card pr-uvod">${blok(uvod.blok)}</div>`:''}
+    <div class="pr-grid">${sekcije.map(s=>`<div class="pr-card"><div class="pr-h"><span class="pr-br">${s.br}</span><span>${esc(s.naziv)}</span></div>${blok(s.blok)}</div>`).join('')}</div>
+  </div>`;
+}
+
+let PRAVILA_SACUVANO=null, PRAVILA_AZUR=null, PRAVILA_OK=true;
+function pravilaDirty(){const ta=document.getElementById('pravila-txt');return !!ta&&PRAVILA_SACUVANO!==null&&ta.value!==PRAVILA_SACUVANO;}
+async function loadPravila(){
+  const ta=document.getElementById('pravila-txt'); if(!ta) return;
+  if(pravilaDirty()){pravilaPreview();return;} // ne diraj nesačuvane izmene
+  const{data,error}=await db.from('pravila').select('*').eq('id',1);
+  if(error){PRAVILA_OK=false;PRAVILA_SACUVANO='';console.warn('Tabela pravila:',error.message);}
+  else{PRAVILA_OK=true;PRAVILA_SACUVANO=(data&&data[0]&&data[0].tekst)||'';PRAVILA_AZUR=data&&data[0]?data[0].azurirano:null;}
+  ta.value=PRAVILA_SACUVANO||PRAVILA_DEFAULT;
+  pravilaPreview();
+}
+function pravilaPreview(){
+  const ta=document.getElementById('pravila-txt'), st=document.getElementById('pravila-status');
+  document.getElementById('pravila-preview').innerHTML=pravilaHtml(ta.value);
+  if(!PRAVILA_OK){st.className='pr-status err';st.textContent='Tabela "pravila" ne postoji u bazi — pokreni SQL iz readme-a';return;}
+  if(pravilaDirty()){st.className='pr-status dirty';st.textContent=PRAVILA_SACUVANO===''?'● Tekst još nije sačuvan u bazi — klikni Sačuvaj pravila':'● Nesačuvane izmene';return;}
+  st.className='pr-status';
+  st.textContent=PRAVILA_AZUR?'Sačuvano · '+new Date(PRAVILA_AZUR).toLocaleString('sr-RS',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+}
+async function sacuvajPravila(){
+  if(!PRAVILA_OK){toast('Tabela "pravila" ne postoji — pokreni SQL iz readme-a');return;}
+  const tekst=document.getElementById('pravila-txt').value;
+  const azurirano=new Date().toISOString();
+  const{error}=await db.from('pravila').upsert({id:1,tekst,azurirano});
+  if(error){toast('Greška: '+error.message);return;}
+  PRAVILA_SACUVANO=tekst;PRAVILA_AZUR=azurirano;
+  await logujAkciju('PRAVILA_IZMENJENA',`Pravila sačuvana (${tekst.split('\n').length} redova)`);
+  pravilaPreview();toast('Pravila sačuvana!');
+}
+function vratiPravila(){
+  if(!pravilaDirty()) return;
+  if(!confirm('Poništiti nesačuvane izmene?')) return;
+  document.getElementById('pravila-txt').value=PRAVILA_SACUVANO||PRAVILA_DEFAULT;
+  pravilaPreview();
+}
+window.addEventListener('beforeunload',e=>{if(pravilaDirty()){e.preventDefault();e.returnValue='';}});
+
+// ── Igrači ────────────────────────────────────────────────────────────────
+let KONTAKT={}, KONTAKT_OK=true, FIRMA_OK=true;
+// Firma iz mejla: deo posle @ (poznati domeni imaju lepše ime)
+const FIRME={'4zida.rs':'4zida','polovniautomobili.com':'Polovni automobili','infostud.com':'Infostud','helloworld.rs':'HelloWorld','inspiragrupa.com':'Inspira grupa'};
+function firmaIzMejla(m){
+  const d=String(m||'').toLowerCase().split('@').pop().replace(/^www\./,'').trim();
+  if(!d||!d.includes('.')) return '';
+  if(FIRME[d]) return FIRME[d];
+  const n=d.split('.')[0]; return n.charAt(0).toUpperCase()+n.slice(1);
+}
+// Upis igrača; ako kolone firma/plasman_prosle još ne postoje u bazi, upisuje bez njih
+async function insertIgraci(redovi){
+  let r=await db.from('igraci').insert(redovi).select('id,ime');
+  if(r.error&&/firma|plasman_prosle/.test(r.error.message||'')){
+    FIRMA_OK=false; toast('Firma nije sačuvana — pokreni SQL dopunu iz readme-a');
+    r=await db.from('igraci').insert(redovi.map(({firma,plasman_prosle,...x})=>x)).select('id,ime');
+  }
+  return r;
+}
+// Jednokratno: igračima bez firme popuni firmu iz (maskiranog) mejla
+async function dopuniFirme(){
+  if(!FIRMA_OK||!IG.length||!('firma' in IG[0])) { if(IG.length&&!('firma' in IG[0])) FIRMA_OK=false; return false; }
+  const za=IG.filter(i=>!i.firma&&KONTAKT[i.id]).map(i=>({id:i.id,firma:firmaIzMejla(KONTAKT[i.id])})).filter(x=>x.firma);
+  for(const x of za){ await db.from('igraci').update({firma:x.firma}).eq('id',x.id); }
+  return za.length>0;
+}
+const RANGOVI=[5,4.5,4,3.5,3,2.5,2,1.5,1,0.5];
+let AM_ID=null;
+function urediIgraca(id){
+  const i=IG.find(x=>x.id===id); if(!i) return; AM_ID=id;
+  document.getElementById('am-ime').value=i.ime||'';
+  document.getElementById('am-rang').innerHTML=RANGOVI.map(r=>`<option value="${r}"${Number(i.zvezde)===r?' selected':''}>${r} ★</option>`).join('');
+  document.getElementById('am-firma').value=i.firma||(KONTAKT[id]?firmaIzMejla(KONTAKT[id]):'');
+  document.getElementById('am-plasman').value=i.plasman_prosle||'';
+  const sz=Number(i.sezona||2); document.getElementById('am-sezona').innerHTML=[1,2,3,4,5,6,7,8,9,10].map(n=>`<option value="${n}"${n===sz?' selected':''}>${n}. sezona</option>`).join('');
+  document.getElementById('am-mail-wrap').innerHTML=KONTAKT[id]
+    ?`<label>Mejl</label><div class="am-note" style="font-size:13px">${escH(KONTAKT[id])} (izmena mejla samo preko SQL-a)</div>`
+    :`<label>Mejl</label><input type="text" id="am-mail" placeholder="ime.prezime@firma.rs" oninput="const f=document.getElementById('am-firma');if(!f.dataset.rucno)f.value=firmaIzMejla(this.value)">`;
+  document.getElementById('am-firma').oninput=function(){this.dataset.rucno='1';};
+  document.getElementById('am-firma').dataset.rucno='';
+  if(!FIRMA_OK){document.getElementById('am-firma').disabled=true;document.getElementById('am-plasman').disabled=true;}
+  document.getElementById('am-sezona').disabled=!('sezona' in i);
+  document.getElementById('am').classList.add('on');
+  setTimeout(()=>document.getElementById('am-plasman').focus(),50);
+}
+function zatvoriIzmenu(){document.getElementById('am').classList.remove('on');AM_ID=null;}
+async function sacuvajIzmenu(){
+  const i=IG.find(x=>x.id===AM_ID); if(!i) return;
+  const ime=document.getElementById('am-ime').value.trim(); if(!ime){toast('Ime ne može biti prazno');return;}
+  const upd={ime,zvezde:Number(document.getElementById('am-rang').value)};
+  if(FIRMA_OK){ upd.firma=document.getElementById('am-firma').value.trim(); upd.plasman_prosle=document.getElementById('am-plasman').value.trim(); }
+  if('sezona' in i) upd.sezona=Number(document.getElementById('am-sezona').value);
+  const mailEl=document.getElementById('am-mail'); const mail=mailEl?mailEl.value.trim().toLowerCase():'';
+  if(mail&&!MAIL_RE.test(mail)){toast('Mejl nije ispravan');return;}
+  let{error}=await db.from('igraci').update(upd).eq('id',i.id);
+  if(error&&/firma|plasman_prosle|sezona/.test(error.message||'')){ FIRMA_OK=false; delete upd.firma; delete upd.plasman_prosle; delete upd.sezona; ({error}=await db.from('igraci').update(upd).eq('id',i.id)); toast('Firma/plasman nisu sačuvani — pokreni SQL dopunu'); }
+  if(error){toast('Greška: '+error.message);return;}
+  if(mail){ const r=await sacuvajMejlove([{igrac_id:i.id,email:mail}]); if(r.greska){toast('Mejl nije sačuvan: '+r.greska);} }
+  const promene=[i.ime!==ime?`ime → ${ime}`:'',Number(i.zvezde)!==upd.zvezde?`rang ${upd.zvezde}★`:'',upd.firma!==undefined&&(i.firma||'')!==upd.firma?`firma ${upd.firma||'—'}`:'',upd.plasman_prosle!==undefined&&(i.plasman_prosle||'')!==upd.plasman_prosle?`prošla sezona: ${upd.plasman_prosle||'—'}`:'',upd.sezona!==undefined&&Number(i.sezona||2)!==upd.sezona?`${upd.sezona}. sezona`:'',mail?'mejl dodat':''].filter(Boolean);
+  if(promene.length) await logujAkciju('IGRAC_IZMENJEN',`${i.ime} — ${promene.join(', ')}`);
+  zatvoriIzmenu(); toast('Igrač sačuvan'); loadAll();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('am')?.classList.contains('on'))zatvoriIzmenu();});
+const MAIL_RE=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+// Mejlovi se čuvaju u privatnoj tabeli igraci_kontakt (javno se ne mogu pročitati ni izmeniti)
+async function sacuvajMejlove(parovi){ // [{igrac_id,email}]
+  if(!parovi.length) return {ok:0,greska:null};
+  const{error}=await db.from('igraci_kontakt').insert(parovi);
+  return {ok:error?0:parovi.length,greska:error?error.message:null};
+}
+async function dodajIgraca(){
+  const ime=document.getElementById('inp-ime').value.trim();
+  const dept='';
+  const mail=document.getElementById('inp-mail').value.trim().toLowerCase();
+  if(!ime)return;
+  if(mail&&!MAIL_RE.test(mail)){toast('Mejl nije ispravan');return;}
+  const{data,error}=await insertIgraci([{ime,odeljenje:dept,zvezde:selectedStars,firma:firmaIzMejla(mail)}]);
+  if(error){toast('Greška: '+error.message);return;}
+  let mailMsg='';
+  if(mail&&data&&data[0]){ const r=await sacuvajMejlove([{igrac_id:data[0].id,email:mail}]); if(r.greska) mailMsg=' (mejl nije sačuvan: '+r.greska+')'; }
+  await logujAkciju('IGRAC_DODAT', `${ime}${dept?' ('+dept+')':''} — ${selectedStars}★${mail?' · mejl':''}`);
+  document.getElementById('inp-ime').value='';
+  document.getElementById('inp-mail').value='';
+  selectedStars=3.0;renderPickerStars(3.0);
+  document.getElementById('sel-val-label').textContent='3.0 ★';
+  toast('Igrač dodat!'+mailMsg);loadAll();
+}
+async function dodajMejl(id){
+  const ig=IG.find(x=>x.id===id); if(!ig) return;
+  const mail=(prompt(`Mejl za: ${ig.ime}`)||'').trim().toLowerCase();
+  if(!mail) return;
+  if(!MAIL_RE.test(mail)){toast('Mejl nije ispravan');return;}
+  const r=await sacuvajMejlove([{igrac_id:id,email:mail}]);
+  if(r.greska){toast('Greška: '+r.greska);return;}
+  await logujAkciju('IGRAC_MEJL',`${ig.ime} — mejl dodat`);
+  toast('Mejl sačuvan');loadAll();
+}
+// ── Zbirni unos ───────────────────────────────────────────────────────────
+let unosMode='poj', BULK=[];
+function setUnosMode(m){
+  unosMode=m;
+  document.getElementById('mode-poj').classList.toggle('on',m==='poj');
+  document.getElementById('mode-zb').classList.toggle('on',m==='zb');
+  document.getElementById('unos-poj').style.display=m==='poj'?'':'none';
+  document.getElementById('unos-zb').style.display=m==='zb'?'':'none';
+  document.getElementById('star-label-txt').textContent=m==='poj'?'Rang timova':'Podrazumevani rang';
+  const btn=document.getElementById('btn-dodaj');
+  btn.onclick=m==='poj'?dodajIgraca:dodajZbirno;
+  renderBulkPreview();
+}
+function normIme(t){return (t||'').toLowerCase().replace(/\s+/g,' ').trim();}
+function escH(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function parseBulk(txt){
+  const poImenu={}; IG.forEach(i=>poImenu[normIme(i.ime)]=i);
+  const vidjeni=new Set();
+  const out=[];
+  (txt||'').split(/\r?\n/).forEach(line=>{
+    const cols=line.split('\t').map(c=>c.trim()).filter(c=>c!=='');
+    let ime=null, dept='', z=null, email='';
+    for(const c of cols){
+      if(c.includes('@')){ if(!email&&MAIL_RE.test(c)) email=c.toLowerCase(); continue; }   // mejl
+      if(/^[★☆✩✪✫✬✭✮✯⭐⯨⯪½\s]+$/.test(c)) continue;                                     // kolona sa zvezdicama
+      if(/^\d+([.,]\d+)?\.?$/.test(c)){                                                     // broj
+        if(ime===null) continue;                                                            // redni broj ispred imena
+        const n=parseFloat(c.replace(',','.'));
+        if(n>=0.5 && n<=5 && Math.round(n*2)===n*2) z=n;
+        continue;
+      }
+      if(ime===null) ime=c;          // ostale tekstualne kolone (sektor i sl.) se ne čuvaju
+    }
+    if(!ime) return;
+    ime=ime.replace(/^\d+[.)]\s*/,'').replace(/\s+/g,' ').trim();
+    if(!ime || /^ime(\s+i\s+prezime)?$/i.test(ime)) return; // zaglavlje
+    const key=normIme(ime);
+    const post=poImenu[key];
+    let status='ok', dopuna=null;
+    if(vidjeni.has(key)) status='duplikat';
+    else if(post){
+      const noviMejl=!!email && !KONTAKT[post.id];
+      const noviRang=z!==null && Number(post.zvezde)!==z;
+      if(noviMejl||noviRang){ status='dopuna'; dopuna={id:post.id,mejl:noviMejl,rang:noviRang}; }
+      else status='postoji';
+    }
+    vidjeni.add(key);
+    out.push({ime,odeljenje:dept,zvezde:z,email,status,dopuna});
+  });
+  return out;
+}
+function renderBulkPreview(){
+  const el=document.getElementById('bulk-preview');
+  const btn=document.getElementById('btn-dodaj');
+  if(!el||!btn) return;
+  if(unosMode!=='zb'){el.style.display='none';btn.textContent='+ Dodaj igrača';return;}
+  BULK=parseBulk(document.getElementById('inp-bulk').value);
+  const novi=BULK.filter(r=>r.status==='ok'), dop=BULK.filter(r=>r.status==='dopuna');
+  const skip=BULK.length-novi.length-dop.length;
+  const n=novi.length+dop.length;
+  btn.textContent=n?`+ Sačuvaj (${novi.length} novih${dop.length?`, ${dop.length} dopuna`:''})`:'+ Sačuvaj';
+  if(!BULK.length){el.style.display='none';return;}
+  el.style.display='';
+  const bezMejla=novi.filter(r=>!r.email).length;
+  el.innerHTML=`<div class="bulk-sum"><b>${novi.length}</b> novih${dop.length?` · <b>${dop.length}</b> dopuna`:''}${skip?` · ${skip} bez promene`:''}${bezMejla?` · <span style="color:var(--yellow)">${bezMejla} bez mejla</span>`:''}</div>
+    <div class="bulk-list">${BULK.map(r=>{
+      const aktivan=r.status==='ok'||r.status==='dopuna';
+      let desno;
+      if(r.status==='ok') desno=`<span style="display:inline-flex;gap:1px;align-items:center;flex-shrink:0">${starsHtml(r.zvezde??selectedStars,11)}</span>`;
+      else if(r.status==='dopuna') desno=`<span class="bulk-tag dop">dopuna: ${[r.dopuna.mejl?'mejl':'',r.dopuna.rang?'rang '+r.zvezde+'★':''].filter(Boolean).join(' + ')}</span>`;
+      else desno=`<span class="bulk-tag">${r.status==='postoji'?'bez promene':'duplikat'}</span>`;
+      return `<div class="bulk-row${aktivan?'':' skip'}">
+        <span class="bn">${escH(r.ime)}${r.email?`<span class="bulk-mail">${escH(r.email)}</span>`:(r.status==='ok'?'<span class="bulk-mail" style="color:var(--yellow)">bez mejla</span>':'')}</span>
+        ${desno}
+      </div>`;}).join('')}</div>`;
+}
+async function dodajZbirno(){
+  renderBulkPreview();
+  const novi=BULK.filter(r=>r.status==='ok'), dop=BULK.filter(r=>r.status==='dopuna');
+  if(!novi.length&&!dop.length){toast('Nema novih igrača ni dopuna');return;}
+  const btn=document.getElementById('btn-dodaj');
+  btn.disabled=true;btn.textContent='Čuvam...';
+  const mejlovi=[]; let greske=[];
+  // 1) novi igrači
+  if(novi.length){
+    const redovi=novi.map(r=>({ime:r.ime,odeljenje:r.odeljenje,zvezde:r.zvezde??selectedStars,firma:firmaIzMejla(r.email)}));
+    const{data,error}=await insertIgraci(redovi);
+    if(error){btn.disabled=false;toast('Greška: '+error.message);renderBulkPreview();return;}
+    const poImenu={}; (data||[]).forEach(d=>poImenu[normIme(d.ime)]=d.id);
+    novi.forEach(r=>{ if(r.email&&poImenu[normIme(r.ime)]) mejlovi.push({igrac_id:poImenu[normIme(r.ime)],email:r.email}); });
+    try{ await db.from('log').insert(redovi.map(r=>({akcija:'IGRAC_DODAT',detalji:`${r.ime}${r.odeljenje?' ('+r.odeljenje+')':''} — ${r.zvezde}★`,izvor:'admin'}))); }catch(e){}
+  }
+  // 2) dopune postojećih: rang + mejl
+  for(const r of dop){
+    if(r.dopuna.rang){ const{error}=await db.from('igraci').update({zvezde:r.zvezde}).eq('id',r.dopuna.id); if(error) greske.push(r.ime+': '+error.message); }
+    if(r.dopuna.mejl){ mejlovi.push({igrac_id:r.dopuna.id,email:r.email}); if(FIRMA_OK) await db.from('igraci').update({firma:firmaIzMejla(r.email)}).eq('id',r.dopuna.id); }
+  }
+  if(dop.length){ try{ await db.from('log').insert(dop.map(r=>({akcija:'IGRAC_IZMENJEN',detalji:`${r.ime} — ${[r.dopuna.mejl?'mejl dodat':'',r.dopuna.rang?'rang '+r.zvezde+'★':''].filter(Boolean).join(', ')}`,izvor:'admin'}))); }catch(e){} }
+  // 3) mejlovi (privatna tabela)
+  if(mejlovi.length){ const m=await sacuvajMejlove(mejlovi); if(m.greska) greske.push('mejlovi: '+m.greska); }
+  btn.disabled=false;
+  document.getElementById('inp-bulk').value='';
+  toast(greske.length?('Sačuvano uz greške — '+greske[0]):`Sačuvano: ${novi.length} novih${dop.length?', '+dop.length+' dopuna':''}${mejlovi.length?', '+mejlovi.length+' mejlova':''}`);
+  await loadAll();
+  renderBulkPreview();
+}
+async function ukloniIgraca(id){
+  if(!confirm('Ukloniti igrača?'))return;
+  const igrac=IG.find(i=>i.id===id);
+  await db.from('igraci').delete().eq('id',id);
+  await logujAkciju('IGRAC_UKLONJEN', igrac?igrac.ime:'id='+id);
+  toast('Uklonjen');loadAll();
+}
+function renderIgraci(){
+  renderBulkPreview();
+  document.getElementById('igrac-count').textContent=IG.length;
+  const el=document.getElementById('igraci-chips');
+  if(!IG.length){el.innerHTML='<div class="empty" style="padding:0.5rem">Nema igrača</div>';return;}
+  el.innerHTML=IG.map(i=>`<div class="chip">
+    <span class="chip-name" onclick="urediIgraca(${i.id})" title="Klikni za izmenu">${escH(i.ime)}</span>${i.firma?`<span style="font-size:11px;color:var(--teal)">${escH(i.firma)}</span>`:''}
+    <span style="display:inline-flex;gap:1px;align-items:center">${starsHtml(i.zvezde||3,13)}</span>
+    ${KONTAKT_OK?(KONTAKT[i.id]?`<span class="chip-mail" title="${escH(KONTAKT[i.id])}">✉</span>`:`<span class="chip-mail nema" title="Nema mejla — klikni da dodaš" onclick="dodajMejl(${i.id})">+✉</span>`):''}
+    <span class="chip-rm" onclick="ukloniIgraca(${i.id})">×</span>
+  </div>`).join('');
+}
+
+// ── Raspored: dupli round-robin ───────────────────────────────────────────
+async function generisiRaspored(){
+  const potvrda = confirm(
+    '⚠️ UPOZORENJE\n\n' +
+    'Ova akcija će:\n' +
+    '• Obrisati sve postojeće mečeve\n' +
+    '• Obrisati sve unete rezultate\n' +
+    '• Generisati novi raspored\n\n' +
+    'Da li ste sigurni da želite da nastavite?'
+  );
+  if(!potvrda) return;
+  if(IG.length<2){alert('Potrebno je najmanje 2 igrača');return;}
+  if(ME.length>0){if(!confirm('Obrisati postojeći raspored i napraviti novi?'))return;await db.from('mecevi').delete().neq('id',0);}
+  const ps=[...IG];
+  if(ps.length%2!==0) ps.push({id:null,ime:'BYE'});
+  const n=ps.length,rounds=n-1,half=n/2;
+  let arr=[...ps];
+  const prvi=[];
+  for(let r=0;r<rounds;r++){
+    for(let i=0;i<half;i++){
+      const h=arr[i],a=arr[n-1-i];
+      if(h.id&&a.id) prvi.push({kolo:r+1,domacin:h.id,gost:a.id});
+    }
+    arr=[arr[0],...arr.slice(n-1),...arr.slice(1,n-1)];
+  }
+  const drugi=prvi.map(m=>({kolo:m.kolo+rounds,domacin:m.gost,gost:m.domacin}));
+  const novi=[...prvi,...drugi].map(m=>({...m,gol_domacin:null,gol_gost:null}));
+  const{error}=await db.from('mecevi').insert(novi);
+  if(error){toast('Greška: '+error.message);return;}
+  await logujAkciju('RASPORED_GENERISAN', `${IG.length} igrača, ${novi.length} mečeva, ${rounds*2} kola`);
+  toast(`✓ ${novi.length} mečeva u ${rounds*2} kola!`);
+  await loadAll();
+  showTab('rezultati', document.querySelectorAll('.tab')[1]);
+}
+
+function slobodanUKolu(k,mecevi){
+  const uKolu=new Set();
+  mecevi.forEach(m=>{uKolu.add(m.domacin);uKolu.add(m.gost);});
+  for(const i of IG){if(!uKolu.has(i.id))return i.id;}
+  return null;
+}
+
+function setFilter(f,btn){
+  filter=f;document.querySelectorAll('.fbtn[onclick^="setFilter"]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderRezultati();
+}
+async function resetujRezultat(id){
+  if(!confirm('Obrisati rezultat ovog meča?')) return;
+  const igM={};IG.forEach(i=>igM[i.id]=i);
+  const mec=ME.find(m=>m.id===id);
+  const{error}=await mecSnimi('update',{gol_domacin:null,gol_gost:null},id,'clear');
+  if(error){toast('Greška!');return;}
+  if(mec){ const d=igM[mec.domacin]?.ime||'?', g=igM[mec.gost]?.ime||'?', stari=`${mec.gol_domacin}:${mec.gol_gost}`; await logujAkciju('REZULTAT_RESETOVAN', `${d} vs ${g} — bilo ${stari}`); }
+  toast('Rezultat obrisan');await loadAll();
+}
+
+async function sacuvajRezultat(id){
+  const hv=document.getElementById('h-'+id)?.value;
+  const av=document.getElementById('a-'+id)?.value;
+  if(hv===''||av===''||isNaN(hv)||isNaN(av)){toast('Unesite oba gola!');return;}
+  const igM={};IG.forEach(i=>igM[i.id]=i);
+  const mec=ME.find(m=>m.id===id);
+  const{error}=await mecSnimi('update',{gol_domacin:parseInt(hv),gol_gost:parseInt(av)},id,(mec&&mec.gol_domacin!==null)?'keep':'now');
+  if(error){toast('Greška!');return;}
+  if(mec){ const d=igM[mec.domacin]?.ime||'?', g=igM[mec.gost]?.ime||'?'; const tip=mec.gol_domacin!==null?'REZULTAT_IZMENJEN':'REZULTAT_UNET'; const detalji=mec.gol_domacin!==null?`${d} vs ${g} → ${hv}:${av} (bilo ${mec.gol_domacin}:${mec.gol_gost})`:`${d} vs ${g} → ${hv}:${av}`; await logujAkciju(tip, detalji); }
+  toast('Rezultat sačuvan!');loadAll();
+}
+function renderRezultati(){
+  const igM={};IG.forEach(i=>igM[i.id]=i);
+
+  // Populate dropdowns
+  ['adm-filter1','adm-filter2'].forEach((fid,fi)=>{
+    const sel=document.getElementById(fid);
+    if(!sel) return;
+    const prev=sel.value;
+    sel.innerHTML=`<option value="">${fi===0?'— Igrač 1 —':'— Igrač 2 —'}</option>`+
+      IG.map(i=>`<option value="${i.id}"${prev==i.id?' selected':''}>${i.ime}</option>`).join('');
+  });
+
+  const id1=parseInt(document.getElementById('adm-filter1')?.value||0)||null;
+  const id2=parseInt(document.getElementById('adm-filter2')?.value||0)||null;
+
+  let mecevi=ME;
+  if(filter==='odigrani') mecevi=ME.filter(m=>m.gol_domacin!==null);
+  if(filter==='neodigrani') mecevi=ME.filter(m=>m.gol_domacin===null);
+  if(id1&&id2) mecevi=mecevi.filter(m=>(m.domacin===id1&&m.gost===id2)||(m.domacin===id2&&m.gost===id1));
+  else if(id1) mecevi=mecevi.filter(m=>m.domacin===id1||m.gost===id1);
+  else if(id2) mecevi=mecevi.filter(m=>m.domacin===id2||m.gost===id2);
+
+  const total=ME.length,played=ME.filter(m=>m.gol_domacin!==null).length;
+  document.getElementById('r-total').textContent=total;
+  document.getElementById('r-played').textContent=played;
+  document.getElementById('r-remain').textContent=total-played;
+
+  if(!mecevi.length){document.getElementById('rezultati-lista').innerHTML='<div class="empty">Nema mečeva</div>';return;}
+
+  const kola={};mecevi.forEach(m=>{if(!kola[m.kolo])kola[m.kolo]=[];kola[m.kolo].push(m);});
+  let h='';
+  Object.keys(kola).sort((a,b)=>+a-+b).forEach(k=>{
+    const ms=kola[k], od=ms.filter(m=>m.gol_domacin!==null).length;
+    const slobId=(!id1&&!id2)?slobodanUKolu(k,kola[k]):null;
+    const igSlob=slobId?IG.find(i=>i.id===slobId):null;
+    h+=`<div class="rg"><div class="rgh"><span>Kolo ${k}${igSlob?` <span style="color:rgba(255,200,0,0.7);font-size:11px">— ${igSlob.ime} slobodan</span>`:''}</span><span class="rgb">${od}/${ms.length} odigrano</span></div>`;
+    ms.forEach(m=>{
+      const d=igM[m.domacin],g=igM[m.gost],pl=m.gol_domacin!==null;
+      h+=`<div class="rg-row" id="card-${m.id}" style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;padding:12px 14px;border-bottom:1px solid var(--border);${pl?'':''}">
+        <div style="min-width:0">
+          <div style="display:flex;gap:1px;margin-bottom:2px">${starsHtml(d?.zvezde||3,10)}</div>
+          <div style="display:flex;align-items:center;gap:4px">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-style:italic;font-size:11px;font-weight:900;width:18px;height:18px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;background:rgba(173,255,47,0.2);color:#ADFF2F;flex-shrink:0">D</span>
+            <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;font-weight:500">${d?.ime||'?'}</div>
+          </div>
+        </div>
+        ${pl
+          ? `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0">
+               <div style="display:flex;align-items:center;gap:4px">
+                 <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" class="si" id="h-${m.id}" value="${m.gol_domacin}" onfocus="setActiveAdmin(${m.id})" oninput="samoBroj(this);checkAdminBtn()" onkeydown="if(event.key==='Enter')sacuvajRezultat(${m.id})" style="border-color:rgba(173,255,47,0.3)">
+                 <span class="sp">:</span>
+                 <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" class="si" id="a-${m.id}" value="${m.gol_gost}" onfocus="setActiveAdmin(${m.id})" oninput="samoBroj(this);checkAdminBtn()" onkeydown="if(event.key==='Enter')sacuvajRezultat(${m.id})" style="border-color:rgba(173,255,47,0.3)">
+                 <button class="sb done desk-only" onclick="sacuvajRezultat(${m.id})" title="Sačuvaj">✓</button>
+                 <button class="sb desk-only" onclick="resetujRezultat(${m.id})" title="Resetuj" style="color:var(--red);border-color:rgba(255,64,96,0.3);margin-left:2px">×</button>
+               </div>
+               <button onclick="resetujRezultat(${m.id})" style="display:none;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-size:11px;font-weight:700;color:var(--red);background:none;border:none;cursor:pointer;padding:0;letter-spacing:1px" class="mob-reset">× RESETUJ</button>
+             </div>`
+          : `<div style="display:flex;align-items:center;gap:4px;flex-shrink:0">
+               <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" class="si" id="h-${m.id}" placeholder="—" onfocus="setActiveAdmin(${m.id})" oninput="samoBroj(this);checkAdminBtn()" onkeydown="if(event.key==='Enter')sacuvajRezultat(${m.id})">
+               <span class="sp">:</span>
+               <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" class="si" id="a-${m.id}" placeholder="—" onfocus="setActiveAdmin(${m.id})" oninput="samoBroj(this);checkAdminBtn()" onkeydown="if(event.key==='Enter')sacuvajRezultat(${m.id})">
+               <button class="sb desk-only" onclick="sacuvajRezultat(${m.id})">→</button>
+             </div>`
+        }
+        <div style="min-width:0;text-align:right">
+          <div style="display:flex;gap:1px;margin-bottom:2px;justify-content:flex-end">${starsHtml(g?.zvezde||3,10)}</div>
+          <div style="display:flex;align-items:center;justify-content:flex-end;gap:4px">
+            <div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px;font-weight:500">${g?.ime||'?'}</div>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-style:italic;font-size:11px;font-weight:900;width:18px;height:18px;border-radius:3px;display:inline-flex;align-items:center;justify-content:center;background:rgba(0,200,150,0.2);color:#00C896;flex-shrink:0">G</span>
+          </div>
+        </div>
+      </div>`;
+    });
+    h+='</div>';
+  });
+  document.getElementById('rezultati-lista').innerHTML=h;
+}
+
+let PO_MECEVI=[], PO={};
+
+// ── Playoff logika (identična u index.html i admin/index.html) ─────────────
+// Serija (osmina, četvrtfinale, polufinale): 2 meča, 3. samo ako je zbir
+// golova iz prva dva izjednačen. Finale i 3. mesto: 1 meč.
+// Mečevi se čuvaju u `mecevi` sa playoff_runda: 'O1-1','O1-2','O1-3' ... 'F', '3M'.
+const PO_DEF=[
+  {key:'O1',naziv:'Osmina finala',kratko:'1/8',a:{seed:8},b:{seed:9}},
+  {key:'O2',naziv:'Osmina finala',kratko:'1/8',a:{seed:5},b:{seed:12}},
+  {key:'O3',naziv:'Osmina finala',kratko:'1/8',a:{seed:6},b:{seed:11}},
+  {key:'O4',naziv:'Osmina finala',kratko:'1/8',a:{seed:7},b:{seed:10}},
+  {key:'C1',naziv:'Četvrtfinale',kratko:'ČF',a:{seed:1},b:{w:'O1'}},
+  {key:'C2',naziv:'Četvrtfinale',kratko:'ČF',a:{seed:4},b:{w:'O2'}},
+  {key:'C3',naziv:'Četvrtfinale',kratko:'ČF',a:{seed:3},b:{w:'O3'}},
+  {key:'C4',naziv:'Četvrtfinale',kratko:'ČF',a:{seed:2},b:{w:'O4'}},
+  {key:'P1',naziv:'Polufinale',kratko:'PF',a:{w:'C1'},b:{w:'C2'}},
+  {key:'P2',naziv:'Polufinale',kratko:'PF',a:{w:'C3'},b:{w:'C4'}},
+  {key:'F', naziv:'Finale',kratko:'Finale',a:{w:'P1'},b:{w:'P2'}},
+  {key:'3M',naziv:'Meč za 3. mesto',kratko:'3. mesto',a:{l:'P1'},b:{l:'P2'}}
+];
+function poSerija(key){return key!=='F'&&key!=='3M';}
+function poRunda(key,n){return poSerija(key)?key+'-'+n:key;}
+function poIzracunaj(rows, poMec){
+  const byR={};(poMec||[]).forEach(m=>byR[m.playoff_runda]=m);
+  const S={};
+  const uzmi=src=>src.seed?(rows[src.seed-1]||null):src.w?(S[src.w]?.winner||null):src.l?(S[src.l]?.loser||null):null;
+  PO_DEF.forEach(def=>{
+    const A=uzmi(def.a),B=uzmi(def.b),serija=poSerija(def.key);
+    const st={key:def.key,naziv:def.naziv,kratko:def.kratko,A,B,seedA:def.a.seed||null,seedB:def.b.seed||null,
+      serija,maxG:serija?3:1,games:[],unlocked:0,ptsA:0,ptsB:0,winner:null,loser:null,treciPotreban:false};
+    if(A&&B){
+      for(let i=1;i<=st.maxG;i++){
+        const m=byR[poRunda(def.key,i)];
+        let g=null;
+        if(m&&m.gol_domacin!==null&&m.gol_domacin!==undefined&&m.gol_gost!==null&&m.gol_gost!==undefined){
+          if(m.domacin===A.id&&m.gost===B.id) g={a:m.gol_domacin,b:m.gol_gost,m};
+          else if(m.domacin===B.id&&m.gost===A.id) g={a:m.gol_gost,b:m.gol_domacin,m};
+        }
+        st.games.push(g);
+      }
+      const bod=g=>{st.ptsA+=g.a;st.ptsB+=g.b;}; // zbir golova u dvomeču
+      const [g1,g2,g3]=st.games;
+      st.unlocked=1;
+      if(!serija){
+        if(g1&&g1.a!==g1.b) st.winner=g1.a>g1.b?A:B;
+      } else if(g1){
+        st.unlocked=2;bod(g1);
+        if(g2){
+          bod(g2);
+          if(st.ptsA!==st.ptsB) st.winner=st.ptsA>st.ptsB?A:B;
+          else{st.unlocked=3;st.treciPotreban=true;if(g3&&g3.a!==g3.b) st.winner=g3.a>g3.b?A:B;}
+        }
+      }
+      // mečevi van otključanog opsega se ne računaju
+      st.games=st.games.map((g,i)=>i<st.unlocked?g:null);
+      if(st.winner) st.loser=st.winner===A?B:A;
+    }
+    S[def.key]=st;
+  });
+  return S;
+}
+
+// Snimanje meča — upisuje i vreme unosa (uneto_at) ako kolona postoji
+function samoBroj(el){const v=el.value.replace(/\D/g,'').slice(0,2);if(el.value!==v)el.value=v;}
+let UNETO_OK=true;
+async function mecSnimi(op,payload,id,stamp){
+  const p={...payload};
+  if(UNETO_OK){ if(stamp==='now') p.uneto_at=new Date().toISOString(); else if(stamp==='clear') p.uneto_at=null; }
+  const run=q=>op==='update'?db.from('mecevi').update(q).eq('id',id):db.from('mecevi').insert(q);
+  let r=await run(p);
+  if(r.error&&('uneto_at' in p)&&/uneto_at/i.test(r.error.message||'')){
+    UNETO_OK=false;console.warn('Kolona uneto_at ne postoji u tabeli mecevi — pokreni SQL iz readme-a.');
+    delete p.uneto_at;r=await run(p);
+  }
+  return r;
+}
+
+
+// ── Playoff admin ─────────────────────────────────────────────────────────
+function calcTableAdmin(){
+  const m={};
+  IG.forEach(i=>m[i.id]={...i,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0});
+  ME.forEach(x=>{
+    if(x.gol_domacin===null||x.gol_domacin===undefined) return;
+    const d=m[x.domacin],g=m[x.gost];
+    if(!d||!g) return;
+    d.P++;g.P++;d.GF+=x.gol_domacin;d.GA+=x.gol_gost;g.GF+=x.gol_gost;g.GA+=x.gol_domacin;
+    if(x.gol_domacin>x.gol_gost){d.W++;d.Pts+=3;g.L++;}
+    else if(x.gol_domacin<x.gol_gost){g.W++;g.Pts+=3;d.L++;}
+    else{d.D++;g.D++;d.Pts++;g.Pts++;}
+    d.GD=d.GF-d.GA;g.GD=g.GF-g.GA;
+  });
+  return Object.values(m).sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF||a.ime.localeCompare(b.ime));
+}
+
+async function savePoGame(key,n){
+  const st=PO[key];
+  if(!st||!st.A||!st.B){toast('Par još nije poznat');return;}
+  if(n>st.unlocked){toast('Prvo unesi prethodni meč');return;}
+  const av=document.getElementById(`po-${key}-${n}-a`)?.value;
+  const bv=document.getElementById(`po-${key}-${n}-b`)?.value;
+  if(av===''||bv===''||av==null||bv==null||isNaN(av)||isNaN(bv)){toast('Unesite oba gola!');return;}
+  const a=parseInt(av),b=parseInt(bv);
+  if((!st.serija||n===3)&&a===b){toast('Ovaj meč mora imati pobednika — unesi rezultat posle penala');return;}
+  const runda=poRunda(key,n);
+  const red=PO_MECEVI.find(m=>m.playoff_runda===runda);
+  const stari=st.games[n-1];
+  const payload={domacin:st.A.id,gost:st.B.id,gol_domacin:a,gol_gost:b};
+  const r=red?await mecSnimi('update',payload,red.id,stari?'keep':'now')
+             :await mecSnimi('insert',{...payload,playoff_runda:runda,kolo:0},null,'now');
+  if(r.error){toast('Greška: '+r.error.message);return;}
+  // Ako je serija rešena posle 2 meča, 3. meč nije potreban — obriši ga ako postoji
+  if(st.serija&&n<=2){
+    const g1=n===1?{a,b}:st.games[0], g2=n===2?{a,b}:st.games[1];
+    if(g1&&g2){
+      const pa=g1.a+g2.a, pb=g1.b+g2.b;
+      const r3=PO_MECEVI.find(m=>m.playoff_runda===poRunda(key,3));
+      if(pa!==pb&&r3) await db.from('mecevi').delete().in('id',[r3.id]);
+    }
+  }
+  await logujAkciju('PLAYOFF_REZULTAT',`${st.naziv}${st.serija?' · meč '+n:''}: ${st.A.ime} vs ${st.B.ime} → ${a}:${b}${stari?` (bilo ${stari.a}:${stari.b})`:''}`);
+  const bioPob=st.winner?.ime||null;
+  await loadAll();
+  const pob=PO[key]?.winner?.ime||null;
+  if(pob&&pob!==bioPob){
+    await logujAkciju('PLAYOFF_POBEDNIK',`${st.naziv}: ${st.A.ime} vs ${st.B.ime} → prolazi ${pob}`);
+    toast('Pobednik: '+pob);
+  } else toast('Rezultat sačuvan!');
+  const sled=document.getElementById(`po-${key}-${n+1}-a`);
+  if(sled&&!sled.disabled&&sled.value==='') sled.focus();
+}
+
+async function resetPoGame(key,n){
+  const st=PO[key]; if(!st) return;
+  const vise=st.serija&&n<3;
+  if(!confirm(vise?'Obrisati rezultat ovog i narednih mečeva u seriji?':'Obrisati rezultat ovog meča?')) return;
+  const rund=[];for(let i=n;i<=st.maxG;i++) rund.push(poRunda(key,i));
+  const ids=PO_MECEVI.filter(m=>rund.includes(m.playoff_runda)).map(m=>m.id);
+  if(ids.length){
+    const{error}=await db.from('mecevi').delete().in('id',ids);
+    if(error){toast('Greška: '+error.message);return;}
+  }
+  await logujAkciju('PLAYOFF_REZULTAT_OBRISAN',`${st.naziv}${st.serija?' · od meča '+n:''}: ${st.A?.ime||'?'} vs ${st.B?.ime||'?'}`);
+  toast('Rezultat obrisan');
+  await loadAll();
+}
+
+async function resetujPlayoff(){
+  if(!confirm('Obrisati sve playoff rezultate?')) return;
+  if(!PO_MECEVI.length){toast('Nema playoff mečeva');return;}
+  const ids = PO_MECEVI.map(m=>m.id);
+  const {error} = await db.from('mecevi').delete().in('id', ids);
+  if(error){toast('Greška: '+error.message);return;}
+  await logujAkciju('PLAYOFF_RESETOVAN', `Obrisano ${ids.length} playoff mečeva`);
+  toast('Playoff resetovan');
+  await loadAll();
+}
+
+// ── Playoff prikaz (identičan u index.html i admin/index.html) ────────────
+// Teniski prikaz: imena levo, rezultati mečeva u kolonama desno (M1 M2 M3 Σ).
+// ed=true (admin) → polja za unos; ed=false (javni sajt) → samo prikaz.
+const PO_RUNDE=[
+  {id:'O',tab:'1/8',naziv:'Osmina finala',keys:['O1','O2','O3','O4']},
+  {id:'C',tab:'1/4',naziv:'Četvrtfinale',keys:['C1','C2','C3','C4']},
+  {id:'P',tab:'SF',naziv:'Polufinale',keys:['P1','P2']},
+  {id:'F',tab:'F / 3.',naziv:'Finale',keys:['F','3M']}
+];
+let PO_MOB_RUNDA=null, PO_MOBILNI=null;
+function poEsc(t){return String(t??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function poOtvorena(S,key){const st=S[key];return !!(st&&st.A&&st.B&&!st.winner);}
+function poNepotreban(st,k){return st.serija&&k===3&&k>st.unlocked&&!!st.winner;}
+function poBtnHtml(key,k,saved){
+  return saved
+    ?`<button class="po-btn po-x" id="po-btn-${key}-${k}" onclick="resetPoGame('${key}',${k})" title="Obriši rezultat">×</button>`
+    :`<button class="po-btn" id="po-btn-${key}-${k}" onclick="savePoGame('${key}',${k})" title="Sačuvaj (ili Enter)">✓</button>`;
+}
+function poKartica(S,key,ed){
+  const st=S[key], n=st.maxG, sum=st.serija, par=!!(st.A&&st.B);
+  const cols=`style="grid-template-columns:minmax(0,1fr) repeat(${n},var(--tc-cell))${sum?' var(--tc-sum)':''}"`;
+  const lbl=k=>st.serija?'M'+k:'REZ';
+  const head=`<div class="tc-r tc-h" ${cols}><span class="tc-rn">${st.kratko}</span>${[...Array(n)].map((_,i)=>`<span class="${poNepotreban(st,i+1)?'tc-na':''}${st.serija&&i===2?' tc-3':''}">${lbl(i+1)}</span>`).join('')}${sum?'<span>Σ</span>':''}</div>`;
+  const red=(p,seed,s)=>{
+    const win=!!(st.winner&&st.winner===p), o=s==='a'?'b':'a';
+    const cells=[...Array(n)].map((_,i)=>{
+      const k=i+1, g=st.games[i], locked=!par||k>st.unlocked;
+      if(ed&&par&&!locked){
+        return `<span class="tc-c"><input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" class="po-in${g?' saved':''}" id="po-${key}-${k}-${s}" value="${g?g[s]:''}" placeholder="—" oninput="samoBroj(this);poDirty('${key}',${k})" onkeydown="if(event.key==='Enter')savePoGame('${key}',${k})"></span>`;
+      }
+      if(g) return `<span class="tc-c tc-v${g[s]>g[o]?' tc-gw':''}">${g[s]}</span>`;
+      return `<span class="tc-c tc-e${poNepotreban(st,k)?' tc-na':''}">${poNepotreban(st,k)||(ed&&locked&&par)?'':'–'}</span>`;
+    }).join('');
+    const zbir=sum?`<span class="tc-sum">${st.games[0]?(s==='a'?st.ptsA:st.ptsB):''}</span>`:'';
+    const ime=p?poEsc(p.ime):'???';
+    return `<div class="tc-r tc-p${win?' win':''}${p?'':' tbd'}" ${cols}><span class="tc-name">${seed?`<span class="tc-seed">${seed}</span>`:''}<span class="tc-nm" title="${ime}" data-igrac="${p?p.id:''}">${ime}</span>${win?'<span class="tc-ok">✓</span>':''}</span>${cells}${zbir}</div>`;
+  };
+  let akcije='';
+  if(ed&&par){
+    akcije=`<div class="tc-r tc-a" ${cols}><span></span>${[...Array(n)].map((_,i)=>{
+      const k=i+1, g=st.games[i];
+      if(poNepotreban(st,k)) return '<span></span>';
+      if(k>st.unlocked) return `<span class="tc-c"><button class="po-btn" disabled title="Otključava se posle prethodnog meča">🔒</button></span>`;
+      return `<span class="tc-c">${poBtnHtml(key,k,!!g)}</span>`;
+    }).join('')}${sum?'<span></span>':''}</div>`;
+  }
+  let nota='';
+  if(st.treciPotreban&&!st.games[2]) nota=`<div class="tc-note">Izjednačeno ${st.ptsA}:${st.ptsB} — igra se 3. meč</div>`;
+  return `<div class="tc${st.winner?' done':''}${key==='3M'?' tc-bronze':''}">${head}${red(st.A,st.seedA,'a')}${red(st.B,st.seedB,'b')}${akcije}${nota}</div>`;
+}
+function poBoardHtml(S,ed){
+  const mob=window.innerWidth<=700; PO_MOBILNI=mob;
+  const W=k=>S[k]?.winner?.ime||null;
+  const sampion=`<div class="po-champ"><span>🏆</span><span>${W('F')?poEsc(W('F')):'???'}</span></div>`;
+  const bronza=`<div class="po-bronze"><span>🥉</span><span>${W('3M')?poEsc(W('3M')):'???'}</span></div>`;
+  if(!mob){
+    const kol=(naziv,keys)=>`<div class="pob-col"><div class="pob-title">${naziv}</div><div class="pob-list">${keys.map(k=>poKartica(S,k,ed)).join('')}</div></div>`;
+    return `<div class="pob-wrap"><div class="pob">
+        ${kol('Osmina finala',PO_RUNDE[0].keys)}${kol('Četvrtfinale',PO_RUNDE[1].keys)}${kol('Polufinale',PO_RUNDE[2].keys)}
+        <div class="pob-col"><div class="pob-title">Finale</div><div class="pob-list pob-fin">${poKartica(S,'F',ed)}<div><div class="pob-sub">Pobednik</div>${sampion}</div></div></div>
+      </div>
+      <div class="pob-3m"><div class="pob-title" style="color:rgba(255,200,0,0.6);padding:0">Meč za 3. mesto</div>${poKartica(S,'3M',ed)}<div class="po-arrow">→</div>${bronza}</div>
+    </div>`;
+  }
+  if(!PO_MOB_RUNDA){
+    const otv=PO_RUNDE.find(r=>r.keys.some(k=>poOtvorena(S,k)));
+    PO_MOB_RUNDA=otv?otv.id:(W('F')?'F':'O');
+  }
+  const r=PO_RUNDE.find(x=>x.id===PO_MOB_RUNDA)||PO_RUNDE[0];
+  const tabs=`<div class="pom-tabs">${PO_RUNDE.map(x=>`<button class="pom-tab${x.id===r.id?' on':''}" onclick="poMobIzaberi('${x.id}')">${x.tab}${x.keys.some(k=>poOtvorena(S,k))?'<span class="pom-dot"></span>':''}</button>`).join('')}</div>`;
+  const lista=r.id==='F'
+    ?`<div class="pob-title">Finale</div>${poKartica(S,'F',ed)}${sampion}<div class="pob-title" style="margin-top:14px;color:rgba(255,200,0,0.6)">Meč za 3. mesto</div>${poKartica(S,'3M',ed)}${bronza}`
+    :`<div class="pob-title">${r.naziv}</div>`+r.keys.map(k=>poKartica(S,k,ed)).join('');
+  return `<div class="pom">${tabs}<div class="pom-list">${lista}</div></div>`;
+}
+function poMobIzaberi(id){
+  PO_MOB_RUNDA=id; poRender();
+  const t=document.getElementById('tab-playoff'); if(t) window.scrollTo({top:Math.max(0,t.offsetTop-10)});
+}
+window.addEventListener('resize',()=>{
+  const m=window.innerWidth<=700, t=document.getElementById('tab-playoff');
+  if(PO_MOBILNI!==null&&m!==PO_MOBILNI&&t&&t.classList.contains('on')) poRender();
+});
+
+function poRender(){renderAdminPlayoff();}
+function renderAdminPlayoff(){
+  const el=document.getElementById('admin-playoff-bracket');
+  if(!el) return;
+  if(calcTableAdmin().length<8){el.innerHTML='<div class="empty">Potrebno je najmanje 8 igrača u tabeli</div>';return;}
+  el.innerHTML=poBoardHtml(PO,true);
+}
+// Dugme ispod kolone: ✓ kad ima nesnimljenih izmena, × kad je rezultat snimljen
+function poDirty(key,k){
+  const g=PO[key]?.games[k-1];
+  const a=document.getElementById(`po-${key}-${k}-a`)?.value, b=document.getElementById(`po-${key}-${k}-b`)?.value;
+  const btn=document.getElementById(`po-btn-${key}-${k}`); if(!btn) return;
+  const saved=!!g&&String(g.a)===a&&String(g.b)===b;
+  const wasSaved=btn.classList.contains('po-x');
+  if(saved!==wasSaved) btn.outerHTML=poBtnHtml(key,k,saved);
+}
+
+buildStarPick();
+loadAll();
+
+let activeAdminId = null;
+function setActiveAdmin(id){
+  if(activeAdminId){
+    const prev=document.getElementById('card-'+activeAdminId);
+    if(prev) prev.style.outline='';
+  }
+  activeAdminId=id;
+  const row=document.getElementById('card-'+id);
+  if(row) row.style.outline='1px solid rgba(173,255,47,0.4)';
+  checkAdminBtn();
+}
+function checkAdminBtn(){
+  const btn=document.getElementById('admin-float-btn');
+  if(!btn) return;
+  const isMobile=window.innerWidth<=700;
+  if(!isMobile||!activeAdminId){btn.style.display='none';return;}
+  const hv=document.getElementById('h-'+activeAdminId)?.value;
+  const av=document.getElementById('a-'+activeAdminId)?.value;
+  btn.style.display=(hv!==''&&av!=='')?'block':'none';
+}
+async function saveActiveAdmin(){
+  if(!activeAdminId) return;
+  await sacuvajRezultat(activeAdminId);
+  activeAdminId=null;
+  document.getElementById('admin-float-btn').style.display='none';
+}
+</script>
+<div id="admin-float-btn" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:100;padding:12px 16px;background:linear-gradient(transparent,rgba(7,9,15,0.95) 30%);pointer-events:none">
+  <button onclick="saveActiveAdmin()" style="width:100%;padding:14px;background:var(--green);color:#07090f;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:18px;letter-spacing:2px;cursor:pointer;pointer-events:all">SNIMI REZULTAT</button>
+</div>
+</body>
+</html>
