@@ -205,6 +205,9 @@
   .rg-ch { display: inline-block; margin-left: 4px; transition: transform 0.2s; }
   .rg.zatv .rg-ch { transform: rotate(-90deg); }
   .rg.zatv .mrow { display: none; }
+  .rg.grp .rg-ch { transform: rotate(-90deg); }
+  .rg.grp.otv .rg-ch { transform: none; }
+  .rg.grp.otv { margin-bottom: 6px; }
   .rgh { background: var(--surf2); padding: 10px 16px; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600; color: var(--muted2); display: flex; justify-content: space-between; align-items: center; }
   .rgb { font-size: 12px; background: rgba(255,255,255,0.05); padding: 2px 9px; border-radius: 10px; }
   .mrow { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -751,6 +754,14 @@ function mecVreme(m){
 
 // ── SVG star renderer ──────────────────────────────────────────────────────
 // Returns inline SVG stars (full, half, empty). Size ~12px tall.
+// Kratko ime za kartice na Pregledu i baner: 3+ reči → prve dve (Nemanja Šili, Goran Vojnic);
+// ako je i dalje duže od 16 znakova, prezime se skraćuje (Veselin Radosavljević → Veselin Rad.)
+function kratkoIme(ime){
+  const w=String(ime||'').trim().split(/\s+/);
+  let t=w.slice(0,2).join(' ');
+  if(t.length>16 && w.length>1) t=w[0]+' '+w[1].slice(0,3)+'.';
+  return t||'?';
+}
 function starsHtml(v, size) {
   v = parseFloat(v) || 3;
   size = size || 12;
@@ -886,7 +897,7 @@ function tab(name, btn) {
   if(name==='playoff') requestAnimationFrame(()=>renderPlayoff());
   document.body.classList.toggle('po-wide', name==='playoff');
   decoPostavi(name);
-  if(name!=='mecevi' && (MEC_SVA || MEC_OTVORENA.size)){ MEC_SVA=false; MEC_OTVORENA.clear(); renderMecevi(); }   // zatvori sva kola tek kad se napusti tab
+  if(name!=='mecevi' && (MEC_SVA || MEC_OTVORENA.size || MEC_GRUPE.size)){ MEC_SVA=false; MEC_OTVORENA.clear(); MEC_GRUPE.clear(); renderMecevi(); }   // zatvori sva kola tek kad se napusti tab
   // aktivni tab uvek vidljiv u navigaciji na telefonu
   const ni=btn.parentElement;
   if(ni && ni.scrollWidth>ni.clientWidth) ni.scrollTo({left: btn.offsetLeft - ni.clientWidth/2 + btn.offsetWidth/2, behavior:'smooth'});
@@ -1033,12 +1044,12 @@ function render() {
       <div class="rteams">
         <div class="rplayer"><div class="rpt">
           <div class="rp-stars">${starsHtml(d?.zvezde||3,9)}</div>
-          <div class="rp-name${dl}" data-igrac="${d?.id||''}">${d?.ime||'?'}</div>
+          <div class="rp-name${dl}" data-igrac="${d?.id||''}" title="${d?.ime||''}">${kratkoIme(d?.ime)}</div>
         </div></div>
         <div class="rvs-mid"><span class="rscore" data-duel="${m.domacin}-${m.gost}" title="Međusobni dueli">${m.gol_domacin}<i>:</i>${m.gol_gost}</span></div>
         <div class="rplayer"><div class="rpt">
           <div class="rp-stars">${starsHtml(g?.zvezde||3,9)}</div>
-          <div class="rp-name${gl}" data-igrac="${g?.id||''}">${g?.ime||'?'}</div>
+          <div class="rp-name${gl}" data-igrac="${g?.id||''}" title="${g?.ime||''}">${kratkoIme(g?.ime)}</div>
         </div></div>
       </div>
       <div class="rkolo">${m._label||('Kolo '+m.kolo)}</div>
@@ -1072,12 +1083,12 @@ function render() {
       <div class="rteams">
         <div class="rplayer"><div class="rpt">
           <div class="rp-stars">${starsHtml(d?.zvezde||3,9)}</div>
-          <div class="rp-name" data-igrac="${d?.id||''}">${d?.ime||'?'}</div>
+          <div class="rp-name" data-igrac="${d?.id||''}" title="${d?.ime||''}">${kratkoIme(d?.ime)}</div>
         </div></div>
         <div class="rvs-mid"><span class="rvs" data-duel="${m.domacin}-${m.gost}" title="Međusobni dueli">vs</span></div>
         <div class="rplayer"><div class="rpt">
           <div class="rp-stars">${starsHtml(g?.zvezde||3,9)}</div>
-          <div class="rp-name" data-igrac="${g?.id||''}">${g?.ime||'?'}</div>
+          <div class="rp-name" data-igrac="${g?.id||''}" title="${g?.ime||''}">${kratkoIme(g?.ime)}</div>
         </div></div>
       </div>
       <div class="rkolo">Kolo ${m.kolo}${Math.max(znZaost(m.domacin),znZaost(m.gost))?`<div class="rzaost">zaostaje ${Math.max(znZaost(m.domacin),znZaost(m.gost))}</div>`:''}</div>
@@ -1098,9 +1109,9 @@ function render() {
     const esc=t=>String(t??'').replace(/&/g,'&amp;').replace(/</g,'&lt;');
     hp.innerHTML=`
       <button class="hs" onclick="goTab('mecevi')"><div class="hs-l">Odigrano</div><div class="hs-v"><b>${odig}</b> / ${total||'—'}</div><div class="hs-bar"><div style="width:${pct}%"></div></div></button>
-      <button class="hs" onclick="goTab('tabela')"><div class="hs-l">Lider</div><div class="hs-v">${lider?esc(lider.ime):'—'}</div><div class="hs-s">${lider?mn(lider.Pts,'bod','boda','bodova'):'čeka se prvo kolo'}</div></button>
-      <button class="hs" onclick="goTab('strelci')"><div class="hs-l">Najbolji napad</div><div class="hs-v">${napad&&napad.GF?esc(napad.ime):'—'}</div><div class="hs-s">${napad&&napad.GF?mn(napad.GF,'gol','gola','golova'):'još nema golova'}</div></button>
-      <button class="hs" onclick="goTab('tabela')"><div class="hs-l">Najbolja odbrana</div><div class="hs-v">${odbrana?esc(odbrana.ime):'—'}</div><div class="hs-s">${odbrana?mn(odbrana.GA,'gol','gola','golova'):'čeka se prvo kolo'}</div></button>`;
+      <button class="hs" onclick="goTab('tabela')"><div class="hs-l">Lider</div><div class="hs-v" title="${lider?esc(lider.ime):''}">${lider?esc(kratkoIme(lider.ime)):'—'}</div><div class="hs-s">${lider?mn(lider.Pts,'bod','boda','bodova'):'čeka se prvo kolo'}</div></button>
+      <button class="hs" onclick="goTab('strelci')"><div class="hs-l">Najbolji napad</div><div class="hs-v" title="${napad?esc(napad.ime):''}">${napad&&napad.GF?esc(kratkoIme(napad.ime)):'—'}</div><div class="hs-s">${napad&&napad.GF?mn(napad.GF,'gol','gola','golova'):'još nema golova'}</div></button>
+      <button class="hs" onclick="goTab('tabela')"><div class="hs-l">Najbolja odbrana</div><div class="hs-v" title="${odbrana?esc(odbrana.ime):''}">${odbrana?esc(kratkoIme(odbrana.ime)):'—'}</div><div class="hs-s">${odbrana?mn(odbrana.GA,'gol','gola','golova'):'čeka se prvo kolo'}</div></button>`;
   }
 
   renderMecevi();
@@ -1164,7 +1175,7 @@ function renderMecevi(){
       }
       first=kolaKeys.slice(0,n); rest=kolaKeys.slice(n);
     }
-    let mh=first.map(k=>buildKolo(k,kola[k],igM)).join('');
+    let mh=kolaHtml(first,kola,igM);
     if(rest.length) mh+=`<div id="lazy-more" style="text-align:center;padding:1.5rem"><button onclick="loadMoreKola()" style="background:none;border:1px solid var(--border2);border-radius:8px;color:var(--muted);padding:8px 20px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer">Učitaj još kola (${rest.length} preostalo) ↓</button></div>`;
     document.getElementById('mecevi-wrap').innerHTML=mh||'<div class="empty" style="padding:2rem">Nema mečeva</div>';
     window._lzK=rest; window._lzD=kola; window._lzI=igM;
@@ -1178,10 +1189,36 @@ function loadMoreKola(){
   MEC_SVA = true;
   const rest=window._lzK||[], kola=window._lzD||{}, igM=window._lzI||{};
   document.getElementById('lazy-more')?.remove();
-  document.getElementById('mecevi-wrap').insertAdjacentHTML('beforeend', rest.map(k=>buildKolo(k,kola[k],igM)).join(''));
+  document.getElementById('mecevi-wrap').insertAdjacentHTML('beforeend', kolaHtml(rest,kola,igM));
   window._lzK=[];
 }
 
+// Uzastopna potpuno odigrana kola (2 ili više) spajaju se u jedan red "✓ Kola 1–6"; klik ih otvara
+const MEC_GRUPE = new Set();
+function kolaHtml(keys,kola,igM){
+  const gotovo=k=>kola[k].length>0&&kola[k].every(m=>m.gol_domacin!==null);
+  let h='', i=0;
+  while(i<keys.length){
+    if(gotovo(keys[i])){
+      let j=i; while(j+1<keys.length&&gotovo(keys[j+1])) j++;
+      if(j>i){
+        const grp=keys.slice(i,j+1), gid=grp[0]+'-'+grp[grp.length-1];
+        const otv=MEC_GRUPE.has(gid), br=grp.reduce((a,k)=>a+kola[k].length,0);
+        h+=`<div class="rg done grp${otv?' otv':''}" id="grp-${gid}"><div class="rgh" onclick="toggleGrupa('${gid}')"><span>✓ Kola ${grp[0]}–${grp[grp.length-1]}</span><span class="rgb">${br}/${br} odigrano <span class="rg-ch">▾</span></span></div></div>`;
+        if(otv) h+=grp.map(k=>buildKolo(k,kola[k],igM)).join('');
+        i=j+1; continue;
+      }
+    }
+    h+=buildKolo(keys[i],kola[keys[i]],igM); i++;
+  }
+  return h;
+}
+function toggleGrupa(gid){
+  const [a,b]=gid.split('-').map(Number);
+  if(MEC_GRUPE.has(gid)){ MEC_GRUPE.delete(gid); for(let k=a;k<=b;k++) MEC_OTVORENA.delete(String(k)); }
+  else { MEC_GRUPE.add(gid); for(let k=a;k<=b;k++) MEC_OTVORENA.add(String(k)); }
+  const y=window.scrollY; renderMecevi(); window.scrollTo(0,y);
+}
 function toggleKolo(k){ if(MEC_OTVORENA.has(k)) MEC_OTVORENA.delete(k); else MEC_OTVORENA.add(k); const el=document.getElementById('rg-'+k); if(el) el.classList.toggle('zatv',!MEC_OTVORENA.has(k)); }
 function buildKolo(k,ms,igM){
   const od=ms.filter(m=>m.gol_domacin!==null).length;
