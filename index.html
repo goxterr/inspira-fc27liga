@@ -109,7 +109,6 @@
   .rk-top { background: rgba(173,255,47,0.18); color: var(--green); }
   tr.po-top td { background: rgba(173,255,47,0.06); }
   tr.po-top td:first-child { box-shadow: inset 3px 0 0 rgba(173,255,47,0.7); }
-  tr.po-crta td { border-top: 2px dashed rgba(120,150,255,0.35); }
   .rkx { display: inline-flex; width: 26px; justify-content: center; color: var(--muted); font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; }
 
   /* Player cell */
@@ -1154,7 +1153,17 @@ function renderMecevi(){
     MEC_FILTER=true;
     document.getElementById('mecevi-wrap').innerHTML=kolaKeys.map(k=>buildKolo(k,kola[k],igM)).join('')||'<div class="empty" style="padding:2rem">Nema mečeva</div>';
   } else {
-    const first=MEC_SVA?kolaKeys:kolaKeys.slice(0,3), rest=MEC_SVA?[]:kolaKeys.slice(3);
+    // uvek 3 otvorena (nezavršena) kola; završena kola pre/između njih se prikazuju skupljena
+    let first=kolaKeys, rest=[];
+    if(!MEC_SVA){
+      let otv=0, n=0;
+      for(const k of kolaKeys){
+        if(otv>=3) break;
+        n++;
+        if(kola[k].some(m=>m.gol_domacin===null)) otv++;
+      }
+      first=kolaKeys.slice(0,n); rest=kolaKeys.slice(n);
+    }
     let mh=first.map(k=>buildKolo(k,kola[k],igM)).join('');
     if(rest.length) mh+=`<div id="lazy-more" style="text-align:center;padding:1.5rem"><button onclick="loadMoreKola()" style="background:none;border:1px solid var(--border2);border-radius:8px;color:var(--muted);padding:8px 20px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer">Učitaj još kola (${rest.length} preostalo) ↓</button></div>`;
     document.getElementById('mecevi-wrap').innerHTML=mh||'<div class="empty" style="padding:2rem">Nema mečeva</div>';
