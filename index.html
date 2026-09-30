@@ -1560,7 +1560,6 @@ function otvoriDuel(aId,bId){
       ${f?`<div class="du-photo"><img src="${f}" alt="${esc(ig.ime)}" onerror="this.parentNode.className='du-noph';this.parentNode.textContent='${esc(ini)}'"></div>`:`<div class="du-noph">${esc(ini)}</div>`}
       <div class="du-name">${esc(ig.ime)}</div>
       ${ig.firma?`<div class="du-firma">${esc(ig.firma)}</div>`:''}
-      <div class="du-pos">${r&&r.P>0?`${p+1}. mesto · ${r.Pts} bod.`:'još nije igrao'}</div>
       <div class="fm">${forma||'<span class="du-pos">bez forme</span>'}</div>
     </div>`;
   };
