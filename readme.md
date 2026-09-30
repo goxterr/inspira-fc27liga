@@ -100,9 +100,9 @@ Grb, baner igrača, baner Timova, isečeni fudbaleri i favicon su ugrađeni u HT
 ### Tabovi
 Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasanje (može da se sakrije iz admina)
 
-### Firma ispod imena
-- Izvor redom: `igraci.firma` iz baze → firma iz mejla (javna funkcija `kontakt_status()` vraća maskiran mejl sa domenom; `firmaIzMejla`) → lista `FIRMA_PO_IMENU` u index.html (iz mejlova sa prijave, 17 igrača). Novi igrači bez firme u bazi: admin → Igrači → "Popuni firme iz mejlova" ili ručno u izmeni igrača
-- Mali tekst sa firmom (iz mejla) ispod imena igrača: tabele (i na telefonu), Poslednji/Sledeći mečevi, Mečevi, Strelci, Fer-plej
+### Firma
+- Prikazuje se SAMO u kartici igrača i u duelu (ispod imena); u tabelama, rasporedu, rezultatima, Mečevima, Strelcima i Glasanju je nema
+- Izvor redom: `igraci.firma` iz baze → firma iz mejla (javna funkcija `kontakt_status()` vraća maskiran mejl sa domenom; `firmaIzMejla`) → lista `FIRMA_PO_IMENU`
 
 ### Zaglavlje i navigacija
 - Desktop (>900px): jedna sticky traka — grb + "FC27 LIGA" levo, tabovi (pilule) centrirani, LIVE desno; `<header>` sakriven. Traka je uvek iste širine (1240px) na svim tabovima
@@ -124,6 +124,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 ### Duel (međusobni mečevi)
 - Klik na rezultat ili "vs" (Poslednji/Sledeći mečevi), na rezultat odigranog meča ili bilo gde u redu meča (osim imena i polja za unos) na tabu Mečevi → pop-up sa slikama oba igrača, firmom, mestom u tabeli, formama, zbirom pobeda/nerešenih i golova i listom svih međusobnih mečeva (liga + playoff, odigrani i neodigrani)
 - Elementi imaju `data-duel="domacinId-gostId"`; `otvoriDuel(a,b)`
+- Slike imaju senku dole i na strani okrenutoj ka protivniku (ka VS)
 
 ### Kartica igrača (pop-up)
 - Fotografija igrača na vrhu kartice: fajl `Ime_Prezime.webp` u korenu repo-a bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
@@ -393,6 +394,16 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Firma samo u karticama; senka u duelu
+
+**Urađeno:**
+- Firma uklonjena iz tabela, rasporeda, rezultata, Mečeva, Strelaca i Glasanja — ostaje u kartici igrača i duelu
+- Duel: senka na unutrašnjoj strani obe slike (ka protivniku), donja senka nepromenjena
+
+**Fajlovi:** `index.html` + `readme.md`
+
 ---
 
 ### [30.09.2026] — Duel pop-up, firma iz mejla za sve

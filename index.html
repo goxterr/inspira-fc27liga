@@ -436,6 +436,9 @@
   .du-photo { aspect-ratio: 1; overflow: hidden; background: #0d1a14; position: relative; }
   .du-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 0%; display: block; }
   .du-photo::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 30%; background: linear-gradient(0deg, #171f33, rgba(23,31,51,0)); }
+  .du-photo::before { content: ''; position: absolute; top: 0; bottom: 0; width: 34%; z-index: 1; pointer-events: none; }
+  .du-top > .du-side:first-child .du-photo::before { right: 0; background: linear-gradient(270deg, #171f33 0%, rgba(23,31,51,0.55) 40%, rgba(23,31,51,0) 100%); }
+  .du-top > .du-side:last-child .du-photo::before { left: 0; background: linear-gradient(90deg, #171f33 0%, rgba(23,31,51,0.55) 40%, rgba(23,31,51,0) 100%); }
   .du-noph { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-style: italic; font-weight: 900; font-size: 54px; color: rgba(255,255,255,0.18); background: linear-gradient(160deg,#1c253a,#141c2c); }
   .du-name { font-family: 'Barlow Condensed', sans-serif; font-style: italic; font-weight: 900; font-size: 22px; line-height: 1.02; color: #fff; padding: 8px 10px 0; word-break: break-word; }
   .du-firma { font-size: 12.5px; font-weight: 600; color: var(--teal); margin-top: 2px; }
@@ -974,7 +977,7 @@ function tblHtml(rows, forma, showLegend=true, limit=0, mini=false) {
       <td>
         <div class="pstars">${starsHtml(r.zvezde||3,11)}</div>
         <div class="pn"><span data-igrac="${r.id}">${r.ime}</span>${medaljaHtml(r)}</div>
-        <div class="pd">${r.firma||''}</div>
+        <div class="pd">${r.odeljenje||''}</div>
       </td>
       ${forma?`<td class="hm"><div class="fm">${fm||'—'}</div></td>`:''}${mini?`<td class="mob-only"><div class="fm">${fm||'—'}</div></td>`:''}
       <td class="c hm">${r.P}</td><td class="c${mh}">${r.W}</td><td class="c${mh}">${r.D}</td><td class="c${mh}">${r.L}</td>
@@ -1023,12 +1026,12 @@ function render() {
       <div class="rteams">
         <div class="rplayer"><div class="rpt">
           <div class="rp-stars">${starsHtml(d?.zvezde||3,9)}</div>
-          <div class="rp-name${dl}" data-igrac="${d?.id||''}">${d?.ime||'?'}</div>${d?.firma?`<div class="rp-firma">${d.firma}</div>`:''}
+          <div class="rp-name${dl}" data-igrac="${d?.id||''}">${d?.ime||'?'}</div>
         </div></div>
         <div class="rvs-mid"><span class="rscore" data-duel="${m.domacin}-${m.gost}" title="Međusobni dueli">${m.gol_domacin}<i>:</i>${m.gol_gost}</span></div>
         <div class="rplayer"><div class="rpt">
           <div class="rp-stars">${starsHtml(g?.zvezde||3,9)}</div>
-          <div class="rp-name${gl}" data-igrac="${g?.id||''}">${g?.ime||'?'}</div>${g?.firma?`<div class="rp-firma">${g.firma}</div>`:''}
+          <div class="rp-name${gl}" data-igrac="${g?.id||''}">${g?.ime||'?'}</div>
         </div></div>
       </div>
       <div class="rkolo">${m._label||('Kolo '+m.kolo)}</div>
@@ -1062,12 +1065,12 @@ function render() {
       <div class="rteams">
         <div class="rplayer"><div class="rpt">
           <div class="rp-stars">${starsHtml(d?.zvezde||3,9)}</div>
-          <div class="rp-name" data-igrac="${d?.id||''}">${d?.ime||'?'}</div>${d?.firma?`<div class="rp-firma">${d.firma}</div>`:''}
+          <div class="rp-name" data-igrac="${d?.id||''}">${d?.ime||'?'}</div>
         </div></div>
         <div class="rvs-mid"><span class="rvs" data-duel="${m.domacin}-${m.gost}" title="Međusobni dueli">vs</span></div>
         <div class="rplayer"><div class="rpt">
           <div class="rp-stars">${starsHtml(g?.zvezde||3,9)}</div>
-          <div class="rp-name" data-igrac="${g?.id||''}">${g?.ime||'?'}</div>${g?.firma?`<div class="rp-firma">${g.firma}</div>`:''}
+          <div class="rp-name" data-igrac="${g?.id||''}">${g?.ime||'?'}</div>
         </div></div>
       </div>
       <div class="rkolo">Kolo ${m.kolo}${Math.max(znZaost(m.domacin),znZaost(m.gost))?`<div class="rzaost">zaostaje ${Math.max(znZaost(m.domacin),znZaost(m.gost))}</div>`:''}</div>
@@ -1164,7 +1167,6 @@ function buildKolo(k,ms,igM){
             <span class="dg-badge dg-d">D</span>
             <div class="mname" data-igrac="${d?.id||''}">${d?.ime||'?'}</div>
           </div>
-          ${d?.firma?`<div class="mdept">${d.firma}</div>`:''}
         </div>
         ${pl
           ?`<div class="mbox mplayed" data-duel="${m.domacin}-${m.gost}" title="Međusobni dueli">${m.gol_domacin} : ${m.gol_gost}</div>`
@@ -1181,7 +1183,6 @@ function buildKolo(k,ms,igM){
             <div class="mname" data-igrac="${g?.id||''}">${g?.ime||'?'}</div>
             <span class="dg-badge dg-g">G</span>
           </div>
-          ${g?.firma?`<div class="mdept">${g.firma}</div>`:''}
         </div>
       </div>
     </div>`;
@@ -1532,7 +1533,7 @@ function renderFerPlej(){
   el.innerHTML=`<div class="fp-prog">${FP_VERIFIKACIJA?'Potvrđenih glasova':'Glasalo'}: <b>${potv}</b> od ${IG.length}</div><div class="fp-list">${svi.map(i=>{
     const st=FP_STATUS[i.id]; // true = potvrđen, false = čeka potvrdu, undefined = nije glasao
     const msg=FP_PORUKE[i.id];
-    const imeHtml=`<div class="fp-name"><div class="pstars">${starsHtml(i.zvezde||3,10)}</div>${esc(i.ime)}${i.firma?`<span class="fp-firma">${esc(i.firma)}</span>`:''}${st===false?'<span class="fp-ceka">✉ čeka potvrdu</span>':''}${st===true&&!FP_VERIFIKACIJA?'<span class="fp-ceka" style="color:var(--green)">✓ glasao</span>':''}${msg?`<div class="fp-msg${msg.err?' err':''}">${esc(msg.t)}</div>`:''}</div>`;
+    const imeHtml=`<div class="fp-name"><div class="pstars">${starsHtml(i.zvezde||3,10)}</div>${esc(i.ime)}${st===false?'<span class="fp-ceka">✉ čeka potvrdu</span>':''}${st===true&&!FP_VERIFIKACIJA?'<span class="fp-ceka" style="color:var(--green)">✓ glasao</span>':''}${msg?`<div class="fp-msg${msg.err?' err':''}">${esc(msg.t)}</div>`:''}</div>`;
     if(st===true && FP_VERIFIKACIJA) return `<div class="fp-row done">${imeHtml}<span></span><span class="fp-ok">✓ Glasao</span></div>`;
     const izb=FP_IZBOR[i.id]||'';
     return `<div class="fp-row${st===true?' done':''}">${imeHtml}
@@ -1607,7 +1608,7 @@ function renderStrelci(){
       <div class="sinfo">
         <div class="sstars">${starsHtml(r.zvezde||3,11)}</div>
         <div class="sname" data-igrac="${r.id}">${r.ime}</div>
-        <div class="sdept">${r.firma||''}</div>
+        <div class="sdept">${r.odeljenje||''}</div>
       </div>
       <div class="sbar-wrap">
         <div class="sbar-sub">${r.GF} dati / ${r.GA} primljeni</div>
