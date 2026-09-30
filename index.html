@@ -1277,12 +1277,12 @@ function pravilaHtml(tekst){
 // ── Kartica igrača (klik na ime bilo gde na sajtu) ──
 // Fotografije su u korenu repo-a (pored index.html) — ime fajla = ime igrača bez kvačica, sa _ (npr. Goran_Bilic.webp).
 // Redosled imena nije bitan (Boris_Zmaher = Žmaher Boris). Nova slika: dovoljno je dodati fajl Ime_Prezime.webp pored index.html.
-const FOTO_IGRACA = ["Bojan_Zmijanjac", "Boris_Zmaher", "Dalibor_Birkas", "Danijel_Berkes", "Dejan_Bodiroga", "Dragan_Belegic", "Goran_Bilic", "Goran_Jankovic", "Goran_Vojnic_Hajduk", "Janos_Zedi", "Milenko_Jaric", "Milos_Cetina", "Nemanja_Sili_Todorovic", "Nenad_Gojkovic", "Srdjan_Mutlak", "Tamas_Horvat", "Veselin_Radosavljevic", "Vukasin_Plavsic", "Zoran_Grcic"];
+const FOTO_IGRACA = ["Bojan_Zmijanjac", "Boris_Zmaher", "Dalibor_Birkas", "Danijel_Berkes", "Dejan_Bodiroga", "Dragan_Belegic", "Filip_Tunguz", "Goran_Bilic", "Goran_Jankovic", "Goran_Vojnic_Hajduk", "Janos_Zedi", "Milenko_Jaric", "Milos_Cetina", "Nemanja_Sili_Todorovic", "Nenad_Gojkovic", "Srdjan_Mutlak", "Tamas_Horvat", "Veselin_Radosavljevic", "Vukasin_Plavsic", "Zoran_Grcic"];
 function kljucImena(t){
   return String(t||'').replace(/[đĐ]/g,'dj').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().split(' ').filter(Boolean).sort().join(' ');
 }
-const FOTO_MAPA = {}; const FOTO_VERZIJA = '3';   // povećati kad se slike zamene, da browser ne prikazuje stare
+const FOTO_MAPA = {}; const FOTO_VERZIJA = '4';   // povećati kad se slike zamene, da browser ne prikazuje stare
 FOTO_IGRACA.forEach(f=>FOTO_MAPA[kljucImena(f.replace(/_/g,' '))]=f+'.webp?v='+FOTO_VERZIJA);
 function fotoIgraca(ime){
   if(FOTO_MAPA[kljucImena(ime)]) return FOTO_MAPA[kljucImena(ime)];
