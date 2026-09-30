@@ -51,6 +51,8 @@
   .bulk-tag.dop{color:var(--teal)}
   .chip-mail{font-size:12px;cursor:default;opacity:0.85}
   .chip-mail.nema{cursor:pointer;color:var(--yellow);opacity:1}
+  .fp-adm-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surf2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:14px}
+  .fp-adm-row b{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--green);margin-left:auto}
   .bulk-tag{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);flex-shrink:0}
   .btn{padding:9px 18px;border:1px solid var(--border2);border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:none;color:#fff;transition:all 0.2s;white-space:nowrap}
   .btn:hover{background:var(--surf2)}
@@ -250,6 +252,7 @@
   <button class="tab" onclick="showTab('rezultati',this)">Rezultati</button>
   <button class="tab" onclick="showTab('playoff',this)">Playoff</button>
   <button class="tab" onclick="showTab('pravila',this)">Pravila</button>
+  <button class="tab" onclick="showTab('ferplej',this)">Fer-plej</button>
   <button class="tab" onclick="showTab('log',this)">Log</button>
 </div>
 <main>
@@ -291,6 +294,11 @@
     <div style="margin-top:1rem">
       <button class="btn" onclick="resetujPlayoff()" style="color:var(--red);border-color:rgba(255,64,96,0.3)">× Resetuj ceo playoff</button>
     </div>
+  </div>
+
+  <div id="tab-ferplej" class="section">
+    <div class="stitle">Fer-plej glasanje</div>
+    <div id="fp-admin"><div class="empty">Učitavanje...</div></div>
   </div>
 
   <div id="tab-pravila" class="section">
@@ -571,6 +579,7 @@ function showTab(t,btn){
   document.getElementById('tab-'+t).classList.add('on');btn.classList.add('on');
   document.body.classList.toggle('po-wide',t==='playoff'||t==='pravila');
   if(t==='pravila') loadPravila();
+  if(t==='ferplej') loadFerPlejAdmin();
   if(t==='playoff') renderAdminPlayoff();
   if(t==='log') loadLog();
 }
@@ -874,6 +883,22 @@ function renderIgraci(){
   </div>`).join('');
 }
 
+// ── Fer-plej (admin): rezultati i ko je glasao ──
+async function loadFerPlejAdmin(){
+  const el=document.getElementById('fp-admin'); if(!el) return;
+  const[r,st]=await Promise.all([db.rpc('fp_rezultati'),db.rpc('fp_status')]);
+  if(r.error||st.error){el.innerHTML='<div class="empty">Fer-plej glasanje još nije podešeno u bazi — pokreni fajl 03-fer-plej.sql u Supabase SQL Editoru.</div>';return;}
+  const igM={};IG.forEach(i=>igM[i.id]=i);
+  const potv=(st.data||[]).filter(x=>x.potvrdjen), ceka=(st.data||[]).filter(x=>!x.potvrdjen);
+  const bezMejla=IG.filter(i=>!KONTAKT[i.id]);
+  el.innerHTML=`
+    <div style="font-size:14px;color:var(--muted);margin-bottom:14px">Glasalo: <b style="color:#fff">${potv.length}</b> od ${IG.length} igrača</div>
+    <div class="stitle" style="font-size:15px">Rezultati</div>
+    ${(r.data||[]).length?(r.data||[]).map((x,k)=>`<div class="fp-adm-row"><span style="color:var(--muted);width:20px">${k+1}.</span>${escH(igM[x.za_id]?.ime||'?')}<b>${x.glasova}</b></div>`).join(''):'<div class="empty" style="padding:0.5rem 0">Još nema potvrđenih glasova</div>'}
+    <div class="stitle" style="font-size:15px;margin-top:18px">Glasali</div>
+    <div class="chips">${IG.map(i=>{const s=(st.data||[]).find(x=>x.glasac_id===i.id);return `<div class="chip">${escH(i.ime)} <span style="font-size:12px;color:${s?(s.potvrdjen?'var(--green)':'var(--yellow)'):'var(--muted)'}">${s?(s.potvrdjen?'✓ glasao':'✉ čeka potvrdu'):'—'}</span></div>`;}).join('')}</div>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" onclick="loadFerPlejAdmin()">Osveži</button></div>`;
+}
 // ── Raspored: dupli round-robin ───────────────────────────────────────────
 async function generisiRaspored(){
   const potvrda = confirm(

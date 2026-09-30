@@ -86,7 +86,8 @@ repo/
 ├── readme.md                     ← ovaj fajl
 ├── Ime_Prezime.webp …            ← fotografije igrača za karticu (npr. Goran_Bilic.webp)
 ├── 1.webp … 4.webp               ← nalepnice medalja (prošlogodišnji plasman)
-├── 00-nova-baza.sql              ← sve tabele, dozvole i funkcije (Supabase)
+├── 00-nova-baza.sql              ← sve tabele, dozvole i funkcije (Supabase), uključujući fer-plej
+├── 03-fer-plej.sql               ← samo fer-plej (za bazu koja je već napravljena)
 └── 02-nova-sezona-brisanje.sql   ← brisanje podataka za novu sezonu
 ```
 Grb, baner igrača, baner Timova, isečeni fudbaleri i favicon su ugrađeni u HTML (`data:` URI).
@@ -97,7 +98,10 @@ Grb, baner igrača, baner Timova, isečeni fudbaleri i favicon su ugrađeni u HT
 ## Javni sajt — index.html
 
 ### Tabovi
-Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
+Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Fer-plej
+
+### Firma ispod imena
+- Mali tekst sa firmom (iz mejla) ispod imena igrača: tabele (i na telefonu), Poslednji/Sledeći mečevi, Mečevi, Strelci, Fer-plej
 
 ### Zaglavlje i navigacija
 - Desktop (>900px): jedna sticky traka — grb + "FC27 LIGA" levo, tabovi (pilule) centrirani, LIVE desno; `<header>` sakriven. Traka je uvek iste širine (1240px) na svim tabovima
@@ -151,6 +155,12 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
 - Tekst iz tabele `pravila` (fallback `PRAVILA_DEFAULT`), `pravilaHtml()` — isti kod u oba fajla
 - Formatiranje: 1. linija naslov, `N. NASLOV VELIKIM` sekcija, `* `/`- ` lista, `1. tekst` numerisana, red velikim slovima istaknut
 
+### Fer-plej
+- Lista svih igrača (abecedno), pored svakog padajući meni sa svim ostalima (bez sebe) i dugme Glasaj
+- TEST REŽIM (`FP_VERIFIKACIJA = false`): glas se upisuje odmah preko SQL funkcije `fp_glasaj` i može da se promeni ("Promeni glas"); javno se vidi samo KO je glasao (`fp_status`)
+- Finalni režim (`true`) sa potvrdom mejlom: kod postoji, ali traži Edge funkciju `fer-plej-glas` + Brevo (nije podešeno)
+- SQL: `03-fer-plej.sql` (tabela `fp_glasovi`, funkcije `fp_status`, `fp_rezultati`, `fp_glasaj`, `fp_potvrdi`); bez njega tab piše "Glasanje još nije pokrenuto"
+
 ### Fudbaleri sa strane (dekoracija)
 - 3 isečena igrača (WebP, `DECO_IGRACI`), po jedan levo i desno u sredini bočnog prostora, iste visine; 6 kombinacija parova nasumično po tabovima (`DECO_RASPORED`, `decoPostavi()`)
 - Samo na ekranima >1500px; nema ih na Playoffu i telefonu
@@ -161,7 +171,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila
 Adresa: `/admin` (nema login — TODO)
 
 ### Tabovi
-Igrači · Rezultati · Playoff · Pravila · Log
+Igrači · Rezultati · Playoff · Pravila · Fer-plej · Log
 
 ### Igrači — unos
 - Čuvaju se SAMO: Ime i prezime, Mejl, Rang (zvezdice)
@@ -185,6 +195,9 @@ Igrači · Rezultati · Playoff · Pravila · Log
 
 ### Pravila
 - Tekst + pregled uživo; Sačuvaj / Poništi izmene; upozorenje pri zatvaranju sa nesačuvanim izmenama
+
+### Fer-plej
+- Broj glasova, rezultati (`fp_rezultati`), ko je glasao
 
 ### Log
 - Istorija svih izmena sa filterima i napomenama
@@ -371,6 +384,26 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Firma ispod imena, Fer-plej vraćen (test režim)
+
+**Urađeno:**
+- Firma malim fontom ispod imena igrača na svim listama
+- Fer-plej tab ponovo na sajtu i u adminu (glas bez mejla, može da se promeni)
+- `03-fer-plej.sql` (i dodato u `00-nova-baza.sql`)
+
+**Fajlovi:** `index.html` + `admin.html` + `readme.md` + `03-fer-plej.sql` + `00-nova-baza.sql` + `02-nova-sezona-brisanje.sql`
+
+---
+
+### [30.09.2026] — Nove fotografije: Filip Tunguz, Goran Bilić
+
+**Urađeno:**
+- `Filip_Tunguz.webp` (nov igrač) i nova `Goran_Bilic.webp`; `FOTO_VERZIJA` = 4
+
+**Fajlovi:** `index.html` + `Filip_Tunguz.webp` + `Goran_Bilic.webp` + `readme.md`
+
 ---
 
 ### [30.09.2026] — Trofej u tabeli, kola ostaju otvorena
