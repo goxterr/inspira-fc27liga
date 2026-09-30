@@ -160,7 +160,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 - Lista svih igrača (abecedno), pored svakog padajući meni sa svim ostalima (bez sebe) i dugme Glasaj
 - TEST REŽIM (`FP_VERIFIKACIJA = false`): glas se upisuje odmah preko SQL funkcije `fp_glasaj` i može da se promeni ("Promeni glas"); javno se vidi samo KO je glasao (`fp_status`)
 - Finalni režim (`true`) sa potvrdom mejlom: kod postoji, ali traži Edge funkciju `fer-plej-glas` + Brevo (nije podešeno)
-- SQL: `03-fer-plej.sql` (tabela `fp_glasovi`, funkcije `fp_status`, `fp_rezultati`, `fp_glasaj`, `fp_potvrdi`); bez njega tab piše "Glasanje još nije pokrenuto"
+- SQL: `03-fer-plej.sql` (tabela `fp_glasovi`, funkcije `fp_status`, `fp_rezultati`, `fp_glasaj`, `fp_potvrdi`, `fp_reset`); bez njega tab piše "Glasanje još nije pokrenuto"
 
 ### Fudbaleri sa strane (dekoracija)
 - 3 isečena igrača (WebP, `DECO_IGRACI`), po jedan levo i desno u sredini bočnog prostora, iste visine; 6 kombinacija parova nasumično po tabovima (`DECO_RASPORED`, `decoPostavi()`)
@@ -186,6 +186,7 @@ Igrači · Rezultati · Playoff · Pravila · Glasanje · Log
 - Na čipu: ✉ = ima mejl (maskiran u tooltip-u), +✉ = nema (klik za dodavanje)
 - Izmena postojećeg mejla samo preko SQL-a: `update igraci_kontakt set email='...' where igrac_id=...;`
 - Generiši raspored (dupli krug) — briše sve mečeve i pravi nove
+- "Obriši sve igrače" (dve potvrde) — briše sve igrače; baza automatski briše i njihove mečeve, rezultate, playoff, mejlove i glasove (cascade); log `IGRACI_OBRISANI`. Istorija (Log) i pravila ostaju
 
 ### Rezultati
 - Svi / Neodigrani / Odigrani; unos i reset rezultata (samo cifre)
@@ -199,6 +200,7 @@ Igrači · Rezultati · Playoff · Pravila · Glasanje · Log
 
 ### Glasanje
 - Prekidač "Tab Glasanje je vidljiv na sajtu" (log `GLASANJE_UKLJUCENO` / `GLASANJE_ISKLJUCENO`)
+- Dugme "Resetuj glasanje" (dve potvrde) briše sve glasove preko SQL funkcije `fp_reset()`; log `GLASANJE_RESET`
 - Broj glasova, rezultati (`fp_rezultati`), ko je glasao
 
 ### Log
@@ -386,6 +388,24 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Zbirno brisanje igrača
+
+**Urađeno:**
+- Admin → Igrači: dugme "Obriši sve igrače" (sa mečevima, mejlovima i glasovima)
+
+**Fajlovi:** `admin.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Reset glasanja
+
+**Urađeno:**
+- Admin → Glasanje: dugme "Resetuj glasanje" (briše sve glasove); SQL funkcija `fp_reset()` u `03-fer-plej.sql` i `00-nova-baza.sql`
+
+**Fajlovi:** `admin.html` + `readme.md` + `03-fer-plej.sql` + `00-nova-baza.sql`
+
 ---
 
 ### [30.09.2026] — Glasanje: prekidač u adminu; firme po novom pravilu

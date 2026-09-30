@@ -179,3 +179,12 @@ begin
   return json_build_object('ok', true);
 end $$;
 grant execute on function fp_glasaj(int, int) to anon, authenticated;
+
+-- Reset glasanja (admin → Glasanje → Resetuj glasanje): briše sve glasove
+create or replace function fp_reset()
+returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  truncate fp_glasovi;
+end $$;
+grant execute on function fp_reset() to anon, authenticated;

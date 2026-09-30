@@ -63,6 +63,7 @@
   .btn{padding:9px 18px;border:1px solid var(--border2);border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:none;color:#fff;transition:all 0.2s;white-space:nowrap}
   .btn:hover{background:var(--surf2)}
   .btn-g{background:var(--green);color:#07090f;border-color:var(--green)}
+  .btn-r{color:var(--red);border-color:rgba(255,64,96,0.35)}
   .btn-g:hover{opacity:0.85}
   .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
   .chip-name{cursor:pointer;border-bottom:1px dotted rgba(255,255,255,0.35)}
@@ -291,7 +292,10 @@
       <div id="igraci-chips" class="chips"><div class="empty" style="padding:0.5rem">Nema igrača</div></div>
       <button class="btn" style="margin-top:10px" onclick="popuniFirme()">Popuni firme iz mejlova (svim igračima)</button>
     </div>
-    <button class="btn btn-g" onclick="generisiRaspored()" style="margin-top:0.5rem">Generiši raspored (dupli krug)</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:0.5rem">
+      <button class="btn btn-g" onclick="generisiRaspored()">Generiši raspored (dupli krug)</button>
+      <button class="btn btn-r" onclick="obrisiSveIgrace()">× Obriši sve igrače</button>
+    </div>
   </div>
 
   <div id="tab-playoff" class="section">
@@ -694,6 +698,18 @@ async function dopuniFirme(){
   for(const x of za){ await db.from('igraci').update({firma:x.firma}).eq('id',x.id); }
   return za.length>0;
 }
+// Zbirno brisanje: brišu se svi igrači, a sa njima (automatski) i svi njihovi mečevi, rezultati, playoff, mejlovi i glasovi
+async function obrisiSveIgrace(){
+  if(!IG.length){toast('Nema igrača');return;}
+  if(!confirm(`Obrisati SVE igrače (${IG.length})?\n\nSa njima se brišu i svi mečevi, rezultati, playoff, mejlovi i glasovi.`)) return;
+  if(!confirm('Sigurno? Ovo ne može da se vrati.')) return;
+  const ids=IG.map(i=>i.id);
+  const{error}=await db.from('igraci').delete().in('id',ids);
+  if(error){toast('Greška: '+error.message);return;}
+  await logujAkciju('IGRACI_OBRISANI',`Obrisani svi igrači (${ids.length}) sa mečevima`);
+  toast(`Obrisano igrača: ${ids.length}`);
+  loadAll();
+}
 async function popuniFirme(){
   if(!IG.length){toast('Nema igrača');return;}
   if(IG.length&&!('firma' in IG[0])){toast('U bazi nema kolone firma — pokreni SQL iz readme-a');return;}
@@ -915,6 +931,14 @@ async function sacuvajGlasanjeOnOff(on){
   await logujAkciju('GLASANJE_'+(on?'UKLJUCENO':'ISKLJUCENO'),on?'Tab Glasanje uključen na sajtu':'Tab Glasanje isključen na sajtu');
   toast(on?'Glasanje uključeno':'Glasanje isključeno');
 }
+async function resetujGlasanje(){
+  if(!confirm('Obrisati SVE glasove? Svi igrači će moći da glasaju ponovo od nule.')) return;
+  if(!confirm('Sigurno? Ovo ne može da se vrati.')) return;
+  const{error}=await db.rpc('fp_reset');
+  if(error){ toast(/fp_reset/.test(error.message||'')?'Pokreni SQL za reset (fp_reset) iz readme-a':'Greška: '+error.message); return; }
+  await logujAkciju('GLASANJE_RESET','Svi glasovi obrisani');
+  toast('Glasanje resetovano'); loadFerPlejAdmin();
+}
 async function loadFerPlejAdmin(){
   ucitajPodesavanja().then(pod=>{const on=pod.glasanje!==false;const sw=document.getElementById('sw-glasanje');if(sw)sw.checked=on;const t=document.getElementById('sw-glasanje-txt');if(t)t.textContent=on?'Tab Glasanje je vidljiv na sajtu':'Tab Glasanje je sakriven na sajtu';});
   const el=document.getElementById('fp-admin'); if(!el) return;
@@ -929,7 +953,7 @@ async function loadFerPlejAdmin(){
     ${(r.data||[]).length?(r.data||[]).map((x,k)=>`<div class="fp-adm-row"><span style="color:var(--muted);width:20px">${k+1}.</span>${escH(igM[x.za_id]?.ime||'?')}<b>${x.glasova}</b></div>`).join(''):'<div class="empty" style="padding:0.5rem 0">Još nema potvrđenih glasova</div>'}
     <div class="stitle" style="font-size:15px;margin-top:18px">Glasali</div>
     <div class="chips">${IG.map(i=>{const s=(st.data||[]).find(x=>x.glasac_id===i.id);return `<div class="chip">${escH(i.ime)} <span style="font-size:12px;color:${s?(s.potvrdjen?'var(--green)':'var(--yellow)'):'var(--muted)'}">${s?(s.potvrdjen?'✓ glasao':'✉ čeka potvrdu'):'—'}</span></div>`;}).join('')}</div>
-    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" onclick="loadFerPlejAdmin()">Osveži</button></div>`;
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap"><button class="btn" onclick="loadFerPlejAdmin()">Osveži</button><button class="btn btn-r" onclick="resetujGlasanje()">× Resetuj glasanje</button></div>`;
 }
 // ── Raspored: dupli round-robin ───────────────────────────────────────────
 async function generisiRaspored(){
