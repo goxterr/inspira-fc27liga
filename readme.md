@@ -98,7 +98,7 @@ Grb, baner igrača, baner Timova, isečeni fudbaleri i favicon su ugrađeni u HT
 ## Javni sajt — index.html
 
 ### Tabovi
-Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Fer-plej
+Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasanje (može da se sakrije iz admina)
 
 ### Firma ispod imena
 - Mali tekst sa firmom (iz mejla) ispod imena igrača: tabele (i na telefonu), Poslednji/Sledeći mečevi, Mečevi, Strelci, Fer-plej
@@ -155,7 +155,8 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Fer-p
 - Tekst iz tabele `pravila` (fallback `PRAVILA_DEFAULT`), `pravilaHtml()` — isti kod u oba fajla
 - Formatiranje: 1. linija naslov, `N. NASLOV VELIKIM` sekcija, `* `/`- ` lista, `1. tekst` numerisana, red velikim slovima istaknut
 
-### Fer-plej
+### Glasanje (fer-plej)
+- Tab se zove "Glasanje"; uključuje/isključuje se u adminu → Glasanje (prekidač). Stanje se čuva u tabeli `pravila`, red `id=2`, tekst = JSON `{"glasanje":true/false}` (bez posebne tabele); podrazumevano uključeno
 - Lista svih igrača (abecedno), pored svakog padajući meni sa svim ostalima (bez sebe) i dugme Glasaj
 - TEST REŽIM (`FP_VERIFIKACIJA = false`): glas se upisuje odmah preko SQL funkcije `fp_glasaj` i može da se promeni ("Promeni glas"); javno se vidi samo KO je glasao (`fp_status`)
 - Finalni režim (`true`) sa potvrdom mejlom: kod postoji, ali traži Edge funkciju `fer-plej-glas` + Brevo (nije podešeno)
@@ -171,13 +172,13 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Fer-p
 Adresa: `/admin` (nema login — TODO)
 
 ### Tabovi
-Igrači · Rezultati · Playoff · Pravila · Fer-plej · Log
+Igrači · Rezultati · Playoff · Pravila · Glasanje · Log
 
 ### Igrači — unos
 - Čuvaju se SAMO: Ime i prezime, Mejl, Rang (zvezdice)
 - Pojedinačno: ime, mejl, rang (Enter dodaje)
 - Zbirno: paste iz tabele — kolone Ime · Mejl · Rang; kolona sa zvezdicama (★☆) i ostale kolone se preskaču; zaglavlje i redni brojevi se ignorišu; pregled pre čuvanja; postojeći igrač → "dopuna" (dodaje mejl ako ga nema, ažurira rang); duplikati se preskaču
-- Firma se računa iz mejla (`firmaIzMejla`; poznati domeni: 4zida, Polovni automobili, Infostud, HelloWorld, Inspira grupa); igračima bez firme popunjava se automatski pri otvaranju admina
+- Firma se računa iz mejla (`firmaIzMejla`, deo posle @ bez .rs/.com; poznati domeni: 4zida, PolovniAutomobili, Infostud, HelloWorld, InspiraGrupa); igračima bez firme popunjava se automatski pri otvaranju admina; dugme "Popuni firme iz mejlova" ponovo računa firmu svima koji imaju mejl
 - Ako kolone `firma`/`plasman_prosle` ne postoje, unos radi bez njih (poruka za SQL dopunu)
 
 ### Igrači — izmena
@@ -196,7 +197,8 @@ Igrači · Rezultati · Playoff · Pravila · Fer-plej · Log
 ### Pravila
 - Tekst + pregled uživo; Sačuvaj / Poništi izmene; upozorenje pri zatvaranju sa nesačuvanim izmenama
 
-### Fer-plej
+### Glasanje
+- Prekidač "Tab Glasanje je vidljiv na sajtu" (log `GLASANJE_UKLJUCENO` / `GLASANJE_ISKLJUCENO`)
 - Broj glasova, rezultati (`fp_rezultati`), ko je glasao
 
 ### Log
@@ -384,6 +386,16 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Glasanje: prekidač u adminu; firme po novom pravilu
+
+**Urađeno:**
+- Tab Fer-plej preimenovan u "Glasanje"; admin prekidač za prikaz na sajtu (`pravila` id=2)
+- Firme: PolovniAutomobili, HelloWorld, 4zida, Infostud, InspiraGrupa; dugme "Popuni firme iz mejlova"
+
+**Fajlovi:** `index.html` + `admin.html` + `readme.md`
+
 ---
 
 ### [30.09.2026] — Firma ispod imena, Fer-plej vraćen (test režim)

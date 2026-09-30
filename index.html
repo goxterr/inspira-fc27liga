@@ -513,7 +513,7 @@
     <button class="ntab" onclick="tab('timovi',this)">Timovi</button>
     <button class="ntab" onclick="tab('playoff',this)">Playoff</button>
     <button class="ntab" onclick="tab('pravila',this)">Pravila</button>
-    <button class="ntab" onclick="tab('ferplej',this)">Fer-plej</button>
+    <button class="ntab" id="ntab-ferplej" onclick="tab('ferplej',this)">Glasanje</button>
   </div>
   <div class="live-pill nav-live"><div class="ldot"></div>LIVE</div>
   </div>
@@ -634,7 +634,7 @@
   </div>
 
   <div id="tab-ferplej" class="section">
-    <div class="panel-h">Fer-plej nagrada</div>
+    <div class="panel-h">Glasanje za fer-plej nagradu</div>
     <div class="fp-intro" id="fp-intro"></div>
     <div id="fp-poruka"></div>
     <div id="fp-wrap"><div class="loading">Učitavanje...</div></div>
@@ -659,6 +659,15 @@ const SB_URL = 'https://yvyuqxlzbvcjdogeerdu.supabase.co';
 const SB_KEY = 'sb_publishable_oE-JUQcjaJiGh13-DIUWag_YHCginrZ';
 const db = supabase.createClient(SB_URL, SB_KEY);
 let IG = [], ME = [], PO_MECEVI = [], PO_IZR = {}, PRAVILA_TEKST = null, LOG_UNOS = {};
+// Podešavanja sajta iz admina (tabela pravila, red id=2): { glasanje: true/false }
+let PODESAVANJA = {};
+function glasanjeUkljuceno(){ return PODESAVANJA.glasanje !== false; }
+function primeniPodesavanja(){
+  const b=document.getElementById('ntab-ferplej'); if(!b) return;
+  const on=glasanjeUkljuceno();
+  b.style.display = on ? '' : 'none';
+  if(!on && b.classList.contains('on')) goTab('pregled');
+}
 let FP_OK = false, FP_STATUS = {}, FP_IZBOR = {}, FP_PORUKE = {};
 // false = test režim: glas se upisuje odmah, bez mejla (SQL funkcija fp_glasaj) i može da se promeni.
 // true  = finalno: potvrda linkom na mejl (Edge funkcija fer-plej-glas). Vidi readme → Fer-plej.
@@ -767,7 +776,7 @@ async function load() {
     db.from('igraci').select('*').order('id'),
     db.from('mecevi').select('*').order('kolo').order('id'),
     db.from('mecevi').select('*').not('playoff_runda','is',null),
-    db.from('pravila').select('*').eq('id',1),
+    db.from('pravila').select('*').in('id',[1,2]),   // id 1 = tekst pravila, id 2 = podešavanja sajta (JSON)
     db.from('log').select('akcija,detalji,vreme').eq('akcija','REZULTAT_UNET').order('vreme',{ascending:false}).limit(500),
     db.rpc('fp_status')
   ]);
@@ -777,7 +786,11 @@ async function load() {
     const k=String(l.detalji||'').split(' → ')[0];
     if(k && !(k in LOG_UNOS)) LOG_UNOS[k]=Date.parse(l.vreme)||0;   // prvi = najnoviji unos
   });
-  PRAVILA_TEKST = (!d.error && d.data && d.data[0] && d.data[0].tekst) ? d.data[0].tekst : PRAVILA_DEFAULT;
+  const prRed = (!d.error && d.data) ? d.data.find(x=>x.id===1) : null;
+  PRAVILA_TEKST = (prRed && prRed.tekst) ? prRed.tekst : PRAVILA_DEFAULT;
+  const podRed = (!d.error && d.data) ? d.data.find(x=>x.id===2) : null;
+  try { PODESAVANJA = podRed && podRed.tekst ? JSON.parse(podRed.tekst) : {}; } catch(err) { PODESAVANJA = {}; }
+  primeniPodesavanja();
   IG = a.data||[];
   const norm = m=>({...m, gol_domacin: m.gol_domacin??null, gol_gost: m.gol_gost??null});
   ME = (b.data||[]).filter(m=>m.playoff_runda===null||m.playoff_runda===undefined).map(norm);
@@ -1523,7 +1536,7 @@ load().then(fpIzLinka);
     const dy = e.changedTouches[0].clientY - startY;
     if(Math.abs(dx) < 60 || Math.abs(dy) > Math.abs(dx) * 0.6) return;
     const active = document.querySelector('.ntab.on');
-    const btns = Array.from(document.querySelectorAll('.ntab'));
+    const btns = Array.from(document.querySelectorAll('.ntab')).filter(b=>b.style.display!=='none');
     const idx = btns.indexOf(active);
     const scrollable = getScrollableParent(startEl);
     // Swipe right (back) - only if inner scroll hasn't moved (user wasn't scrolling content)

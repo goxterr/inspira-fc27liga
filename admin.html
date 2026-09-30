@@ -51,6 +51,12 @@
   .bulk-tag.dop{color:var(--teal)}
   .chip-mail{font-size:12px;cursor:default;opacity:0.85}
   .chip-mail.nema{cursor:pointer;color:var(--yellow);opacity:1}
+  .sw-row{display:flex;align-items:center;gap:12px;margin:4px 0 18px;cursor:pointer;font-size:14px;font-weight:600;user-select:none;text-transform:none;letter-spacing:0;color:#fff}
+  .sw-row input{display:none}
+  .sw{width:44px;height:24px;border-radius:12px;background:var(--surf2);border:1px solid var(--border2);position:relative;transition:background .2s;flex-shrink:0}
+  .sw::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--muted);transition:all .2s}
+  .sw-row input:checked+.sw{background:rgba(173,255,47,0.25);border-color:var(--green)}
+  .sw-row input:checked+.sw::after{left:22px;background:var(--green)}
   .fp-adm-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surf2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:14px}
   .fp-adm-row b{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--green);margin-left:auto}
   .bulk-tag{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);flex-shrink:0}
@@ -252,7 +258,7 @@
   <button class="tab" onclick="showTab('rezultati',this)">Rezultati</button>
   <button class="tab" onclick="showTab('playoff',this)">Playoff</button>
   <button class="tab" onclick="showTab('pravila',this)">Pravila</button>
-  <button class="tab" onclick="showTab('ferplej',this)">Fer-plej</button>
+  <button class="tab" onclick="showTab('ferplej',this)">Glasanje</button>
   <button class="tab" onclick="showTab('log',this)">Log</button>
 </div>
 <main>
@@ -283,6 +289,7 @@
     <div class="card">
       <div class="stitle">Prijavljeni (<span id="igrac-count">0</span>)</div>
       <div id="igraci-chips" class="chips"><div class="empty" style="padding:0.5rem">Nema igrača</div></div>
+      <button class="btn" style="margin-top:10px" onclick="popuniFirme()">Popuni firme iz mejlova (svim igračima)</button>
     </div>
     <button class="btn btn-g" onclick="generisiRaspored()" style="margin-top:0.5rem">Generiši raspored (dupli krug)</button>
   </div>
@@ -297,7 +304,8 @@
   </div>
 
   <div id="tab-ferplej" class="section">
-    <div class="stitle">Fer-plej glasanje</div>
+    <div class="stitle">Glasanje (fer-plej)</div>
+    <label class="sw-row"><input type="checkbox" id="sw-glasanje" onchange="sacuvajGlasanjeOnOff(this.checked)"><span class="sw"></span><span id="sw-glasanje-txt">Tab Glasanje je vidljiv na sajtu</span></label>
     <div id="fp-admin"><div class="empty">Učitavanje...</div></div>
   </div>
 
@@ -663,7 +671,7 @@ window.addEventListener('beforeunload',e=>{if(pravilaDirty()){e.preventDefault()
 // ── Igrači ────────────────────────────────────────────────────────────────
 let KONTAKT={}, KONTAKT_OK=true, FIRMA_OK=true;
 // Firma iz mejla: deo posle @ (poznati domeni imaju lepše ime)
-const FIRME={'4zida.rs':'4zida','polovniautomobili.com':'Polovni automobili','infostud.com':'Infostud','helloworld.rs':'HelloWorld','inspiragrupa.com':'Inspira grupa'};
+const FIRME={'4zida.rs':'4zida','polovniautomobili.com':'PolovniAutomobili','infostud.com':'Infostud','helloworld.rs':'HelloWorld','inspiragrupa.com':'InspiraGrupa'};
 function firmaIzMejla(m){
   const d=String(m||'').toLowerCase().split('@').pop().replace(/^www\./,'').trim();
   if(!d||!d.includes('.')) return '';
@@ -685,6 +693,16 @@ async function dopuniFirme(){
   const za=IG.filter(i=>!i.firma&&KONTAKT[i.id]).map(i=>({id:i.id,firma:firmaIzMejla(KONTAKT[i.id])})).filter(x=>x.firma);
   for(const x of za){ await db.from('igraci').update({firma:x.firma}).eq('id',x.id); }
   return za.length>0;
+}
+async function popuniFirme(){
+  if(!IG.length){toast('Nema igrača');return;}
+  if(IG.length&&!('firma' in IG[0])){toast('U bazi nema kolone firma — pokreni SQL iz readme-a');return;}
+  const za=IG.filter(i=>KONTAKT[i.id]).map(i=>({id:i.id,ime:i.ime,firma:firmaIzMejla(KONTAKT[i.id])})).filter(x=>x.firma&&x.firma!==(IG.find(i=>i.id===x.id).firma||''));
+  for(const x of za){ const{error}=await db.from('igraci').update({firma:x.firma}).eq('id',x.id); if(error){toast('Greška: '+error.message);return;} }
+  const bez=IG.filter(i=>!KONTAKT[i.id]).length;
+  toast(`Firma ažurirana: ${za.length}`+(bez?` · bez mejla: ${bez}`:''));
+  if(za.length) await logujAkciju('IGRAC_IZMENJEN',`Firme popunjene iz mejlova (${za.length})`);
+  loadAll();
 }
 const RANGOVI=[5,4.5,4,3.5,3,2.5,2,1.5,1,0.5];
 let AM_ID=null;
@@ -884,7 +902,21 @@ function renderIgraci(){
 }
 
 // ── Fer-plej (admin): rezultati i ko je glasao ──
+// Podešavanja sajta: tabela pravila, red id=2, tekst = JSON { glasanje: true/false }
+async function ucitajPodesavanja(){
+  const{data}=await db.from('pravila').select('*').eq('id',2);
+  try{ return data&&data[0]&&data[0].tekst?JSON.parse(data[0].tekst):{}; }catch(e){ return {}; }
+}
+async function sacuvajGlasanjeOnOff(on){
+  const pod=await ucitajPodesavanja(); pod.glasanje=!!on;
+  const{error}=await db.from('pravila').upsert({id:2,tekst:JSON.stringify(pod),azurirano:new Date().toISOString()});
+  if(error){toast('Greška: '+error.message);document.getElementById('sw-glasanje').checked=!on;return;}
+  document.getElementById('sw-glasanje-txt').textContent=on?'Tab Glasanje je vidljiv na sajtu':'Tab Glasanje je sakriven na sajtu';
+  await logujAkciju('GLASANJE_'+(on?'UKLJUCENO':'ISKLJUCENO'),on?'Tab Glasanje uključen na sajtu':'Tab Glasanje isključen na sajtu');
+  toast(on?'Glasanje uključeno':'Glasanje isključeno');
+}
 async function loadFerPlejAdmin(){
+  ucitajPodesavanja().then(pod=>{const on=pod.glasanje!==false;const sw=document.getElementById('sw-glasanje');if(sw)sw.checked=on;const t=document.getElementById('sw-glasanje-txt');if(t)t.textContent=on?'Tab Glasanje je vidljiv na sajtu':'Tab Glasanje je sakriven na sajtu';});
   const el=document.getElementById('fp-admin'); if(!el) return;
   const[r,st]=await Promise.all([db.rpc('fp_rezultati'),db.rpc('fp_status')]);
   if(r.error||st.error){el.innerHTML='<div class="empty">Fer-plej glasanje još nije podešeno u bazi — pokreni fajl 03-fer-plej.sql u Supabase SQL Editoru.</div>';return;}
