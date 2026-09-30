@@ -101,6 +101,7 @@ Grb, baner igrača, baner Timova, isečeni fudbaleri i favicon su ugrađeni u HT
 Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasanje (može da se sakrije iz admina)
 
 ### Firma ispod imena
+- Izvor redom: `igraci.firma` iz baze → firma iz mejla (javna funkcija `kontakt_status()` vraća maskiran mejl sa domenom; `firmaIzMejla`) → lista `FIRMA_PO_IMENU` u index.html (iz mejlova sa prijave, 17 igrača). Novi igrači bez firme u bazi: admin → Igrači → "Popuni firme iz mejlova" ili ručno u izmeni igrača
 - Mali tekst sa firmom (iz mejla) ispod imena igrača: tabele (i na telefonu), Poslednji/Sledeći mečevi, Mečevi, Strelci, Fer-plej
 
 ### Zaglavlje i navigacija
@@ -119,6 +120,10 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 - Poslednji rezultati (5): po vremenu unosa, najnoviji prvi — `mecVreme()` = `uneto_at`, a ako ga nema → vreme iz loga `REZULTAT_UNET`; uključeni i playoff mečevi (oznaka npr. "ČF · M2")
 - Sledeći mečevi (5): igrači se ne ponavljaju; prednost igračima koji zaostaju 2+ meča ("zaostaje N"); zatim redosled kola
 - Realtime osvežavanje sa 0.9s odlaganja (`zakaziLoad`)
+
+### Duel (međusobni mečevi)
+- Klik na rezultat ili "vs" (Poslednji/Sledeći mečevi), na rezultat odigranog meča ili bilo gde u redu meča (osim imena i polja za unos) na tabu Mečevi → pop-up sa slikama oba igrača, firmom, mestom u tabeli, formama, zbirom pobeda/nerešenih i golova i listom svih međusobnih mečeva (liga + playoff, odigrani i neodigrani)
+- Elementi imaju `data-duel="domacinId-gostId"`; `otvoriDuel(a,b)`
 
 ### Kartica igrača (pop-up)
 - Fotografija igrača na vrhu kartice: fajl `Ime_Prezime.webp` u korenu repo-a bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
@@ -388,6 +393,26 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Duel pop-up, firma iz mejla za sve
+
+**Urađeno:**
+- Klik na meč (odigran ili neodigran) otvara duel: slike oba igrača, međusobni mečevi, forme, zbir
+- Firma se na sajtu računa i iz mejla (preko `kontakt_status`), pa je imaju i novi igrači (Tunguz, Belegić, Janković)
+- Mečevi: firma ispod imena (ranije je stajala pored)
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Firma ispod imena u kartici (radi i bez podatka u bazi)
+
+**Urađeno:**
+- `FIRMA_PO_IMENU` — firma za postojeće igrače kad `igraci.firma` nije upisana; firma u kartici tačno ispod imena, 14px
+
+**Fajlovi:** `index.html` + `readme.md`
+
 ---
 
 ### [30.09.2026] — Zbirno brisanje igrača
