@@ -103,6 +103,12 @@
   .rk2 { background: rgba(0,200,150,0.18); color: var(--teal); }
   .rk3 { background: rgba(255,200,0,0.18); color: var(--yellow); }
   .rk4 { background: rgba(255,140,0,0.18); color: #ff8c00; }
+  .rk-dnf { width: auto; padding: 0 6px; background: rgba(255,64,96,0.16); color: var(--red); font-size: 11px; letter-spacing: 0.5px; }
+  tr.dnf td { opacity: 0.55; }
+  tr.dnf .pn span[data-igrac] { text-decoration: line-through; text-decoration-color: rgba(255,64,96,0.7); }
+  .mbox.mdnf { color: var(--red); font-size: 14px; opacity: 0.8; }
+  .mbox.mdnf s { color: var(--muted); text-decoration-color: var(--red); }
+  .pm-dnf { font-size: 12.5px; font-weight: 800; color: var(--red); background: rgba(255,64,96,0.1); border: 1px solid rgba(255,64,96,0.35); border-radius: 999px; padding: 4px 11px; white-space: nowrap; margin-left: 8px; }
   .rk-po { background: rgba(120,150,255,0.16); color: #a9bcff; }
   tr.po-zona td { background: rgba(120,150,255,0.055); }
   tr.po-zona td:first-child { box-shadow: inset 3px 0 0 rgba(120,150,255,0.55); }
@@ -833,6 +839,7 @@ async function logujAkciju(akcija, detalji){
 }
 
 async function saveFromMecevi(id){
+  { const mm=ME.find(x=>x.id===id); if(mm&&dqMec(mm)){ alert('Ovaj meč se ne igra — igrač je diskvalifikovan (DNF).'); return; } }
   const hv=document.getElementById('mh-'+id)?.value;
   const av=document.getElementById('ma-'+id)?.value;
   if(hv===''||hv===null||av===''||av===null||isNaN(hv)||isNaN(av)){
@@ -932,6 +939,11 @@ function goTab(name){
   if(nav && window.scrollY > nav.offsetTop) window.scrollTo({top: nav.offsetTop, behavior:'smooth'});
 }
 
+// ── Diskvalifikacija (DNF) ──
+// Diskvalifikovan igrač: na začelju tabele sa oznakom DNF; njegovi rezultati su zamrznuti (vide se samo u njegovom redu),
+// a protivnicima se mečevi protiv njega ne računaju. Njegovi neodigrani mečevi se ne igraju.
+function jeDQ(id){ const i=IG.find(x=>x.id===id); return !!(i&&i.diskvalifikovan); }
+function dqMec(m){ return jeDQ(m.domacin)||jeDQ(m.gost); }
 function calcTable() {
   const m={};
   IG.forEach(i=>m[i.id]={...i,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0,forma:[]});
@@ -939,18 +951,21 @@ function calcTable() {
   const tU=x=>mecVreme(x);
   ME.slice().sort((a,b)=>tU(a)-tU(b)||a.kolo-b.kolo||a.id-b.id).forEach(x=>{
     if(x.gol_domacin===null||x.gol_domacin===undefined||x.gol_domacin==='') return;
-    const d=m[x.domacin],g=m[x.gost];
-    if(!d||!g) return;
-    d.P++;g.P++;d.GF+=x.gol_domacin;d.GA+=x.gol_gost;g.GF+=x.gol_gost;g.GA+=x.gol_domacin;
-    if(x.gol_domacin>x.gol_gost){d.W++;d.Pts+=3;g.L++;d.forma.push('W');g.forma.push('L');}
-    else if(x.gol_domacin<x.gol_gost){g.W++;g.Pts+=3;d.L++;g.forma.push('W');d.forma.push('L');}
-    else{d.D++;g.D++;d.Pts++;g.Pts++;d.forma.push('D');g.forma.push('D');}
-    d.GD=d.GF-d.GA;g.GD=g.GF-g.GA;
+    const D=m[x.domacin],G=m[x.gost];
+    if(!D||!G) return;
+    const dqD=!!D.diskvalifikovan, dqG=!!G.diskvalifikovan;
+    // meč protiv diskvalifikovanog igrača računa se samo njemu (zamrznuto), protivniku ne
+    const d=(dqG&&!dqD)?null:D, g=(dqD&&!dqG)?null:G;
+    const r=x.gol_domacin>x.gol_gost?'D':(x.gol_domacin<x.gol_gost?'G':'X');
+    if(d){ d.P++; d.GF+=x.gol_domacin; d.GA+=x.gol_gost; if(r==='D'){d.W++;d.Pts+=3;d.forma.push('W');} else if(r==='G'){d.L++;d.forma.push('L');} else {d.D++;d.Pts++;d.forma.push('D');} d.GD=d.GF-d.GA; }
+    if(g){ g.P++; g.GF+=x.gol_gost; g.GA+=x.gol_domacin; if(r==='G'){g.W++;g.Pts+=3;g.forma.push('W');} else if(r==='D'){g.L++;g.forma.push('L');} else {g.D++;g.Pts++;g.forma.push('D');} g.GD=g.GF-g.GA; }
   });
-  return Object.values(m).sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF||a.ime.localeCompare(b.ime));
+  Object.values(m).forEach(r=>r.dq=!!r.diskvalifikovan);
+  return Object.values(m).sort((a,b)=>(a.dq-b.dq)||b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF||a.ime.localeCompare(b.ime));
 }
 
 function rkHtml(pos) {
+  if(pos==='DNF') return `<span class="rk rk-dnf">DNF</span>`;
   if(pos<=4) return `<span class="rk rk-top">${pos}</span>`;   // direktno u četvrtfinale
   if(pos<=12) return `<span class="rk rk-po">${pos}</span>`;   // osmina finala
   return `<span class="rkx">${pos}</span>`;
@@ -978,7 +993,7 @@ function tblHtml(rows, forma, showLegend=true, limit=0, mini=false) {
     <th class="c hm">GF</th><th class="c hm">GA</th><th class="c${mh}">GD</th><th class="c">Pts</th>
   </tr></thead><tbody>`;
   rows.forEach((r,i)=>{
-    const pos=i+1;
+    const pos=r.dq?'DNF':i+1;
     const gdc=r.GD>0?'gdp':r.GD<0?'gdn':'c';
     // forma: poslednjih 5, najnoviji rezultat prvi (levo)
     const fm=r.forma.slice(-5).reverse().map((f,k)=>`<span class="fb f${f}${k===0?' fnew':''}">${f}</span>`).join('');
@@ -986,9 +1001,9 @@ function tblHtml(rows, forma, showLegend=true, limit=0, mini=false) {
     // 1–4: direktno u četvrtfinale (zelena, ista za sve), 5–12: osmina finala (plava), 13+: van plej-ofa
     let rowCls = '';
     const kl=[];
-    if(pos<=4) kl.push('po-top');
+    if(r.dq) kl.push('dnf');
+    else if(pos<=4) kl.push('po-top');
     else if(pos<=12) kl.push('po-zona');
-    else if(pos===13) kl.push('po-crta');
     if(skrati && i>=limit) kl.push('x-row');
     if(kl.length) rowCls=`class="${kl.join(' ')}"`;
 
@@ -1011,13 +1026,14 @@ function tblHtml(rows, forma, showLegend=true, limit=0, mini=false) {
   if(showLegend) h+=`<div class="legend">
     <div class="li"><div class="ld" style="background:rgba(173,255,47,0.6)"></div>1.–4. direktno u četvrtfinale</div>
     <div class="li"><div class="ld" style="background:rgba(120,150,255,0.6)"></div>5.–12. osmina finala</div>
-  </div>`;
+  ${rows.some(r=>r.dq)?'<div class="li"><span class="rk rk-dnf" style="height:16px;font-size:9.5px">DNF</span>diskvalifikovan — mečevi protiv njega se ne računaju</div>':''}</div>`;
   h+=`</div>`;
   return h;
 }
 
 function render() {
-  const total=ME.length, odig=ME.filter(m=>m.gol_domacin!==null&&m.gol_domacin!==undefined&&m.gol_domacin!=='').length;
+  const MEv=ME.filter(m=>!dqMec(m));   // važeći mečevi (bez diskvalifikovanih)
+  const total=MEv.length, odig=MEv.filter(m=>m.gol_domacin!==null&&m.gol_domacin!==undefined&&m.gol_domacin!=='').length;
   const pct=total?Math.round(odig/total*100):0;
 
 
@@ -1028,7 +1044,7 @@ function render() {
   const igM={};IG.forEach(i=>igM[i.id]=i);
 
   // ── Playoff stanje (koristi se u Poslednjim rezultatima i Playoff tabu) ──
-  PO_IZR = poIzracunaj(rows.slice(0,12), PO_MECEVI);
+  PO_IZR = poIzracunaj(rows.filter(r=>!r.dq).slice(0,12), PO_MECEVI);
 
   // ── Poslednji rezultati — po vremenu unosa (uneto_at), najnoviji prvi ──
   const poIgre=[];
@@ -1036,7 +1052,7 @@ function render() {
     if(g) poIgre.push({id:g.m.id,domacin:st.A.id,gost:st.B.id,gol_domacin:g.a,gol_gost:g.b,uneto_at:g.m.uneto_at,_label:st.kratko+(st.serija?' · M'+(i+1):'')});
   }));
   const tUnos=m=>mecVreme(m);
-  const posl=[...ME.filter(m=>m.gol_domacin!==null), ...poIgre]
+  const posl=[...MEv.filter(m=>m.gol_domacin!==null), ...poIgre]
     .sort((x,y)=>tUnos(y)-tUnos(x)||y.id-x.id)
     .slice(0,5);
   document.getElementById('posl').innerHTML=posl.length?posl.map(m=>{
@@ -1062,11 +1078,12 @@ function render() {
   // Logika: (1) u listi se ne ponavljaju igrači, (2) prednost imaju mečevi
   // igrača koji značajno zaostaju (2+ meča manje od najaktivnijeg), (3) redosled kola.
   const odigI={};IG.forEach(i=>odigI[i.id]=0);
-  ME.forEach(m=>{if(m.gol_domacin!==null){if(m.domacin in odigI)odigI[m.domacin]++;if(m.gost in odigI)odigI[m.gost]++;}});
+  MEv.forEach(m=>{if(m.gol_domacin!==null){if(m.domacin in odigI)odigI[m.domacin]++;if(m.gost in odigI)odigI[m.gost]++;}});
+  IG.filter(i=>i.diskvalifikovan).forEach(i=>delete odigI[i.id]);
   const maxOdig=Math.max(0,...Object.values(odigI));
   const zaost=id=>maxOdig-(odigI[id]||0);
   const znZaost=id=>zaost(id)>=2?zaost(id):0;
-  const kand=ME.filter(m=>m.gol_domacin===null)
+  const kand=MEv.filter(m=>m.gol_domacin===null)
     .map(m=>({m,skor:znZaost(m.domacin)+znZaost(m.gost)}))
     .sort((x,y)=>y.skor-x.skor||x.m.kolo-y.m.kolo||x.m.id-y.m.id);
   const sled=[],zauzeti=new Set();
@@ -1103,7 +1120,7 @@ function render() {
   const mn=(n,a,b,c)=>{const d=n%10,dd=n%100;return '<b class="hs-n">'+n+'</b> '+(d===1&&dd!==11?a:(d>=2&&d<=4&&(dd<12||dd>14)?b:c));};
   const hp=document.getElementById('hero-prog');
   if(hp){
-    const igrano=rows.filter(r=>r.P>0);
+    const igrano=rows.filter(r=>r.P>0&&!r.dq);
     const lider=igrano[0]||null;
     const napad=igrano.slice().sort((a,b)=>b.GF-a.GF)[0]||null;
     // najbolja odbrana: najmanje primljenih golova (samo igrači koji su igrali); nerešeno → više odigranih, pa ime
@@ -1173,7 +1190,7 @@ function renderMecevi(){
       for(const k of kolaKeys){
         if(otv>=3) break;
         n++;
-        if(kola[k].some(m=>m.gol_domacin===null)) otv++;
+        if(kola[k].some(m=>m.gol_domacin===null&&!dqMec(m))) otv++;
       }
       first=kolaKeys.slice(0,n); rest=kolaKeys.slice(n);
     }
@@ -1198,7 +1215,7 @@ function loadMoreKola(){
 // Uzastopna potpuno odigrana kola (2 ili više) spajaju se u jedan red "✓ Kola 1–6"; klik ih otvara
 const MEC_GRUPE = new Set();
 function kolaHtml(keys,kola,igM){
-  const gotovo=k=>kola[k].length>0&&kola[k].every(m=>m.gol_domacin!==null);
+  const gotovo=k=>{const v=kola[k].filter(m=>!dqMec(m)); return v.length>0&&v.every(m=>m.gol_domacin!==null);};
   let h='', i=0;
   while(i<keys.length){
     if(gotovo(keys[i])){
@@ -1223,14 +1240,15 @@ function toggleGrupa(gid){
 }
 function toggleKolo(k){ if(MEC_OTVORENA.has(k)) MEC_OTVORENA.delete(k); else MEC_OTVORENA.add(k); const el=document.getElementById('rg-'+k); if(el) el.classList.toggle('zatv',!MEC_OTVORENA.has(k)); }
 function buildKolo(k,ms,igM){
-  const od=ms.filter(m=>m.gol_domacin!==null).length;
-  const gotovo=ms.length>0&&od===ms.length&&!MEC_FILTER;   // celo kolo odigrano → skupljeno (klik na zaglavlje otvara)
+  const msv=ms.filter(m=>!dqMec(m));
+  const od=msv.filter(m=>m.gol_domacin!==null).length;
+  const gotovo=msv.length>0&&od===msv.length&&!MEC_FILTER;   // celo kolo odigrano → skupljeno (klik na zaglavlje otvara)
   const k2=String(k);
   let h=gotovo
-    ? `<div class="rg done${MEC_OTVORENA.has(k2)?'':' zatv'}" id="rg-${k2}"><div class="rgh" onclick="toggleKolo('${k2}')"><span>✓ Kolo ${k}</span><span class="rgb">${od}/${ms.length} odigrano <span class="rg-ch">▾</span></span></div>`
-    : `<div class="rg"><div class="rgh"><span>Kolo ${k}</span><span class="rgb">${od}/${ms.length} odigrano</span></div>`;
+    ? `<div class="rg done${MEC_OTVORENA.has(k2)?'':' zatv'}" id="rg-${k2}"><div class="rgh" onclick="toggleKolo('${k2}')"><span>✓ Kolo ${k}</span><span class="rgb">${od}/${msv.length} odigrano <span class="rg-ch">▾</span></span></div>`
+    : `<div class="rg"><div class="rgh"><span>Kolo ${k}</span><span class="rgb">${od}/${msv.length} odigrano</span></div>`;
   ms.forEach(m=>{
-    const d=igM[m.domacin],g=igM[m.gost],pl=m.gol_domacin!==null;
+    const d=igM[m.domacin],g=igM[m.gost],pl=m.gol_domacin!==null,dq=dqMec(m);
     h+=`<div class="mrow" id="mrow-${m.id}" data-duel="${m.domacin}-${m.gost}">
       <div class="mrow-teams">
         <div class="mteam">
@@ -1240,7 +1258,9 @@ function buildKolo(k,ms,igM){
             <div class="mname" data-igrac="${d?.id||''}">${d?.ime||'?'}</div>
           </div>
         </div>
-        ${pl
+        ${dq
+          ?`<div class="mbox mdnf" title="Meč se ne računa — diskvalifikovan igrač (DNF)">${pl?`<s>${m.gol_domacin} : ${m.gol_gost}</s>`:'DNF'}</div>`
+          :pl
           ?`<div class="mbox mplayed" data-duel="${m.domacin}-${m.gost}" title="Međusobni dueli">${m.gol_domacin} : ${m.gol_gost}</div>`
           :`<div class="mrow-inputs">
               <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" class="mscore-inp" id="mh-${m.id}" placeholder="—" onfocus="setActive(${m.id})" oninput="samoBroj(this);checkFloatBtn()" onkeydown="if(event.key==='Enter')saveFromMecevi(${m.id})">
@@ -1426,7 +1446,7 @@ function poRender(){renderPlayoff();}
 function renderPlayoff(){
   const el = document.getElementById('playoff-bracket');
   if(!el) return;
-  const rows = calcTable().slice(0,12);
+  const rows = calcTable().filter(r=>!r.dq).slice(0,12);
   if(rows.length < 8){ el.innerHTML='<div class="empty">Potrebno je više igrača u tabeli</div>'; return; }
   const S = PO_IZR && Object.keys(PO_IZR).length ? PO_IZR : poIzracunaj(rows, PO_MECEVI);
   el.innerHTML = poBoardHtml(S,false);
@@ -1503,7 +1523,7 @@ function otvoriIgraca(id){
   const rows=calcTable(); const k=rows.findIndex(r=>r.id===id); const r=rows[k];
   const forma=r?r.forma.slice(-5).reverse().map((f,j)=>`<span class="fb f${f}${j===0?' fnew':''}">${f}</span>`).join(''):'';
   // statistika iz odigranih mečeva lige
-  const moji=ME.filter(m=>m.gol_domacin!==null&&(m.domacin===id||m.gost===id)).map(m=>{
+  const moji=ME.filter(m=>m.gol_domacin!==null&&(m.domacin===id||m.gost===id)&&(ig.diskvalifikovan||!dqMec(m))).map(m=>{
     const dom=m.domacin===id, za=dom?m.gol_domacin:m.gol_gost, pr=dom?m.gol_gost:m.gol_domacin;
     const prot=IG.find(x=>x.id===(dom?m.gost:m.domacin));
     return {za,pr,raz:za-pr,prot:prot?prot.ime:'?'};
@@ -1524,7 +1544,7 @@ function otvoriIgraca(id){
     ${grb?`<img class="pm-crest" src="${grb.getAttribute('src')}" alt="">`:''}
     <div class="pm-head"><div class="pm-name">${esc(ig.ime)}</div>${mesto?`<img class="pm-stiker" src="${mesto}.webp?v=4" alt="${mesto}. mesto prošle sezone" title="Prošla sezona: ${mesto}. mesto">`:''}</div>
     ${ig.firma?`<div class="pm-firma">${esc(ig.firma)}</div>`:''}
-    <div class="pm-rang"><span style="display:inline-flex;gap:2px">${starsHtml(ig.zvezde||3,14)}</span><span>rang tima ${Number(ig.zvezde||3)} ★</span><span class="pm-sez">${sez}. sezona</span></div>
+    <div class="pm-rang"><span style="display:inline-flex;gap:2px">${starsHtml(ig.zvezde||3,14)}</span><span>rang tima ${Number(ig.zvezde||3)} ★</span><span class="pm-sez">${sez}. sezona</span>${ig.diskvalifikovan?'<span class="pm-dnf">DNF · diskvalifikovan</span>':''}</div>
     <div class="pm-grid3">
       <div class="pm-box"><div class="pm-l">Golovi</div><div class="pm-v"><b>${golovi}</b></div><div class="pm-s">${moji.length?(n=>{const d=n%10,dd=n%100;return n+' '+(d===1&&dd!==11?'utakmica':(d>=2&&d<=4&&(dd<12||dd>14)?'utakmice':'utakmica'));})(moji.length):'još nije igrao'}</div></div>
       ${mecBox('Najveća pobeda',pob)}
@@ -1666,11 +1686,11 @@ function renderStrelci(){
   // ── Strelci ──
   const sm={};IG.forEach(i=>sm[i.id]={...i,GF:0,GA:0,P:0});
   ME.forEach(m=>{
-    if(m.gol_domacin===null) return;
+    if(m.gol_domacin===null||dqMec(m)) return;
     if(sm[m.domacin]){sm[m.domacin].GF+=m.gol_domacin;sm[m.domacin].GA+=m.gol_gost;sm[m.domacin].P++;}
     if(sm[m.gost]){sm[m.gost].GF+=m.gol_gost;sm[m.gost].GA+=m.gol_domacin;sm[m.gost].P++;}
   });
-  const sr=Object.values(sm).filter(r=>r.GF>0).sort((a,b)=>b.GF-a.GF||a.GA-b.GA);
+  const sr=Object.values(sm).filter(r=>r.GF>0&&!r.diskvalifikovan).sort((a,b)=>b.GF-a.GF||a.GA-b.GA);
   const mx=sr[0]?.GF||1;
   document.getElementById('strelci-wrap').innerHTML=sr.length?'<div class="scorers-list">'+sr.map((r,i)=>{
     const pos=i+1;

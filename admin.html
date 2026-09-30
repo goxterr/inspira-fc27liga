@@ -57,6 +57,10 @@
   .sw::after{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--muted);transition:all .2s}
   .sw-row input:checked+.sw{background:rgba(173,255,47,0.25);border-color:var(--green)}
   .sw-row input:checked+.sw::after{left:22px;background:var(--green)}
+  .sw-row input:checked+.sw.sw-red{background:rgba(255,64,96,0.25);border-color:var(--red)}
+  .sw-row input:checked+.sw.sw-red::after{background:var(--red)}
+  .chip.dnf{border-color:rgba(255,64,96,0.45)}
+  .chip-dnf{font-size:10px;font-weight:800;color:var(--red);background:rgba(255,64,96,0.12);border-radius:6px;padding:1px 5px}
   .fp-adm-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surf2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:14px}
   .fp-adm-row b{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--green);margin-left:auto}
   .bulk-tag{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);flex-shrink:0}
@@ -388,6 +392,8 @@
     <div><label>Firma</label><input type="text" id="am-firma" placeholder="npr. 4zida"><div class="am-note">Automatski iz mejla (deo posle @); može da se izmeni.</div></div>
     <div><label>Prošlogodišnji plasman</label><input type="text" id="am-plasman" placeholder="npr. 3. mesto, polufinale"><div class="am-note">Za medalju upiši "1. mesto", "2. mesto", "3. mesto" ili "4. mesto".</div></div>
     <div><label>Sezona u ligi</label><select id="am-sezona"></select></div>
+    <label class="sw-row" style="margin:4px 0 0"><input type="checkbox" id="am-dq"><span class="sw sw-red"></span><span>Diskvalifikovan (DNF)</span></label>
+    <div class="am-note" id="am-dq-note">Diskvalifikovan igrač ide na začelje tabele sa oznakom DNF. Njegovi rezultati se zamrzavaju, a protivnicima se mečevi protiv njega ne računaju. Neodigrani mečevi se ne igraju. Može da se vrati isključivanjem prekidača.</div>
     <div id="am-mail-wrap"></div>
     <div class="am-row"><button class="btn" onclick="zatvoriIzmenu()">Otkaži</button><button class="btn btn-g" onclick="sacuvajIzmenu()">Sačuvaj</button></div>
   </div>
@@ -582,7 +588,7 @@ async function loadAll(){
   IG=a.data||[];
   ME=b.data||[];
   PO_MECEVI=c.data||[];
-  PO=poIzracunaj(calcTableAdmin().slice(0,12),PO_MECEVI);
+  PO=poIzracunaj(calcTableAdmin().filter(r=>!r.dq).slice(0,12),PO_MECEVI);
   renderIgraci();renderRezultati();renderAdminPlayoff();
 }
 function showTab(t,btn){
@@ -736,6 +742,9 @@ function urediIgraca(id){
   document.getElementById('am-firma').dataset.rucno='';
   if(!FIRMA_OK){document.getElementById('am-firma').disabled=true;document.getElementById('am-plasman').disabled=true;}
   document.getElementById('am-sezona').disabled=!('sezona' in i);
+  const dqEl=document.getElementById('am-dq'); dqEl.checked=!!i.diskvalifikovan; dqEl.disabled=!('diskvalifikovan' in i);
+  document.getElementById('am-dq-note').style.color=('diskvalifikovan' in i)?'':'var(--yellow)';
+  if(!('diskvalifikovan' in i)) document.getElementById('am-dq-note').textContent='Za diskvalifikaciju pokreni SQL: alter table igraci add column if not exists diskvalifikovan boolean default false;';
   document.getElementById('am').classList.add('on');
   setTimeout(()=>document.getElementById('am-plasman').focus(),50);
 }
@@ -746,13 +755,17 @@ async function sacuvajIzmenu(){
   const upd={ime,zvezde:Number(document.getElementById('am-rang').value)};
   if(FIRMA_OK){ upd.firma=document.getElementById('am-firma').value.trim(); upd.plasman_prosle=document.getElementById('am-plasman').value.trim(); }
   if('sezona' in i) upd.sezona=Number(document.getElementById('am-sezona').value);
+  if('diskvalifikovan' in i){
+    upd.diskvalifikovan=document.getElementById('am-dq').checked;
+    if(upd.diskvalifikovan&&!i.diskvalifikovan&&!confirm(`Diskvalifikovati igrača ${i.ime}?\n\nIde na začelje tabele (DNF), a protivnicima se brišu bodovi i golovi iz mečeva protiv njega.`)) return;
+  }
   const mailEl=document.getElementById('am-mail'); const mail=mailEl?mailEl.value.trim().toLowerCase():'';
   if(mail&&!MAIL_RE.test(mail)){toast('Mejl nije ispravan');return;}
   let{error}=await db.from('igraci').update(upd).eq('id',i.id);
-  if(error&&/firma|plasman_prosle|sezona/.test(error.message||'')){ FIRMA_OK=false; delete upd.firma; delete upd.plasman_prosle; delete upd.sezona; ({error}=await db.from('igraci').update(upd).eq('id',i.id)); toast('Firma/plasman nisu sačuvani — pokreni SQL dopunu'); }
+  if(error&&/firma|plasman_prosle|sezona|diskvalifikovan/.test(error.message||'')){ FIRMA_OK=false; delete upd.firma; delete upd.plasman_prosle; delete upd.sezona; delete upd.diskvalifikovan; ({error}=await db.from('igraci').update(upd).eq('id',i.id)); toast('Firma/plasman nisu sačuvani — pokreni SQL dopunu'); }
   if(error){toast('Greška: '+error.message);return;}
   if(mail){ const r=await sacuvajMejlove([{igrac_id:i.id,email:mail}]); if(r.greska){toast('Mejl nije sačuvan: '+r.greska);} }
-  const promene=[i.ime!==ime?`ime → ${ime}`:'',Number(i.zvezde)!==upd.zvezde?`rang ${upd.zvezde}★`:'',upd.firma!==undefined&&(i.firma||'')!==upd.firma?`firma ${upd.firma||'—'}`:'',upd.plasman_prosle!==undefined&&(i.plasman_prosle||'')!==upd.plasman_prosle?`prošla sezona: ${upd.plasman_prosle||'—'}`:'',upd.sezona!==undefined&&Number(i.sezona||2)!==upd.sezona?`${upd.sezona}. sezona`:'',mail?'mejl dodat':''].filter(Boolean);
+  const promene=[i.ime!==ime?`ime → ${ime}`:'',Number(i.zvezde)!==upd.zvezde?`rang ${upd.zvezde}★`:'',upd.firma!==undefined&&(i.firma||'')!==upd.firma?`firma ${upd.firma||'—'}`:'',upd.plasman_prosle!==undefined&&(i.plasman_prosle||'')!==upd.plasman_prosle?`prošla sezona: ${upd.plasman_prosle||'—'}`:'',upd.sezona!==undefined&&Number(i.sezona||2)!==upd.sezona?`${upd.sezona}. sezona`:'',upd.diskvalifikovan!==undefined&&!!i.diskvalifikovan!==upd.diskvalifikovan?(upd.diskvalifikovan?'DISKVALIFIKOVAN (DNF)':'diskvalifikacija poništena'):'',mail?'mejl dodat':''].filter(Boolean);
   if(promene.length) await logujAkciju('IGRAC_IZMENJEN',`${i.ime} — ${promene.join(', ')}`);
   zatvoriIzmenu(); toast('Igrač sačuvan'); loadAll();
 }
@@ -909,8 +922,8 @@ function renderIgraci(){
   document.getElementById('igrac-count').textContent=IG.length;
   const el=document.getElementById('igraci-chips');
   if(!IG.length){el.innerHTML='<div class="empty" style="padding:0.5rem">Nema igrača</div>';return;}
-  el.innerHTML=IG.map(i=>`<div class="chip">
-    <span class="chip-name" onclick="urediIgraca(${i.id})" title="Klikni za izmenu">${escH(i.ime)}</span>${i.firma?`<span style="font-size:11px;color:var(--teal)">${escH(i.firma)}</span>`:''}
+  el.innerHTML=IG.map(i=>`<div class="chip${i.diskvalifikovan?' dnf':''}">
+    <span class="chip-name" onclick="urediIgraca(${i.id})" title="Klikni za izmenu">✎ ${escH(i.ime)}</span>${i.diskvalifikovan?'<span class="chip-dnf">DNF</span>':''}${i.firma?`<span style="font-size:11px;color:var(--teal)">${escH(i.firma)}</span>`:''}
     <span style="display:inline-flex;gap:1px;align-items:center">${starsHtml(i.zvezde||3,13)}</span>
     ${KONTAKT_OK?(KONTAKT[i.id]?`<span class="chip-mail" title="${escH(KONTAKT[i.id])}">✉</span>`:`<span class="chip-mail nema" title="Nema mejla — klikni da dodaš" onclick="dodajMejl(${i.id})">+✉</span>`):''}
     <span class="chip-rm" onclick="ukloniIgraca(${i.id})">×</span>
@@ -1183,15 +1196,17 @@ function calcTableAdmin(){
   IG.forEach(i=>m[i.id]={...i,P:0,W:0,D:0,L:0,GF:0,GA:0,GD:0,Pts:0});
   ME.forEach(x=>{
     if(x.gol_domacin===null||x.gol_domacin===undefined) return;
-    const d=m[x.domacin],g=m[x.gost];
-    if(!d||!g) return;
-    d.P++;g.P++;d.GF+=x.gol_domacin;d.GA+=x.gol_gost;g.GF+=x.gol_gost;g.GA+=x.gol_domacin;
-    if(x.gol_domacin>x.gol_gost){d.W++;d.Pts+=3;g.L++;}
-    else if(x.gol_domacin<x.gol_gost){g.W++;g.Pts+=3;d.L++;}
-    else{d.D++;g.D++;d.Pts++;g.Pts++;}
-    d.GD=d.GF-d.GA;g.GD=g.GF-g.GA;
+    const D=m[x.domacin],G=m[x.gost];
+    if(!D||!G) return;
+    // isto pravilo kao na sajtu: meč protiv diskvalifikovanog računa se samo njemu
+    const dqD=!!D.diskvalifikovan, dqG=!!G.diskvalifikovan;
+    const d=(dqG&&!dqD)?null:D, g=(dqD&&!dqG)?null:G;
+    const r=x.gol_domacin>x.gol_gost?'D':(x.gol_domacin<x.gol_gost?'G':'X');
+    if(d){ d.P++; d.GF+=x.gol_domacin; d.GA+=x.gol_gost; if(r==='D'){d.W++;d.Pts+=3;} else if(r==='G'){d.L++;} else {d.D++;d.Pts++;} d.GD=d.GF-d.GA; }
+    if(g){ g.P++; g.GF+=x.gol_gost; g.GA+=x.gol_domacin; if(r==='G'){g.W++;g.Pts+=3;} else if(r==='D'){g.L++;} else {g.D++;g.Pts++;} g.GD=g.GF-g.GA; }
   });
-  return Object.values(m).sort((a,b)=>b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF||a.ime.localeCompare(b.ime));
+  Object.values(m).forEach(r=>r.dq=!!r.diskvalifikovan);
+  return Object.values(m).sort((a,b)=>(a.dq-b.dq)||b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF||a.ime.localeCompare(b.ime));
 }
 
 async function savePoGame(key,n){
