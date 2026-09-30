@@ -113,7 +113,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 - Swipe levo/desno na telefonu kroz sve tabove (lista `.ntab`), ne radi dok je otvorena kartica igrača
 
 ### Pregled
-1. Baner `#hero` (~190px): grb, naziv, sezona, 4 statistike (Odigrano, Lider, Najbolji napad, Najbolja odbrana — najmanje primljenih golova; kod istog broja prednost ima više odigranih) i fotografija igrača. Statički HTML, render puni samo `#hero-prog`
+1. Baner `#hero` (~190px): grb, naziv, sezona, 4 statistike (brojevi zelenom bojom; Odigrano, Lider, Najbolji napad, Najbolja odbrana — najmanje primljenih golova; kod istog broja prednost ima više odigranih) i fotografija igrača. Statički HTML, render puni samo `#hero-prog`
 2. Levo Tabela (prvih 10, fade + "Prikaži celu tabelu"; stanje ostaje posle osvežavanja), desno Poslednji rezultati i Sledeći mečevi. Telefon: prvo rezultati i mečevi, pa tabela
    - Mini tabela na telefonu: #, Igrač, Forma, Pts (`tblHtml(..., mini=true)`); desktop: P W D L GF GA GD Pts
 - Poslednji rezultati i Sledeći mečevi: ista mreža kolona (domaćin | rezultat 84px | gost | kolo 72px) — sve u liniji; poraženi igrač priglušen
@@ -141,7 +141,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 - Hover: sloj `background-image` na `td` (vidi se i na obojenim zonama)
 
 ### Mečevi
-- Filter po igračima; grupisano po kolima; prikazuju se prva 3 kola + "Učitaj još kola" — kad se otvore sva, ostaju otvorena i posle unosa rezultata/osvežavanja (`MEC_SVA`), zatvaraju se tek kad se napusti tab
+- Filter: Igrač 1 + drugi meni sa opcijama "Neodigrani" / "Odigrani" (mečevi izabranog igrača, ili svi ako igrač nije izabran) ili protivnik (lista bez izabranog igrača); grupisano po kolima; potpuno odigrano kolo je skupljeno i zelenkasto (✓ Kolo N) — klik na zaglavlje otvara/zatvara; otvorena ostaju i posle osvežavanja, zatvaraju se kad se napusti tab; sa filterom sve je otvoreno. Prikazuju se prva 3 kola + "Učitaj još kola" — kad se otvore sva, ostaju otvorena i posle unosa rezultata/osvežavanja (`MEC_SVA`), zatvaraju se tek kad se napusti tab
 - Srednja kolona fiksne širine (150px desktop, 112px telefon) — imena na istim pozicijama i za unos i za odigran meč
 - Unos rezultata: samo cifre (`samoBroj`, max 2), numerička tastatura, Enter snima, plutajuće dugme SNIMI REZULTAT na telefonu (main ima 96px donjeg razmaka)
 
@@ -394,6 +394,25 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Mečevi: filter Neodigrani / Odigrani
+
+**Urađeno:**
+- Drugi padajući meni na tabu Mečevi: "Neodigrani" i "Odigrani" (mečevi izabranog igrača), pa lista protivnika (bez izabranog igrača)
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Baner: zeleni brojevi; Mečevi: odigrana kola skupljena
+
+**Urađeno:**
+- Baner: bodovi/golovi zelenom bojom kao "Odigrano"; najbolja odbrana samo "N golova"
+- Mečevi: kolo u kome su svi mečevi odigrani je skupljeno, drugačije nijanse, otvara se klikom
+
+**Fajlovi:** `index.html` + `readme.md`
+
 ---
 
 ### [30.09.2026] — Firma samo u karticama; senka u duelu

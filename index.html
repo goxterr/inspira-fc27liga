@@ -146,6 +146,7 @@
   .hs-l { font-size: 12px; font-weight: 500; color: var(--muted2); }
   .hs-v { margin-top: 3px; font-size: 15px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .hs-v b { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 20px; color: var(--green); }
+  .hs-n { font-family: 'Barlow Condensed', sans-serif; font-weight: 800; font-size: 16px; color: var(--green); }
   .hs-s { font-size: 12px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .hs-bar { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.1); margin-top: 7px; overflow: hidden; }
   .hs-bar div { height: 100%; background: linear-gradient(90deg, var(--green), var(--teal)); }
@@ -198,6 +199,13 @@
   /* Mečevi tab */
   .matches-grid { display: grid; gap: 10px; }
   .rg { background: var(--surf); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .rg.done { border-color: rgba(173,255,47,0.22); }
+  .rg.done .rgh { background: rgba(173,255,47,0.07); color: var(--green); cursor: pointer; user-select: none; }
+  .rg.done .rgh:hover { background: rgba(173,255,47,0.11); }
+  .rg.done .rgb { background: rgba(173,255,47,0.12); color: var(--green); }
+  .rg-ch { display: inline-block; margin-left: 4px; transition: transform 0.2s; }
+  .rg.zatv .rg-ch { transform: rotate(-90deg); }
+  .rg.zatv .mrow { display: none; }
   .rgh { background: var(--surf2); padding: 10px 16px; font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600; color: var(--muted2); display: flex; justify-content: space-between; align-items: center; }
   .rgb { font-size: 12px; background: rgba(255,255,255,0.05); padding: 2px 9px; border-radius: 10px; }
   .mrow { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -879,7 +887,7 @@ function tab(name, btn) {
   if(name==='playoff') requestAnimationFrame(()=>renderPlayoff());
   document.body.classList.toggle('po-wide', name==='playoff');
   decoPostavi(name);
-  if(name!=='mecevi' && MEC_SVA){ MEC_SVA=false; renderMecevi(); }   // zatvori sva kola tek kad se napusti tab
+  if(name!=='mecevi' && (MEC_SVA || MEC_OTVORENA.size)){ MEC_SVA=false; MEC_OTVORENA.clear(); renderMecevi(); }   // zatvori sva kola tek kad se napusti tab
   // aktivni tab uvek vidljiv u navigaciji na telefonu
   const ni=btn.parentElement;
   if(ni && ni.scrollWidth>ni.clientWidth) ni.scrollTo({left: btn.offsetLeft - ni.clientWidth/2 + btn.offsetWidth/2, behavior:'smooth'});
@@ -1080,7 +1088,7 @@ function render() {
     :`<div class="rempty"><div class="rempty-ico">📅</div><div><div class="rempty-t">Raspored još nije objavljen</div><div class="rempty-s">Mečevi se pojavljuju čim se generiše raspored.</div></div></div>`);
 
   // ── Baner: statistika sezone ──
-  const mn=(n,a,b,c)=>{const d=n%10,dd=n%100;return n+' '+(d===1&&dd!==11?a:(d>=2&&d<=4&&(dd<12||dd>14)?b:c));};
+  const mn=(n,a,b,c)=>{const d=n%10,dd=n%100;return '<b class="hs-n">'+n+'</b> '+(d===1&&dd!==11?a:(d>=2&&d<=4&&(dd<12||dd>14)?b:c));};
   const hp=document.getElementById('hero-prog');
   if(hp){
     const igrano=rows.filter(r=>r.P>0);
@@ -1093,7 +1101,7 @@ function render() {
       <button class="hs" onclick="goTab('mecevi')"><div class="hs-l">Odigrano</div><div class="hs-v"><b>${odig}</b> / ${total||'—'}</div><div class="hs-bar"><div style="width:${pct}%"></div></div></button>
       <button class="hs" onclick="goTab('tabela')"><div class="hs-l">Lider</div><div class="hs-v">${lider?esc(lider.ime):'—'}</div><div class="hs-s">${lider?mn(lider.Pts,'bod','boda','bodova'):'čeka se prvo kolo'}</div></button>
       <button class="hs" onclick="goTab('strelci')"><div class="hs-l">Najbolji napad</div><div class="hs-v">${napad&&napad.GF?esc(napad.ime):'—'}</div><div class="hs-s">${napad&&napad.GF?mn(napad.GF,'gol','gola','golova'):'još nema golova'}</div></button>
-      <button class="hs" onclick="goTab('tabela')"><div class="hs-l">Najbolja odbrana</div><div class="hs-v">${odbrana?esc(odbrana.ime):'—'}</div><div class="hs-s">${odbrana?(odbrana.GA?mn(odbrana.GA,'primljen gol','primljena gola','primljenih golova'):'bez primljenog gola')+' · '+mn(odbrana.P,'meč','meča','mečeva'):'čeka se prvo kolo'}</div></button>`;
+      <button class="hs" onclick="goTab('tabela')"><div class="hs-l">Najbolja odbrana</div><div class="hs-v">${odbrana?esc(odbrana.ime):'—'}</div><div class="hs-s">${odbrana?mn(odbrana.GA,'gol','gola','golova'):'čeka se prvo kolo'}</div></button>`;
   }
 
   renderMecevi();
@@ -1112,29 +1120,38 @@ function resetFilters(){
 function renderMecevi(){
   const igM={};IG.forEach(i=>igM[i.id]=i);
   const id1=parseInt(document.getElementById('filter1')?.value||0)||null;
-  const id2=parseInt(document.getElementById('filter2')?.value||0)||null;
+  MEC_FILTER=false;
+  // drugi meni: "Neodigrani" / "Odigrani" (mečevi izabranog igrača) ili protivnik
+  const v2=document.getElementById('filter2')?.value||'';
+  const status=(v2==='nd'||v2==='od')?v2:null;
+  const id2=status?null:(parseInt(v2)||null);
 
-  ['filter1','filter2'].forEach((fid,fi)=>{
-    const sel=document.getElementById(fid);
-    if(!sel) return;
-    const prev=sel.value;
-    sel.innerHTML=`<option value="">${fi===0?'— Igrač 1 —':'— Igrač 2 —'}</option>`+
-      IG.map(i=>`<option value="${i.id}"${prev==i.id?' selected':''}>${i.ime}</option>`).join('');
-  });
+  const sel1=document.getElementById('filter1');
+  if(sel1){ const prev=sel1.value; sel1.innerHTML=`<option value="">— Igrač 1 —</option>`+IG.map(i=>`<option value="${i.id}"${prev==i.id?' selected':''}>${i.ime}</option>`).join(''); }
+  const sel2=document.getElementById('filter2');
+  if(sel2){
+    sel2.innerHTML=`<option value="">— Svi mečevi / Igrač 2 —</option>
+      <optgroup label="${id1?'Mečevi izabranog igrača':'Svi mečevi'}"><option value="nd"${v2==='nd'?' selected':''}>Neodigrani</option><option value="od"${v2==='od'?' selected':''}>Odigrani</option></optgroup>
+      <optgroup label="Protiv igrača">`+IG.filter(i=>i.id!==id1).map(i=>`<option value="${i.id}"${v2==i.id?' selected':''}>${i.ime}</option>`).join('')+`</optgroup>`;
+  }
 
   let mecevi=ME;
   if(id1&&id2) mecevi=ME.filter(m=>(m.domacin===id1&&m.gost===id2)||(m.domacin===id2&&m.gost===id1));
   else if(id1) mecevi=ME.filter(m=>m.domacin===id1||m.gost===id1);
   else if(id2) mecevi=ME.filter(m=>m.domacin===id2||m.gost===id2);
+  if(status==='nd') mecevi=mecevi.filter(m=>m.gol_domacin===null);
+  if(status==='od') mecevi=mecevi.filter(m=>m.gol_domacin!==null);
 
   const odig=mecevi.filter(m=>m.gol_domacin!==null).length;
   const info=document.getElementById('mecevi-info');
-  if(info) info.textContent=(id1||id2)?`${odig} odigrano / ${mecevi.length-odig} preostalo`:'';
+  const pl=(n,a,b,c)=>{const d=n%10,dd=n%100;return n+' '+(d===1&&dd!==11?a:(d>=2&&d<=4&&(dd<12||dd>14)?b:c));};
+  if(info) info.textContent=(id1||id2||status)?(status==='nd'?pl(mecevi.length,'neodigran meč','neodigrana meča','neodigranih mečeva'):status==='od'?pl(mecevi.length,'odigran meč','odigrana meča','odigranih mečeva'):`${odig} odigrano / ${mecevi.length-odig} preostalo`):'';
 
   const kola={};mecevi.forEach(m=>{if(!kola[m.kolo])kola[m.kolo]=[];kola[m.kolo].push(m);});
   const kolaKeys=Object.keys(kola).sort((a,b)=>+a-+b);
 
-  if(id1||id2){
+  if(id1||id2||status){
+    MEC_FILTER=true;
     document.getElementById('mecevi-wrap').innerHTML=kolaKeys.map(k=>buildKolo(k,kola[k],igM)).join('')||'<div class="empty" style="padding:2rem">Nema mečeva</div>';
   } else {
     const first=MEC_SVA?kolaKeys:kolaKeys.slice(0,3), rest=MEC_SVA?[]:kolaKeys.slice(3);
@@ -1145,7 +1162,9 @@ function renderMecevi(){
   }
 }
 
-let MEC_SVA = false;   // true = korisnik je otvorio sva kola; ostaje otvoreno dok ne napusti tab Mečevi
+let MEC_SVA = false;
+let MEC_FILTER = false;          // true kad je uključen filter po igračima (tada su sva kola otvorena)
+const MEC_OTVORENA = new Set();  // odigrana kola koja je korisnik ručno otvorio   // true = korisnik je otvorio sva kola; ostaje otvoreno dok ne napusti tab Mečevi
 function loadMoreKola(){
   MEC_SVA = true;
   const rest=window._lzK||[], kola=window._lzD||{}, igM=window._lzI||{};
@@ -1154,9 +1173,14 @@ function loadMoreKola(){
   window._lzK=[];
 }
 
+function toggleKolo(k){ if(MEC_OTVORENA.has(k)) MEC_OTVORENA.delete(k); else MEC_OTVORENA.add(k); const el=document.getElementById('rg-'+k); if(el) el.classList.toggle('zatv',!MEC_OTVORENA.has(k)); }
 function buildKolo(k,ms,igM){
   const od=ms.filter(m=>m.gol_domacin!==null).length;
-  let h=`<div class="rg"><div class="rgh"><span>Kolo ${k}</span><span class="rgb">${od}/${ms.length} odigrano</span></div>`;
+  const gotovo=ms.length>0&&od===ms.length&&!MEC_FILTER;   // celo kolo odigrano → skupljeno (klik na zaglavlje otvara)
+  const k2=String(k);
+  let h=gotovo
+    ? `<div class="rg done${MEC_OTVORENA.has(k2)?'':' zatv'}" id="rg-${k2}"><div class="rgh" onclick="toggleKolo('${k2}')"><span>✓ Kolo ${k}</span><span class="rgb">${od}/${ms.length} odigrano <span class="rg-ch">▾</span></span></div>`
+    : `<div class="rg"><div class="rgh"><span>Kolo ${k}</span><span class="rgb">${od}/${ms.length} odigrano</span></div>`;
   ms.forEach(m=>{
     const d=igM[m.domacin],g=igM[m.gost],pl=m.gol_domacin!==null;
     h+=`<div class="mrow" id="mrow-${m.id}" data-duel="${m.domacin}-${m.gost}">
