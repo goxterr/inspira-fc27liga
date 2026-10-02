@@ -152,11 +152,19 @@
   body.po-wide main{max-width:1900px}
   .pob-wrap{overflow-x:auto;padding-bottom:1rem;--tc-cell:38px;--tc-sum:34px}
   .pob{display:grid;grid-template-columns:repeat(4,minmax(230px,1.15fr)) minmax(220px,1fr);column-gap:22px;align-items:stretch;min-width:1240px}
+  .pob-head{align-items:end}
+  .pob-h{text-align:center;min-width:0}
+  .pob-span2{grid-column:span 2;border-bottom:1px solid rgba(0,200,150,0.35);padding-bottom:2px}
+  .pob-kola{margin:6px 0 10px}
+  .pob-kola div{text-align:center;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;color:var(--muted2,rgba(255,255,255,0.68))}
+  .tc-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:7px;vertical-align:1px;background:rgba(255,255,255,0.25)}
+  .tc.done .tc-dot{background:var(--green)}
+  .tc.ready .tc-dot{background:var(--teal);box-shadow:0 0 0 3px rgba(0,200,150,0.18)}
   .pob-list.pob-fin{justify-content:center;gap:22px}
   .pob-sub{font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;color:var(--muted2,rgba(255,255,255,0.68));text-align:center;margin-bottom:8px}
   .pob-col{display:flex;flex-direction:column;min-width:0}
   .pob-title{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:800;font-size:18px;letter-spacing:0.2px;color:rgba(255,255,255,0.9);text-align:center;padding-bottom:2px}
-  .pob-ulaz{font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--teal);text-align:center;padding-bottom:12px;min-height:26px}
+  .pob-ulaz{font-family:'Barlow',sans-serif;font-size:12px;font-weight:600;color:var(--teal);text-align:center;padding-bottom:4px;min-height:18px}
   .pob-list{display:flex;flex-direction:column;justify-content:space-around;gap:28px;flex:1}
   .pob-3m{margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:24px;flex-wrap:wrap}
   .pob-3m .tc{width:340px}
@@ -165,10 +173,6 @@
   .tc.done{border-color:rgba(173,255,47,0.35)}
   .tc.ready{border-color:rgba(0,200,150,0.45);box-shadow:0 0 0 1px rgba(0,200,150,0.12)}
   .tc.wait{opacity:0.62}
-  .tc-stanje{font-family:'Barlow',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.4px;text-transform:uppercase;border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:1px}
-  .tc.done .tc-stanje{color:var(--green);background:rgba(173,255,47,0.12)}
-  .tc.ready .tc-stanje{color:var(--teal);background:rgba(0,200,150,0.12)}
-  .tc.wait .tc-stanje{color:var(--muted);background:rgba(255,255,255,0.06)}
   .po-status{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13.5px;font-weight:600;border-radius:12px;padding:10px 14px;margin-bottom:16px;border:1px solid}
   .po-status.zv{color:var(--green);background:rgba(173,255,47,0.06);border-color:rgba(173,255,47,0.3)}
   .po-status.pr{color:var(--yellow);background:rgba(255,200,0,0.06);border-color:rgba(255,200,0,0.3)}
@@ -206,7 +210,7 @@
   .po-bronze{display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,200,0,0.05);border:1px solid rgba(255,200,0,0.2);border-radius:10px;padding:10px 16px;font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:16px;color:rgba(255,200,0,0.75)}
   .pom{--tc-cell:44px;--tc-sum:34px}
   .pom-tabs{display:flex;gap:6px;margin-bottom:14px;position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0}
-  .pom-tab{flex:1;padding:10px 2px;font-family:'Barlow',sans-serif;font-weight:700;font-size:13px;border:1px solid var(--border2);border-radius:20px;background:none;color:var(--muted);cursor:pointer;position:relative}
+  .pom-tab{flex:1;padding:10px 2px;font-family:'Barlow',sans-serif;font-weight:700;font-size:12px;border:1px solid var(--border2);border-radius:20px;background:none;color:var(--muted);cursor:pointer;position:relative}
   .pom-tab.on{background:var(--green);color:#07090f;border-color:var(--green)}
   .pom-dot{position:absolute;top:6px;right:10px;width:6px;height:6px;border-radius:50%;background:var(--yellow)}
   .pom-tab.on .pom-dot{background:#07090f}
@@ -315,7 +319,7 @@
 
   <div id="tab-playoff" class="section">
     <div class="stitle">Playoff bracket</div>
-    <p style="font-size:13px;color:var(--muted);margin-bottom:0.6rem">Kostur: prvih 14 iz lige. 1. i 2. mesto → polufinale, 3.–6. → druga runda, 7.–14. → prva runda. Prva i druga runda, četvrtfinale i polufinale: 2 meča, 3. meč se otključava samo ako je zbir golova izjednačen. Finale i meč za 3. mesto: jedan meč. Odlučujući meč ne može biti nerešen — unesi rezultat posle penala. Rezultati se unose tek kad je kostur zvanično formiran.</p>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:0.6rem">Kostur: prvih 14 iz lige. 1. i 2. mesto → polufinale, 3.–6. → četvrtfinale (1. kolo), 7.–14. → doigravanje. Četvrtfinale ima 2 kola. Doigravanje, četvrtfinale i polufinale: 2 meča, 3. meč se otključava samo ako je zbir golova izjednačen. Finale i meč za 3. mesto: jedan meč. Odlučujući meč ne može biti nerešen — unesi rezultat posle penala. Rezultati se unose tek kad je kostur zvanično formiran.</p>
     <div id="po-formiranje" style="margin-bottom:1rem"></div>
     <div id="admin-playoff-bracket"><div class="empty">Učitavanje...</div></div>
     <div style="margin-top:1rem">
@@ -624,7 +628,7 @@ function toast(msg){
 // Tekst se čuva u Supabase tabeli `pravila` (red id=1). Pravila formatiranja:
 // prva linija = naslov; "N. NASLOV VELIKIM SLOVIMA" = nova sekcija; "* " ili "- " = stavka liste;
 // "1. tekst" (malim slovima) = numerisana stavka; red ceo velikim slovima = istaknut; prazan red = razmak.
-const PRAVILA_DEFAULT = "🎮⚽ PRAVILA LIGE\n1. NAJVAŽNIJE PRAVILO\nIGRAČI MOGU DA SE DOGOVORE OKO SVEGA.\nAko se oba igrača slažu oko timova, ranga ili bilo kog drugog detalja – dogovor važi.\n👉 Ako nema dogovora, primenjuje se pravilnik.\n2. ODABIR TIMOVA\nSvaki igrač pre lige prijavljuje svoj default rang.\n🏠 Igra se po rangu domaćina.\nGost bira bilo koji drugi tim istog ranga.\nPrimer:\nDomaćin: ★★★☆☆\nGost: ★★★☆☆\n🚫 Isti timovi nisu dozvoljeni.\n3. PODEŠAVANJA UTAKMICE\n\n* Gameplay: Competitive\n* Presets: Competitive\n* Poluvreme: 6 min\n* Forma: Live Form\n* Kamera: Tactical\n\n4. KALENDAR\n▶️ Start lige: 1. oktobar\n🏁 Završnica lige: 21–22. decembar\n5. TABELA\nKod istog broja bodova redosled određuje:\n\n1. Bodovi\n2. Međusobni skor\n3. Ostali kriterijumi koje automatski obračunava tabela\n\n6. PLAY-OFF\nU plej-of ide prvih 14 sa tabele (pozicija na tabeli, ne rang tima).\n\n* 🥇 1. i 2. mesto: direktno u polufinale\n* ⚔️ 3.–6. mesto: ulaze u drugu rundu\n* ▶️ 7.–14. mesto: igraju prvu rundu\n* 15.–20. mesto: ne prolaze dalje\n\nKostur (fiksan, bez ponovnog razvrstavanja):\n\n* Prva runda: A 7–14, B 8–13, C 9–12, D 10–11\n* Druga runda: E 3 – pobednik D, F 4 – pobednik C, G 5 – pobednik B, H 6 – pobednik A\n* Četvrtfinale: I pobednik F – pobednik G, J pobednik E – pobednik H\n* Polufinale: K 1. mesto – pobednik I, L 2. mesto – pobednik J\n* Finale: pobednik K – pobednik L\n\nPrva i druga runda, četvrtfinale i polufinale: 2 utakmice. Finale: 1 utakmica.\nKod meča koji se igra na jednu utakmicu, primenjuje se default rang bolje plasiranog igrača iz regularnog dela.\nAko je ukupan rezultat posle dve utakmice nerešen:\n\n* igra se treća utakmica\n* igra se po default rangu bolje plasiranog igrača\n* ako je nerešeno → produžeci\n* zatim → penali\n\n7. NAPUŠTANJE MEČA\nAko igrač namerno napusti utakmicu:\n\n* prvo poluvreme → protivniku +5 golova\n* drugo poluvreme → protivniku +3 gola\n\nIgraču koji napusti meč brišu se svi postignuti golovi.\n8. TEHNIČKI PROBLEM\nAko dođe do tehničkog problema, pucanja igre, konzole ili drugog nenamernog prekida:\n➡️ Utakmica kreće iz početka od 0:0.\n9. ODBIJANJE IGRANJA\nAko igrač neopravdano odbija da igra:\n\n* 1. odbijanje → evidentira se\n* 2. odbijanje → upozorenje\n* 3. odbijanje → 3:0 službeno\n\nDa bi se odbijanje priznalo, mora da postoji pisani trag poziva ili dogovora za utakmicu.\nAko igrač ukupno napusti ili odbije 10 utakmica / 25% lige → 🚫 DISKVALIFIKACIJA\n10. ZLOUPOTREBA SISTEMA\nAko organizator utvrdi da igrač namerno pokušava da zloupotrebi pravila, na primer:\n\n* zove protivnike kada zna da nisu dostupni\n* izbegava njihove pozive kada oni mogu da igraju\n* pokušava da napravi lažni utisak da protivnik odbija utakmice\n* na drugi način namerno „buši“ sistem\n\n⚠️ Prva opomena – upozorenje\n🚫 Druga opomena – diskvalifikacija\n11. SPORNE SITUACIJE\nSve situacije koje nisu jasno pokrivene pravilnikom rešava organizator lige.\nOdluka organizatora je konačna za taj slučaj.\n12. DISKVALIFIKACIJA\nAko igrač odustane ili bude diskvalifikovan:\nBrišu se svi njegovi rezultati kao da nije učestvovao u ligi.\n13. NAGRADE\n🥇 1. mesto – \n🥈 2. mesto – \n🥉 3. mesto – \n🏅 4. mesto – \nFER PLEJ  -";
+const PRAVILA_DEFAULT = "🎮⚽ PRAVILA LIGE\n1. NAJVAŽNIJE PRAVILO\nIGRAČI MOGU DA SE DOGOVORE OKO SVEGA.\nAko se oba igrača slažu oko timova, ranga ili bilo kog drugog detalja – dogovor važi.\n👉 Ako nema dogovora, primenjuje se pravilnik.\n2. ODABIR TIMOVA\nSvaki igrač pre lige prijavljuje svoj default rang.\n🏠 Igra se po rangu domaćina.\nGost bira bilo koji drugi tim istog ranga.\nPrimer:\nDomaćin: ★★★☆☆\nGost: ★★★☆☆\n🚫 Isti timovi nisu dozvoljeni.\n3. PODEŠAVANJA UTAKMICE\n\n* Gameplay: Competitive\n* Presets: Competitive\n* Poluvreme: 6 min\n* Forma: Live Form\n* Kamera: Tactical\n\n4. KALENDAR\n▶️ Start lige: 1. oktobar\n🏁 Završnica lige: 21–22. decembar\n5. TABELA\nKod istog broja bodova redosled određuje:\n\n1. Bodovi\n2. Međusobni skor\n3. Ostali kriterijumi koje automatski obračunava tabela\n\n6. PLAY-OFF\nU plej-of ide prvih 14 sa tabele (pozicija na tabeli, ne rang tima).\n\n* 🥇 1. i 2. mesto: direktno u polufinale\n* ⚔️ 3.–6. mesto: direktno u četvrtfinale\n* ▶️ 7.–14. mesto: doigravanje za četvrtfinale\n* 15.–20. mesto: ne prolaze dalje\n\nKostur (fiksan, bez ponovnog razvrstavanja):\n\n* Doigravanje: 7–14, 8–13, 9–12, 10–11\n* Četvrtfinale, 1. kolo: 3. mesto – pobednik (10–11), 4. – pobednik (9–12), 5. – pobednik (8–13), 6. – pobednik (7–14)\n* Četvrtfinale, 2. kolo: pobednici 1. kola međusobno (4/9 – 5/8 i 3/10 – 6/7 grana)\n* Polufinale: 1. mesto – pobednik jednog, 2. mesto – pobednik drugog duela 2. kola\n* Finale: pobednici polufinala (+ meč za 3. mesto)\n\nDoigravanje, četvrtfinale i polufinale: 2 utakmice. Finale: 1 utakmica.\nKod meča koji se igra na jednu utakmicu, primenjuje se default rang bolje plasiranog igrača iz regularnog dela.\nAko je ukupan rezultat posle dve utakmice nerešen:\n\n* igra se treća utakmica\n* igra se po default rangu bolje plasiranog igrača\n* ako je nerešeno → produžeci\n* zatim → penali\n\n7. NAPUŠTANJE MEČA\nAko igrač namerno napusti utakmicu:\n\n* prvo poluvreme → protivniku +5 golova\n* drugo poluvreme → protivniku +3 gola\n\nIgraču koji napusti meč brišu se svi postignuti golovi.\n8. TEHNIČKI PROBLEM\nAko dođe do tehničkog problema, pucanja igre, konzole ili drugog nenamernog prekida:\n➡️ Utakmica kreće iz početka od 0:0.\n9. ODBIJANJE IGRANJA\nAko igrač neopravdano odbija da igra:\n\n* 1. odbijanje → evidentira se\n* 2. odbijanje → upozorenje\n* 3. odbijanje → 3:0 službeno\n\nDa bi se odbijanje priznalo, mora da postoji pisani trag poziva ili dogovora za utakmicu.\nAko igrač ukupno napusti ili odbije 10 utakmica / 25% lige → 🚫 DISKVALIFIKACIJA\n10. ZLOUPOTREBA SISTEMA\nAko organizator utvrdi da igrač namerno pokušava da zloupotrebi pravila, na primer:\n\n* zove protivnike kada zna da nisu dostupni\n* izbegava njihove pozive kada oni mogu da igraju\n* pokušava da napravi lažni utisak da protivnik odbija utakmice\n* na drugi način namerno „buši“ sistem\n\n⚠️ Prva opomena – upozorenje\n🚫 Druga opomena – diskvalifikacija\n11. SPORNE SITUACIJE\nSve situacije koje nisu jasno pokrivene pravilnikom rešava organizator lige.\nOdluka organizatora je konačna za taj slučaj.\n12. DISKVALIFIKACIJA\nAko igrač odustane ili bude diskvalifikovan:\nBrišu se svi njegovi rezultati kao da nije učestvovao u ligi.\n13. NAGRADE\n🥇 1. mesto – \n🥈 2. mesto – \n🥉 3. mesto – \n🏅 4. mesto – \nFER PLEJ  -";
 function pravilaHtml(tekst){
   const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const velika=t=>t===t.toUpperCase()&&t!==t.toLowerCase();
@@ -1128,22 +1132,23 @@ function renderRezultati(){
 let PO_MECEVI=[], PO={};
 
 // ── Playoff logika (identična u index.html i admir.html) ─────────────
-// Kostur sa 5 faza, prvih 14 iz lige: 1.–2. mesto → polufinale, 3.–6. → druga runda, 7.–14. → prva runda.
-// Dueli prve i druge runde, četvrtfinala i polufinala: 2 utakmice, 3. (odlučujuća) samo ako je zbir golova jednak.
+// 4 runde, prvih 14 iz lige: 1.–2. mesto → polufinale, 3.–6. → četvrtfinale (1. kolo), 7.–14. → doigravanje.
+// Četvrtfinale ima 2 kola (E–H, pa I–J), jer u polufinale prolaze samo 2 igrača uz 1. i 2. mesto.
+// Dueli doigravanja, četvrtfinala i polufinala: 2 utakmice, 3. (odlučujuća) samo ako je zbir golova jednak.
 // Finale (M) i meč za 3. mesto (3M): 1 utakmica. Kostur je fiksan — nema ponovnog razvrstavanja posle iznenađenja.
 // Mečevi u `mecevi`: playoff_runda 'A-1','A-2','A-3' … 'L-3', 'M', '3M'.
 const PO_BROJ = 14;
 const PO_DEF=[
-  {key:'A',faza:'R1',naziv:'Prva runda',  kratko:'1.R A',a:{seed:7}, b:{seed:14}},
-  {key:'B',faza:'R1',naziv:'Prva runda',  kratko:'1.R B',a:{seed:8}, b:{seed:13}},
-  {key:'C',faza:'R1',naziv:'Prva runda',  kratko:'1.R C',a:{seed:9}, b:{seed:12}},
-  {key:'D',faza:'R1',naziv:'Prva runda',  kratko:'1.R D',a:{seed:10},b:{seed:11}},
-  {key:'E',faza:'R2',naziv:'Druga runda', kratko:'2.R E',a:{seed:3}, b:{w:'D'}},
-  {key:'F',faza:'R2',naziv:'Druga runda', kratko:'2.R F',a:{seed:4}, b:{w:'C'}},
-  {key:'G',faza:'R2',naziv:'Druga runda', kratko:'2.R G',a:{seed:5}, b:{w:'B'}},
-  {key:'H',faza:'R2',naziv:'Druga runda', kratko:'2.R H',a:{seed:6}, b:{w:'A'}},
-  {key:'I',faza:'QF',naziv:'Četvrtfinale',kratko:'ČF I', a:{w:'F'},  b:{w:'G'}},
-  {key:'J',faza:'QF',naziv:'Četvrtfinale',kratko:'ČF J', a:{w:'E'},  b:{w:'H'}},
+  {key:'A',faza:'DO',naziv:'Doigravanje', kratko:'DO A',a:{seed:7}, b:{seed:14}},
+  {key:'B',faza:'DO',naziv:'Doigravanje', kratko:'DO B',a:{seed:8}, b:{seed:13}},
+  {key:'C',faza:'DO',naziv:'Doigravanje', kratko:'DO C',a:{seed:9}, b:{seed:12}},
+  {key:'D',faza:'DO',naziv:'Doigravanje', kratko:'DO D',a:{seed:10},b:{seed:11}},
+  {key:'E',faza:'QF',naziv:'Četvrtfinale', kratko:'ČF E',a:{seed:3}, b:{w:'D'}},
+  {key:'F',faza:'QF',naziv:'Četvrtfinale', kratko:'ČF F',a:{seed:4}, b:{w:'C'}},
+  {key:'G',faza:'QF',naziv:'Četvrtfinale', kratko:'ČF G',a:{seed:5}, b:{w:'B'}},
+  {key:'H',faza:'QF',naziv:'Četvrtfinale', kratko:'ČF H',a:{seed:6}, b:{w:'A'}},
+  {key:'I',faza:'QF2',naziv:'Četvrtfinale (2. kolo)',kratko:'ČF I', a:{w:'F'},  b:{w:'G'}},
+  {key:'J',faza:'QF2',naziv:'Četvrtfinale (2. kolo)',kratko:'ČF J', a:{w:'E'},  b:{w:'H'}},
   {key:'K',faza:'SF',naziv:'Polufinale',  kratko:'PF K', a:{seed:1}, b:{w:'I'}},
   {key:'L',faza:'SF',naziv:'Polufinale',  kratko:'PF L', a:{seed:2}, b:{w:'J'}},
   {key:'M',faza:'FI',naziv:'Finale',      kratko:'Finale',a:{w:'K'}, b:{w:'L'}},
@@ -1349,15 +1354,15 @@ async function resetujPlayoff(){
 // Teniski prikaz: imena levo, rezultati mečeva u kolonama desno (M1 M2 M3 Σ).
 // ed=true (admin, zvaničan kostur) → polja za unos; inače samo prikaz.
 const PO_RUNDE=[
-  {id:'R1',tab:'1. runda',naziv:'Prva runda',  ulaz:'7.–14. mesto', keys:['B','C','A','D']},
-  {id:'R2',tab:'2. runda',naziv:'Druga runda', ulaz:'+ 3.–6. mesto',keys:['G','F','H','E']},
-  {id:'QF',tab:'ČF',      naziv:'Četvrtfinale',ulaz:'',            keys:['I','J']},
-  {id:'SF',tab:'PF',      naziv:'Polufinale',  ulaz:'+ 1. i 2. mesto',keys:['K','L']},
-  {id:'FI',tab:'Finale',  naziv:'Finale',      ulaz:'',            keys:['M','3M']}
+  {id:'DO',tab:'Doigravanje', naziv:'Doigravanje', ulaz:'7.–14. mesto',     keys:['B','C','A','D']},
+  {id:'QF',tab:'Četvrtfinale',naziv:'Četvrtfinale',ulaz:'ulaze 3.–6. mesto',keys:['G','F','H','E'], keys2:['I','J']},
+  {id:'SF',tab:'Polufinale',  naziv:'Polufinale',  ulaz:'ulaze 1. i 2. mesto',keys:['K','L']},
+  {id:'FI',tab:'Finale',      naziv:'Finale',      ulaz:'',                 keys:['M','3M']}
 ];
 let PO_MOB_RUNDA=null, PO_MOBILNI=null;
 function poEsc(t){return String(t??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function poOtvorena(S,key){const st=S[key];return !!(st&&st.stanje==='ready');}
+function poKljuceviRunde(r){return r.keys.concat(r.keys2||[]);}
 function poNepotreban(st,k){return st.serija&&k===3&&k>st.unlocked&&!!st.winner;}
 function poBtnHtml(key,k,saved){
   return saved
@@ -1372,8 +1377,8 @@ function poKartica(S,key,ed){
   const st=S[key], n=st.maxG, sum=st.serija, par=!!(st.A&&st.B);
   const cols=`style="grid-template-columns:minmax(0,1fr) repeat(${n},var(--tc-cell))${sum?' var(--tc-sum)':''}"`;
   const lbl=k=>st.serija?'M'+k:'REZ';
-  const stTxt=st.stanje==='done'?'završen':st.stanje==='ready'?'igra se':'čeka';
-  const head=`<div class="tc-r tc-h" ${cols}><span class="tc-rn">${st.kratko}<span class="tc-stanje">${stTxt}</span></span>${[...Array(n)].map((_,i)=>`<span class="${poNepotreban(st,i+1)?'tc-na':''}${st.serija&&i===2?' tc-3':''}">${lbl(i+1)}</span>`).join('')}${sum?'<span>Σ</span>':''}</div>`;
+  const stTxt=st.stanje==='done'?'Duel završen':st.stanje==='ready'?'Duel se igra':'Čeka učesnike';
+  const head=`<div class="tc-r tc-h" ${cols}><span class="tc-rn"><span class="tc-dot" title="${stTxt}"></span>${st.kratko}</span>${[...Array(n)].map((_,i)=>`<span class="${poNepotreban(st,i+1)?'tc-na':''}${st.serija&&i===2?' tc-3':''}">${lbl(i+1)}</span>`).join('')}${sum?'<span>Σ</span>':''}</div>`;
   const red=(p,seed,s,izvor)=>{
     const win=!!(st.winner&&st.winner===p), o=s==='a'?'b':'a';
     const cells=[...Array(n)].map((_,i)=>{
@@ -1408,24 +1413,35 @@ function poBoardHtml(S,ed,zvanicno,datum){
   const sampion=`<div class="po-champ"><span>🏆</span><span>${W('M')?poEsc(W('M')):'Pobednik M'}</span></div>`;
   const bronza=`<div class="po-bronze"><span>🥉</span><span>${W('3M')?poEsc(W('3M')):'Pobednik 3M'}</span></div>`;
   if(!mob){
-    const kol=r=>`<div class="pob-col"><div class="pob-title">${r.naziv}</div><div class="pob-ulaz">${r.ulaz}</div><div class="pob-list">${r.keys.map(k=>poKartica(S,k,ed)).join('')}</div></div>`;
-    const fin=PO_RUNDE[4];
-    return `${status}<div class="pob-wrap"><div class="pob">
-        ${kol(PO_RUNDE[0])}${kol(PO_RUNDE[1])}${kol(PO_RUNDE[2])}${kol(PO_RUNDE[3])}
-        <div class="pob-col"><div class="pob-title">${fin.naziv}</div><div class="pob-ulaz"></div><div class="pob-list pob-fin">${poKartica(S,'M',ed)}<div><div class="pob-sub">Šampion</div>${sampion}</div></div></div>
+    const lista=keys=>`<div class="pob-col"><div class="pob-list">${keys.map(k=>poKartica(S,k,ed)).join('')}</div></div>`;
+    const [DO,QF,SF]=PO_RUNDE;
+    return `${status}<div class="pob-wrap">
+      <div class="pob pob-head">
+        <div class="pob-h"><div class="pob-title">Doigravanje</div><div class="pob-ulaz">${DO.ulaz}</div></div>
+        <div class="pob-h pob-span2"><div class="pob-title">Četvrtfinale</div><div class="pob-ulaz">${QF.ulaz}</div></div>
+        <div class="pob-h"><div class="pob-title">Polufinale</div><div class="pob-ulaz">${SF.ulaz}</div></div>
+        <div class="pob-h"><div class="pob-title">Finale</div><div class="pob-ulaz"></div></div>
+      </div>
+      <div class="pob pob-kola"><div></div><div>1. kolo</div><div>2. kolo</div><div></div><div></div></div>
+      <div class="pob">
+        ${lista(DO.keys)}${lista(QF.keys)}${lista(QF.keys2)}${lista(SF.keys)}
+        <div class="pob-col"><div class="pob-list pob-fin">${poKartica(S,'M',ed)}<div><div class="pob-sub">Šampion</div>${sampion}</div></div></div>
       </div>
       <div class="pob-3m"><div class="pob-title" style="color:rgba(255,200,0,0.6);padding:0">Meč za 3. mesto</div>${poKartica(S,'3M',ed)}<div class="po-arrow">→</div>${bronza}</div>
     </div>`;
   }
   if(!PO_MOB_RUNDA){
-    const otv=PO_RUNDE.find(r=>r.keys.some(k=>poOtvorena(S,k)));
-    PO_MOB_RUNDA=otv?otv.id:(W('M')?'FI':'R1');
+    const otv=PO_RUNDE.find(r=>poKljuceviRunde(r).some(k=>poOtvorena(S,k)));
+    PO_MOB_RUNDA=otv?otv.id:(W('M')?'FI':'DO');
   }
   const r=PO_RUNDE.find(x=>x.id===PO_MOB_RUNDA)||PO_RUNDE[0];
-  const tabs=`<div class="pom-tabs">${PO_RUNDE.map(x=>`<button class="pom-tab${x.id===r.id?' on':''}" onclick="poMobIzaberi('${x.id}')">${x.tab}${x.keys.some(k=>poOtvorena(S,k))?'<span class="pom-dot"></span>':''}</button>`).join('')}</div>`;
+  const tabs=`<div class="pom-tabs">${PO_RUNDE.map(x=>`<button class="pom-tab${x.id===r.id?' on':''}" onclick="poMobIzaberi('${x.id}')">${x.tab}${poKljuceviRunde(x).some(k=>poOtvorena(S,k))?'<span class="pom-dot"></span>':''}</button>`).join('')}</div>`;
+  const ulaz=t=>t?`<div class="pob-ulaz" style="text-align:left;min-height:0;padding-bottom:4px">${t}</div>`:'';
   const lista=r.id==='FI'
     ?`<div class="pob-title">Finale</div>${poKartica(S,'M',ed)}${sampion}<div class="pob-title" style="margin-top:14px;color:rgba(255,200,0,0.6)">Meč za 3. mesto</div>${poKartica(S,'3M',ed)}${bronza}`
-    :`<div class="pob-title">${r.naziv}</div>${r.ulaz?`<div class="pob-ulaz" style="text-align:left;min-height:0;padding-bottom:4px">Ulaze: ${r.ulaz.replace('+ ','')}</div>`:''}`+r.keys.map(k=>poKartica(S,k,ed)).join('');
+    :r.keys2
+      ?`<div class="pob-title">${r.naziv} · 1. kolo</div>${ulaz(r.ulaz)}${r.keys.map(k=>poKartica(S,k,ed)).join('')}<div class="pob-title" style="margin-top:10px">${r.naziv} · 2. kolo</div>${r.keys2.map(k=>poKartica(S,k,ed)).join('')}`
+      :`<div class="pob-title">${r.naziv}</div>${ulaz(r.ulaz)}`+r.keys.map(k=>poKartica(S,k,ed)).join('');
   return `${status}<div class="pom">${tabs}<div class="pom-list">${lista}</div></div>`;
 }
 function poMobIzaberi(id){
