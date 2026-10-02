@@ -15,7 +15,7 @@ Poznavanje konteksta nije dovoljno — mora se primeniti bez čekanja da Goran p
 - Kada daješ uputstvo za upload, navedi tačno koje fajlove treba zameniti na GitHub-u (grana `main`)
 - Kada menjaš fajl koji postoji na više grana, odmah sugeriši sync
 - Ako primetiš potencijalni problem van trenutnog zadatka, napomeni ga
-- **Sve što postoji i na javnom sajtu i u adminu (npr. Playoff prikaz) menja se SINHRONO na obe strane i mora izgledati isto.** Zajednički kod je označen komentarom `(identičan u index.html i admin/index.html)` (admin je sada `admin.html`) — posle izmene proveriti da su blokovi u oba fajla identični
+- **Sve što postoji i na javnom sajtu i u adminu (npr. Playoff prikaz) menja se SINHRONO na obe strane i mora izgledati isto.** Zajednički kod je označen komentarom `(identičan u index.html i admin/index.html)` (admin je sada `admir.html`) — posle izmene proveriti da su blokovi u oba fajla identični
 
 Cilj: Goran ne bi trebalo da mora da pita za stvari koje agent može da zaključi iz konteksta.
 
@@ -32,7 +32,7 @@ Goran (bez programerskog iskustva) vodi razvoj kroz Claude chat.
 - **Hosting**: Vercel (auto-deploy sa GitHub)
 - **Vlasnik**: Goran (GitHub, Vercel i Supabase na Goranovim nalozima; prvobitno napravio Mile)
 - **GitHub**: repo `fc27-liga` (Goranov nalog), grana `main`
-- **Live sajt**: `https://inspira-fc27liga.vercel.app` — admin: `https://inspira-fc27liga.vercel.app/admin`
+- **Live sajt**: `https://inspira-fc27liga.vercel.app` — admin: `https://inspira-fc27liga.vercel.app/admir`
 
 ## Supabase
 - **Projekat**: `fc27-liga` (Central EU, Frankfurt, Free plan)
@@ -52,6 +52,7 @@ tabela: igraci
 - firma (text) -- iz mejla, deo posle @ (kartica igrača)
 - plasman_prosle (text) -- prošlogodišnji plasman, unosi se u adminu ("1. mesto"… → medalja)
 - sezona (integer, default 2) -- koja je ovo sezona igrača u ligi
+- diskvalifikovan (boolean, default false) -- DNF
 
 tabela: mecevi
 - id (serial, PK)
@@ -81,8 +82,8 @@ Sve je u KORENU repo-a, bez foldera (lakši upload: označi sve fajlove i prevuc
 ```
 repo/
 ├── index.html                    ← javni sajt
-├── admin.html                    ← admin panel (adresa /admin zahvaljujući vercel.json)
-├── vercel.json                   ← {"cleanUrls": true} — /admin otvara admin.html
+├── admir.html                    ← admin panel (adresa /admir zahvaljujući vercel.json)
+├── vercel.json                   ← {"cleanUrls": true} — /admir otvara admir.html
 ├── readme.md                     ← ovaj fajl
 ├── Ime_Prezime.webp …            ← fotografije igrača za karticu (npr. Goran_Bilic.webp)
 ├── 1.webp … 4.webp               ← nalepnice medalja (prošlogodišnji plasman)
@@ -105,7 +106,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 - Izvor redom: `igraci.firma` iz baze → firma iz mejla (javna funkcija `kontakt_status()` vraća maskiran mejl sa domenom; `firmaIzMejla`) → lista `FIRMA_PO_IMENU`
 
 ### Zaglavlje i navigacija
-- Desktop (>900px): jedna sticky traka — grb + "FC27 LIGA" levo, tabovi (pilule) centrirani, LIVE desno; `<header>` sakriven. Traka je uvek iste širine (1240px) na svim tabovima
+- Desktop (>900px): jedna sticky traka — grb + "FC27 LIGA" levo, tabovi (pilule, VELIKA SLOVA) centrirani, LIVE desno; `<header>` sakriven. Traka je uvek iste širine (1240px) na svim tabovima
 - Telefon: `<header>` sa grbom i nazivom, ispod sticky red tabova (horizontalni skrol, aktivni tab se centrira, fade desno)
 - `html { overflow-y: scroll }` — zaglavlje se ne pomera između dugih i kratkih strana
 - Širina sadržaja `--wrap: 1240px`; na Playoff tabu samo sadržaj ide na 1900px (`body.po-wide`)
@@ -116,15 +117,17 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 1. Baner `#hero` (~190px): grb, naziv, sezona, 4 statistike (brojevi zelenom bojom; Odigrano, Lider, Najbolji napad, Najbolja odbrana — najmanje primljenih golova; kod istog broja prednost ima više odigranih) i fotografija igrača. Statički HTML, render puni samo `#hero-prog`
 2. Levo Tabela (prvih 10, fade + "Prikaži celu tabelu"; stanje ostaje posle osvežavanja), desno Poslednji rezultati i Sledeći mečevi. Telefon: prvo rezultati i mečevi, pa tabela
    - Mini tabela na telefonu: #, Igrač, Forma, Pts (`tblHtml(..., mini=true)`); desktop: P W D L GF GA GD Pts
+- Kratka imena (`kratkoIme`) u Poslednjim/Sledećim mečevima i baneru: 3+ reči → prve dve (Nemanja Šili, Goran Vojnic); duže od 16 znakova → skraćeno prezime (Veselin Rad.); puno ime u tooltip-u
 - Poslednji rezultati i Sledeći mečevi: ista mreža kolona (domaćin | rezultat 84px | gost | kolo 72px) — sve u liniji; poraženi igrač priglušen
 - Poslednji rezultati (5): po vremenu unosa, najnoviji prvi — `mecVreme()` = `uneto_at`, a ako ga nema → vreme iz loga `REZULTAT_UNET`; uključeni i playoff mečevi (oznaka npr. "ČF · M2")
 - Sledeći mečevi (5): igrači se ne ponavljaju; prednost igračima koji zaostaju 2+ meča ("zaostaje N"); zatim redosled kola
 - Realtime osvežavanje sa 0.9s odlaganja (`zakaziLoad`)
 
 ### Duel (međusobni mečevi)
-- Klik na rezultat ili "vs" (Poslednji/Sledeći mečevi), na rezultat odigranog meča ili bilo gde u redu meča (osim imena i polja za unos) na tabu Mečevi → pop-up sa slikama oba igrača, firmom, mestom u tabeli, formama, zbirom pobeda/nerešenih i golova i listom svih međusobnih mečeva (liga + playoff, odigrani i neodigrani)
+- Klik na rezultat ili "vs" (Poslednji/Sledeći mečevi), na rezultat odigranog meča ili bilo gde u redu meča (osim imena i polja za unos) na tabu Mečevi → pop-up sa slikama oba igrača, firmom, formama, zbirom pobeda/nerešenih i golova i listom svih međusobnih mečeva (liga + playoff, odigrani i neodigrani)
 - Elementi imaju `data-duel="domacinId-gostId"`; `otvoriDuel(a,b)`
 - Slike imaju senku dole i na strani okrenutoj ka protivniku (ka VS)
+- Nalepnica za 1.–4. mesto prošle sezone pored imena (manja nego u kartici igrača: 40px, telefon 30px)
 
 ### Kartica igrača (pop-up)
 - Fotografija igrača na vrhu kartice: fajl `Ime_Prezime.webp` u korenu repo-a bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
@@ -134,14 +137,22 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 - Fotografije su isečene jednako za sve (odnos 1.15:1, ~12% prostora iznad glave, ceo grb i natpis na dresu) automatskim prepoznavanjem glave i ramena; `FOTO_VERZIJA` u kodu povećati kad se slike zamene (da browser ne prikaže stare)
 - Imena imaju `data-igrac="ID"`; jedan klik-handler (`otvoriIgraca`); zatvaranje: ×, klik van kartice, Esc
 
+### Diskvalifikacija (DNF)
+- Admin → Igrači → klik na ime (✎) → prekidač "Diskvalifikovan (DNF)" (potvrda pri uključivanju; može da se poništi)
+- Tabela: DNF igrač na začelju, umesto mesta oznaka DNF, red priglušen i ime precrtano; njegovi rezultati zamrznuti (računaju se samo njemu)
+- Protivnicima se mečevi protiv DNF igrača NE računaju (bodovi, golovi, forma, strelci, kartica igrača)
+- Mečevi: odigrani DNF mečevi precrtani, neodigrani "DNF" (bez unosa); ne ulaze u "Odigrano x/y", Poslednje/Sledeće mečeve ni u završenost kola
+- Plej-of: DNF igrači se preskaču pri određivanju top 12 (sajt i admin isto)
+- Kod: `jeDQ(id)`, `dqMec(m)`, `calcTable` / `calcTableAdmin` (isto pravilo)
+
 ### Tabela
-- Kolone: #, Igrač (zvezde + ime), Forma (5, najnoviji levo sa prstenom), P, W, D, L, GF, GA, GD, Pts
+- Kolone: #, Igrač (samo ime, bez zvezdica ranga), Forma (5, najnoviji levo sa prstenom), P, W, D, L, GF, GA, GD, Pts
 - Sortiranje: bodovi → gol razlika → dati golovi → ime
-- Zone: 1.–4. zelena (direktno u četvrtfinale), 5.–12. plava (osmina finala), isprekidana linija ispod 12.; legenda ispod
+- Zone: 1.–2. zelena (polufinale), 3.–6. teal (druga runda), 7.–14. plava (prva runda), 15.+ bez boje; bez linije između zona (samo boja); legenda ispod
 - Hover: sloj `background-image` na `td` (vidi se i na obojenim zonama)
 
 ### Mečevi
-- Filter: Igrač 1 + drugi meni sa opcijama "Neodigrani" / "Odigrani" (mečevi izabranog igrača, ili svi ako igrač nije izabran) ili protivnik (lista bez izabranog igrača); grupisano po kolima; potpuno odigrano kolo je skupljeno i zelenkasto (✓ Kolo N) — klik na zaglavlje otvara/zatvara; otvorena ostaju i posle osvežavanja, zatvaraju se kad se napusti tab; sa filterom sve je otvoreno. Prikazuju se prva 3 kola + "Učitaj još kola" — kad se otvore sva, ostaju otvorena i posle unosa rezultata/osvežavanja (`MEC_SVA`), zatvaraju se tek kad se napusti tab
+- Filter: Igrač 1 + drugi meni sa opcijama "Neodigrani" / "Odigrani" (mečevi izabranog igrača, ili svi ako igrač nije izabran) ili protivnik (lista bez izabranog igrača); grupisano po kolima; potpuno odigrano kolo je skupljeno i zelenkasto (✓ Kolo N) — klik na zaglavlje otvara/zatvara; 2+ uzastopna odigrana kola spajaju se u jedan red "✓ Kola 1–6" (`kolaHtml`, klik otvara sva); otvorena ostaju i posle osvežavanja, zatvaraju se kad se napusti tab; sa filterom sve je otvoreno. Uvek su otvorena 3 nezavršena kola (završena kola pre/između njih se vide skupljena) + "Učitaj još kola" — kad se otvore sva, ostaju otvorena i posle unosa rezultata/osvežavanja (`MEC_SVA`), zatvaraju se tek kad se napusti tab
 - Srednja kolona fiksne širine (150px desktop, 112px telefon) — imena na istim pozicijama i za unos i za odigran meč
 - Unos rezultata: samo cifre (`samoBroj`, max 2), numerička tastatura, Enter snima, plutajuće dugme SNIMI REZULTAT na telefonu (main ima 96px donjeg razmaka)
 
@@ -151,11 +162,16 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 ### Timovi
 - Baner (zakrpe Inspira grupa + EA Sports FC 27) + 10 kartica rangova u 2 reda po 5 (5★ → 0.5★, linkovi na SoFIFA)
 
-### Playoff
-- Top 12: osmina 8v9, 5v12, 6v11, 7v10; 1–4 čekaju u četvrtfinalu
-- Osmina, četvrtfinale, polufinale: 2 meča, pobednik po zbiru golova; 3. meč samo kod izjednačenog zbira. Finale i 3. mesto: 1 meč. Odlučujući meč ne može biti nerešen (rezultat posle penala)
-- Teniski prikaz para (isti na sajtu i u adminu: `poKartica()`, `poBoardHtml()`); desktop 4 kolone (pobednik ispod finala), telefon: izbor runde 1/8 · 1/4 · SF · F / 3.
-- Logika `PO_DEF` + `poIzracunaj()` i prikaz su ISTI kod u oba fajla (komentar "identičan u index.html i admin/index.html")
+### Playoff (kostur sa 5 faza, prvih 14 iz lige)
+- 1.–2. mesto → polufinale; 3.–6. → druga runda; 7.–14. → prva runda; 15.–20. ne prolaze. Pozicija = mesto na tabeli (ne rang tima)
+- Dueli: A 7–14, B 8–13, C 9–12, D 10–11 → E 3–pD, F 4–pC, G 5–pB, H 6–pA → I pF–pG, J pE–pH → K 1–pI, L 2–pJ → M pK–pL; 3M = poraženi K i L (zaseban). Ukupno 13 duela + 3M
+- Polovine: (B→G, C→F → I → K sa 1.) i (A→H, D→E → J → L sa 2.); 1. i 2. mogu se sresti samo u finalu. Kostur je fiksan
+- Pravila odigravanja nepromenjena: A–L do 3 utakmice (2 + odlučujuća ako je zbir golova jednak), M i 3M jedna utakmica, odlučujuća ne može nerešeno
+- Mečevi: `mecevi.playoff_runda` = 'A-1'…'L-3', 'M', '3M'; meč se računa samo ako igrači u redu odgovaraju trenutnim učesnicima
+- PROJEKCIJA vs ZVANIČNO: dok kostur nije formiran, prikazuje se projekcija iz trenutne tabele (unos rezultata nije moguć). Admin → Playoff → "Formiraj zvanični plej-of" čuva pozicije 1–14 (ID-jevi igrača) u tabeli `pravila`, red id=2, JSON `{playoff:{nosioci:[…14 id],formiran}}`; osvežavanje tabele više ne menja kostur. "Ponovo formiraj" je eksplicitna radnja i briše sve plej-of rezultate (upozorenje)
+- Ispravke: pri čuvanju/brisanju rezultata admin računa koji naredni dueli bi dobili druge učesnike (`poZavisni`), prikazuje njihove rezultate i posle potvrde briše SAMO tu zavisnu granu
+- Prikaz: 5 kolona (Prva runda, Druga runda, Četvrtfinale, Polufinale, Finale + šampion), uz svakog igrača njegova pozicija iz lige, oznake duela "završen / igra se / čeka", nepoznati učesnik = "Pobednik X" / "Poraženi K"; telefon: 5 dugmadi za faze
+- Logika (`PO_DEF`, `poIzracunaj`) i prikaz (`poKartica`, `poBoardHtml`) su ISTI kod u index.html i admir.html
 
 ### Pravila
 - Tekst iz tabele `pravila` (fallback `PRAVILA_DEFAULT`), `pravilaHtml()` — isti kod u oba fajla
@@ -174,8 +190,8 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 
 ---
 
-## Admin panel — admin.html
-Adresa: `/admin` (nema login — TODO)
+## Admin panel — admir.html
+Adresa: `/admir` (fajl `admir.html`; nema login — TODO). Stara adresa /admin više ne postoji
 
 ### Tabovi
 Igrači · Rezultati · Playoff · Pravila · Glasanje · Log
@@ -198,8 +214,10 @@ Igrači · Rezultati · Playoff · Pravila · Glasanje · Log
 - Svi / Neodigrani / Odigrani; unos i reset rezultata (samo cifre)
 
 ### Playoff
-- Unos po mečevima (M1, M2, M3 / REZ); M2 posle M1, M3 samo kad je zbir izjednačen; ✓ nesnimljeno / × briše / 🔒 zaključano
-- Log: PLAYOFF_REZULTAT, PLAYOFF_POBEDNIK, PLAYOFF_REZULTAT_OBRISAN, PLAYOFF_RESETOVAN
+- Dugme "Formiraj zvanični plej-of iz trenutne tabele" (upozorenje ako liga nije završena; prikaz 14 pozicija na potvrdu) / "Ponovo formiraj" (briše sve plej-of rezultate, uz upozorenje)
+- Unos po mečevima (M1, M2, M3 / REZ) samo kad je kostur zvaničan i oba učesnika poznata; M2 posle M1, M3 samo kad je zbir izjednačen; ✓ nesnimljeno / × briše / 🔒 zaključano
+- Izmena/brisanje rezultata koje menja učesnike narednih duela: lista rezultata koji će biti poništeni + potvrda; briše se samo zavisna grana
+- Log: PLAYOFF_FORMIRAN, PLAYOFF_REZULTAT, PLAYOFF_POBEDNIK, PLAYOFF_REZULTAT_OBRISAN, PLAYOFF_RESETOVAN
 
 ### Pravila
 - Tekst + pregled uživo; Sačuvaj / Poništi izmene; upozorenje pri zatvaranju sa nesačuvanim izmenama
@@ -219,7 +237,7 @@ Igrači · Rezultati · Playoff · Pravila · Glasanje · Log
 ### Paleta
 - Pozadina `#0f1420`, kartice `#161d2e`, sekundarne površine `#1c253a`
 - Zelena `#ADFF2F`, teal `#00C896`, crvena `#ff4060`, žuta `#ffc800`
-- Tabela: 1.–4. zelena, 5.–12. plava `rgba(120,150,255,…)`
+- Tabela: 1.–2. zelena, 3.–6. teal, 7.–14. plava `rgba(120,150,255,…)`
 
 ### Tipografija
 - Barlow Condensed (italic 800–900): naslovi, naziv lige, rezultati, bodovi
@@ -361,7 +379,7 @@ ME = (b.data||[]).map(m=>({...m, gol_domacin: m.gol_domacin??null, gol_gost: m.g
 
 ### Važna pravila
 - Radi se na `main`; posle upload-a proveriti sajt na live adresi
-- Uvek navesti koji fajlovi su menjani (`index.html`, `admin.html`, `readme.md`, slike, SQL)
+- Uvek navesti koji fajlovi su menjani (`index.html`, `admir.html`, `readme.md`, slike, SQL)
 - ZIP sadrži samo fajlove (bez foldera); na GitHub se uploaduju SVI fajlovi iz ZIP-a odjednom (označi sve → prevuci)
 - Publishable ključ sme na sajt; secret/service_role ključ NIKAD
 - SQL izmene uvek dodati i u `00-nova-baza.sql`
@@ -386,7 +404,7 @@ Format unosa:
 **Urađeno:** ...
 **Ispravljeno:** ...
 **Nije završeno:** ...
-**Fajlovi:** `index.html` / `admin.html` / oba / `readme.md`
+**Fajlovi:** `index.html` / `admir.html` / oba / `readme.md`
 **Grana:** `main` → objavljeno ✅ / čeka upload ⏳
 ---
 ```
@@ -394,6 +412,137 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Novi plej-of kostur (14 igrača, 5 faza), zone tabele, bez zvezdica na Pregledu
+
+**Urađeno:**
+- Plej-of: kostur A–M (+3M) po specifikaciji; projekcija dok kostur nije formiran; zvanično formiranje u adminu (pozicije 1–14 sačuvane); automatsko napredovanje; poništavanje samo zavisne grane uz potvrdu
+- Prikaz 5 faza na sajtu i u adminu (isti kod), stanje duela, pozicija iz lige uz igrača, "Pobednik X"; telefon 5 faza
+- Tabela: zone 1–2 / 3–6 / 7–14 / 15+ i nova legenda; niži redovi
+- Poslednji rezultati / Sledeći mečevi bez zvezdica ranga
+- Podrazumevani tekst pravila (sekcija 6) usklađen sa novim kosturom
+
+**Provereno (simulacija + browser):** 14 različitih igrača, 13 duela; uvek pobeđuje bolji → 2. runda 3–10, 4–9, 5–8, 6–7, ČF 4–5 i 3–6, PF 1–4 i 2–3, finale 1–2; 14 pobedi 7 → H je 6–14; ispravka A poništava H, J, L, a G ostaje; ponovno čuvanje ne pravi duplikate; posle osvežavanja isto stanje
+
+**Nije završeno:**
+- U adminu → Pravila ažurirati sekciju 6 sačuvanog teksta (baza ima stari tekst)
+- Pravilnik kaže "Polufinale: 1 utakmica", a kod (postojeće pravilo) igra polufinale kao dvomeč — čeka odluku
+
+**Fajlovi:** `index.html` + `admir.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Tabele bez zvezdica ranga
+
+**Urađeno:**
+- Uklonjene zvezdice ranga iz tabela (Pregled i Tabela); rang ostaje u kartici igrača
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Nalepnice medalja i u duelu
+
+**Urađeno:**
+- Kartica duela: nalepnica 1st–4th pored imena igrača (manja veličina)
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Fotografija: Nemanja Popara
+
+**Urađeno:**
+- `Nemanja_Popara.webp` (isto kadriranje kao ostali), dodat u `FOTO_IGRACA`
+
+**Fajlovi:** `index.html` + `Nemanja_Popara.webp` + `readme.md`
+
+---
+
+### [30.09.2026] — Admin na adresi /admir
+
+**Urađeno:**
+- `admin.html` preimenovan u `admir.html` → admin je na `/admir`; `/admin` više ne radi
+- Na GitHub-u obrisati stari `admin.html`
+
+**Fajlovi:** `admir.html` (nov naziv) + `readme.md`
+
+---
+
+### [30.09.2026] — Diskvalifikacija (DNF)
+
+**Urađeno:**
+- Admin: prekidač "Diskvalifikovan (DNF)" u izmeni igrača, oznaka DNF i ✎ na čipu
+- Sajt: DNF na začelju tabele, zamrznuti rezultati, protivnicima se brišu mečevi protiv njega; DNF mečevi se ne igraju
+- SQL: `igraci.diskvalifikovan` (dodato u `00-nova-baza.sql`)
+
+**Fajlovi:** `index.html` + `admin.html` + `readme.md` + `00-nova-baza.sql`
+
+---
+
+### [30.09.2026] — Duel bez mesta i bodova
+
+**Urađeno:**
+- Iz kartice duela uklonjen red "N. mesto · X bod." ispod imena
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Nazivi tabova velikim slovima
+
+**Urađeno:**
+- Meni sajta: nazivi tabova velikim slovima (13.5px, bold, blagi razmak slova); staje na desktopu, na telefonu se skroluje kao i ranije
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Kartica igrača: puno (kratko) ime protivnika bez odsecanja
+
+**Urađeno:**
+- Tekst ispod statistike 11px, bez "…"; na desktopu u jednom redu, na uskom telefonu prelazi u drugi red
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Kartica igrača: kraći tekstovi ispod statistike
+
+**Urađeno:**
+- Golovi: "6 utakmica"; najveća pobeda/poraz: "vs. Tamaš Horvat" (kratko ime, jedan red)
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Kratka imena na Pregledu
+
+**Urađeno:**
+- Poslednji/Sledeći mečevi i baner: Nemanja Šili, Goran Vojnic, Veselin Rad. (da stane u jedan red)
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Mečevi: spajanje uzastopnih odigranih kola
+
+**Urađeno:**
+- Uzastopna potpuno odigrana kola (2 ili više) prikazuju se kao jedan red "✓ Kola 1–6 · 42/42 odigrano"; klik otvara sva, ponovni klik zatvara
+
+**Fajlovi:** `index.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Tabela bez isprekidane linije; Mečevi uvek 3 otvorena kola
+
+**Urađeno:**
+- Uklonjena isprekidana linija ispod 12. mesta (zone se razlikuju samo bojom)
+- Mečevi: prikazuju se 3 nezavršena kola, a odigrana kola između se vide skupljena i ne računaju se u ta 3
+
+**Fajlovi:** `index.html` + `readme.md`
+
 ---
 
 ### [30.09.2026] — Mečevi: filter Neodigrani / Odigrani
