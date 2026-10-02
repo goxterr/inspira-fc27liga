@@ -459,6 +459,7 @@
   .du-top > .du-side:last-child .du-photo::before { left: 0; background: linear-gradient(90deg, #171f33 0%, rgba(23,31,51,0.55) 40%, rgba(23,31,51,0) 100%); }
   .du-noph { aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-style: italic; font-weight: 900; font-size: 54px; color: rgba(255,255,255,0.18); background: linear-gradient(160deg,#1c253a,#141c2c); }
   .du-name { font-family: 'Barlow Condensed', sans-serif; font-style: italic; font-weight: 900; font-size: 22px; line-height: 1.02; color: #fff; padding: 8px 10px 0; word-break: break-word; }
+  .du-stiker { height: 40px; width: auto; vertical-align: middle; margin: -8px 0 -6px 6px; transform: rotate(6deg); filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
   .du-firma { font-size: 12.5px; font-weight: 600; color: var(--teal); margin-top: 2px; }
   .du-pos { font-size: 12px; color: var(--muted2); margin-top: 4px; }
   .du-side .fm { justify-content: center; margin-top: 8px; }
@@ -477,7 +478,7 @@
   .du-m .r .du-sc.np { font-family: 'Barlow', sans-serif; font-size: 12px; font-weight: 600; color: var(--muted); }
   .du-m .w { color: #fff; font-weight: 700; }
   .du-m .l { color: var(--muted2); }
-  @media (max-width: 700px) { .du-name { font-size: 18px; } .du-mid { width: 44px; } .du-vs { width: 40px; height: 40px; font-size: 16px; margin-top: calc((100cqw - 44px) / 4 - 20px); } .du-m { grid-template-columns: 1fr; gap: 4px; } .du-m .r { grid-template-columns: minmax(0,1fr) 70px minmax(0,1fr); } }
+  @media (max-width: 700px) { .du-stiker { height: 30px; margin: -6px 0 -4px 4px; } .du-name { font-size: 18px; } .du-mid { width: 44px; } .du-vs { width: 40px; height: 40px; font-size: 16px; margin-top: calc((100cqw - 44px) / 4 - 20px); } .du-m { grid-template-columns: 1fr; gap: 4px; } .du-m .r { grid-template-columns: minmax(0,1fr) 70px minmax(0,1fr); } }
   footer { text-align: center; padding: 1.5rem 1rem; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
   footer a { color: rgba(173,255,47,0.4); text-decoration: none; }
   footer a:hover { color: var(--green); }
@@ -1489,7 +1490,7 @@ function pravilaHtml(tekst){
 // ── Kartica igrača (klik na ime bilo gde na sajtu) ──
 // Fotografije su u korenu repo-a (pored index.html) — ime fajla = ime igrača bez kvačica, sa _ (npr. Goran_Bilic.webp).
 // Redosled imena nije bitan (Boris_Zmaher = Žmaher Boris). Nova slika: dovoljno je dodati fajl Ime_Prezime.webp pored index.html.
-const FOTO_IGRACA = ["Bojan_Zmijanjac", "Boris_Zmaher", "Dalibor_Birkas", "Danijel_Berkes", "Dejan_Bodiroga", "Dragan_Belegic", "Filip_Tunguz", "Goran_Bilic", "Goran_Jankovic", "Goran_Vojnic_Hajduk", "Janos_Zedi", "Milenko_Jaric", "Milos_Cetina", "Nemanja_Sili_Todorovic", "Nenad_Gojkovic", "Srdjan_Mutlak", "Tamas_Horvat", "Veselin_Radosavljevic", "Vukasin_Plavsic", "Zoran_Grcic"];
+const FOTO_IGRACA = ["Bojan_Zmijanjac", "Boris_Zmaher", "Dalibor_Birkas", "Danijel_Berkes", "Dejan_Bodiroga", "Dragan_Belegic", "Filip_Tunguz", "Goran_Bilic", "Goran_Jankovic", "Goran_Vojnic_Hajduk", "Janos_Zedi", "Milenko_Jaric", "Milos_Cetina", "Nemanja_Popara", "Nemanja_Sili_Todorovic", "Nenad_Gojkovic", "Srdjan_Mutlak", "Tamas_Horvat", "Veselin_Radosavljevic", "Vukasin_Plavsic", "Zoran_Grcic"];
 function kljucImena(t){
   return String(t||'').replace(/[đĐ]/g,'dj').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().split(' ').filter(Boolean).sort().join(' ');
@@ -1578,7 +1579,7 @@ function otvoriDuel(aId,bId){
     const forma=r?r.forma.slice(-5).reverse().map((x,j)=>`<span class="fb f${x}${j===0?' fnew':''}">${x}</span>`).join(''):'';
     return `<div class="du-side">
       ${f?`<div class="du-photo"><img src="${f}" alt="${esc(ig.ime)}" onerror="this.parentNode.className='du-noph';this.parentNode.textContent='${esc(ini)}'"></div>`:`<div class="du-noph">${esc(ini)}</div>`}
-      <div class="du-name">${esc(ig.ime)}</div>
+      <div class="du-name">${esc(ig.ime)}${(n=>n&&n<=4?`<img class="du-stiker" src="${n}.webp?v=4" alt="${n}. mesto prošle sezone" title="Prošla sezona: ${n}. mesto">`:'')(mestoProsle(ig))}</div>
       ${ig.firma?`<div class="du-firma">${esc(ig.firma)}</div>`:''}
       <div class="fm">${forma||'<span class="du-pos">bez forme</span>'}</div>
     </div>`;
