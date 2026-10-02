@@ -1011,7 +1011,6 @@ function tblHtml(rows, forma, showLegend=true, limit=0, mini=false) {
     h+=`<tr ${rowCls}>
       <td>${rkHtml(pos)}</td>
       <td>
-        <div class="pstars">${starsHtml(r.zvezde||3,11)}</div>
         <div class="pn"><span data-igrac="${r.id}">${r.ime}</span>${medaljaHtml(r)}</div>
         <div class="pd">${r.odeljenje||''}</div>
       </td>
