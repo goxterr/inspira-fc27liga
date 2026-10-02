@@ -148,7 +148,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 ### Tabela
 - Kolone: #, Igrač (samo ime, bez zvezdica ranga), Forma (5, najnoviji levo sa prstenom), P, W, D, L, GF, GA, GD, Pts
 - Sortiranje: bodovi → gol razlika → dati golovi → ime
-- Zone: 1.–2. zelena (polufinale), 3.–6. teal (druga runda), 7.–14. plava (prva runda), 15.+ bez boje; bez linije između zona (samo boja); legenda ispod
+- Zone: 1.–2. zelena (polufinale), 3.–6. teal (četvrtfinale), 7.–14. plava (doigravanje), 15.+ bez boje; bez linije između zona (samo boja); legenda ispod
 - Hover: sloj `background-image` na `td` (vidi se i na obojenim zonama)
 
 ### Mečevi
@@ -162,15 +162,17 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 ### Timovi
 - Baner (zakrpe Inspira grupa + EA Sports FC 27) + 10 kartica rangova u 2 reda po 5 (5★ → 0.5★, linkovi na SoFIFA)
 
-### Playoff (kostur sa 5 faza, prvih 14 iz lige)
-- 1.–2. mesto → polufinale; 3.–6. → druga runda; 7.–14. → prva runda; 15.–20. ne prolaze. Pozicija = mesto na tabeli (ne rang tima)
-- Dueli: A 7–14, B 8–13, C 9–12, D 10–11 → E 3–pD, F 4–pC, G 5–pB, H 6–pA → I pF–pG, J pE–pH → K 1–pI, L 2–pJ → M pK–pL; 3M = poraženi K i L (zaseban). Ukupno 13 duela + 3M
-- Polovine: (B→G, C→F → I → K sa 1.) i (A→H, D→E → J → L sa 2.); 1. i 2. mogu se sresti samo u finalu. Kostur je fiksan
-- Pravila odigravanja nepromenjena: A–L do 3 utakmice (2 + odlučujuća ako je zbir golova jednak), M i 3M jedna utakmica, odlučujuća ne može nerešeno
+### Playoff (4 runde, prvih 14 iz lige)
+- **1. Doigravanje**: 7.–14. mesto — A 7–14, B 8–13, C 9–12, D 10–11
+- **2. Četvrtfinale** (2 kola): 1. kolo — 3.–6. mesto ulaze: E 3–pD, F 4–pC, G 5–pB, H 6–pA; 2. kolo — I pF–pG, J pE–pH (2 kola jer u polufinale prolaze samo 2 uz 1. i 2.)
+- **3. Polufinale**: 1. i 2. mesto ulaze — K 1–pI, L 2–pJ
+- **4. Finale**: M pK–pL (+ zaseban meč za 3. mesto: poraženi K i L)
+- 15.–20. ne prolaze. Pozicija = mesto na tabeli (ne rang tima). Polovine: (B→G, C→F → I → K sa 1.) i (A→H, D→E → J → L sa 2.); 1. i 2. mogu se sresti samo u finalu. Kostur je fiksan
+- Pravila odigravanja: A–L do 3 utakmice (2 + odlučujuća ako je zbir golova jednak), M i 3M jedna utakmica, odlučujuća ne može nerešeno
 - Mečevi: `mecevi.playoff_runda` = 'A-1'…'L-3', 'M', '3M'; meč se računa samo ako igrači u redu odgovaraju trenutnim učesnicima
-- PROJEKCIJA vs ZVANIČNO: dok kostur nije formiran, prikazuje se projekcija iz trenutne tabele (unos rezultata nije moguć). Admin → Playoff → "Formiraj zvanični plej-of" čuva pozicije 1–14 (ID-jevi igrača) u tabeli `pravila`, red id=2, JSON `{playoff:{nosioci:[…14 id],formiran}}`; osvežavanje tabele više ne menja kostur. "Ponovo formiraj" je eksplicitna radnja i briše sve plej-of rezultate (upozorenje)
-- Ispravke: pri čuvanju/brisanju rezultata admin računa koji naredni dueli bi dobili druge učesnike (`poZavisni`), prikazuje njihove rezultate i posle potvrde briše SAMO tu zavisnu granu
-- Prikaz: 5 kolona (Prva runda, Druga runda, Četvrtfinale, Polufinale, Finale + šampion), uz svakog igrača njegova pozicija iz lige, oznake duela "završen / igra se / čeka", nepoznati učesnik = "Pobednik X" / "Poraženi K"; telefon: 5 dugmadi za faze
+- PROJEKCIJA vs ZVANIČNO: dok kostur nije formiran, prikazuje se projekcija iz trenutne tabele (unos nije moguć). Admin → Playoff → "Formiraj zvanični plej-of" čuva pozicije 1–14 (ID-jevi) u `pravila` id=2 JSON `{playoff:{nosioci:[…],formiran}}`; "Ponovo formiraj" briše plej-of rezultate (upozorenje)
+- Ispravke: admin računa koji naredni dueli dobijaju druge učesnike (`poZavisni`), prikazuje ih i posle potvrde briše SAMO tu granu
+- Prikaz: desktop — Doigravanje | Četvrtfinale (1. kolo, 2. kolo pod zajedničkim naslovom) | Polufinale | Finale + šampion, meč za 3. mesto ispod; uz igrača pozicija iz lige; tačka u zaglavlju duela: zelena = završen, teal = igra se, siva = čeka; nepoznati učesnik "Pobednik X". Telefon: 4 dugmeta (Doigravanje, Četvrtfinale, Polufinale, Finale)
 - Logika (`PO_DEF`, `poIzracunaj`) i prikaz (`poKartica`, `poBoardHtml`) su ISTI kod u index.html i admir.html
 
 ### Pravila
@@ -412,6 +414,17 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [30.09.2026] — Plej-of: 4 runde (Doigravanje, Četvrtfinale u 2 kola, Polufinale, Finale)
+
+**Urađeno:**
+- Nazivi i prikaz usklađeni sa dogovorom: 7.–14. doigravanje, 3.–6. ulaze u četvrtfinale (1. kolo), 1.–2. ulaze u polufinale; parovi i napredovanje nepromenjeni
+- Desktop 4 runde (četvrtfinale sa 2 kola pod jednim naslovom), telefon 4 dugmeta; stanje duela kao tačka u zaglavlju
+- Legenda tabele i podrazumevani tekst pravila (sekcija 6) prilagođeni
+
+**Fajlovi:** `index.html` + `admir.html` + `readme.md`
+
 ---
 
 ### [30.09.2026] — Novi plej-of kostur (14 igrača, 5 faza), zone tabele, bez zvezdica na Pregledu
