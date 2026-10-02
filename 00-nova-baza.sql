@@ -14,6 +14,7 @@ create table if not exists igraci (
 alter table igraci add column if not exists firma text;            -- firma iz mejla (prikaz u kartici igrača)
 alter table igraci add column if not exists plasman_prosle text;   -- prošlogodišnji plasman (unosi se u adminu)
 alter table igraci add column if not exists sezona integer default 2;  -- koja je ovo sezona igrača u ligi (1 = prva)
+alter table igraci add column if not exists diskvalifikovan boolean default false;  -- DNF: na začelju, mečevi protiv njega se ne računaju
 
 -- Mečevi (liga + playoff)
 create table if not exists mecevi (
