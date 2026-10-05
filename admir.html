@@ -61,6 +61,11 @@
   .sw-row input:checked+.sw.sw-red::after{background:var(--red)}
   .chip.dnf{border-color:rgba(255,64,96,0.45)}
   .chip-dnf{font-size:10px;font-weight:800;color:var(--red);background:rgba(255,64,96,0.12);border-radius:6px;padding:1px 5px}
+  .info-pv{max-width:460px;background:linear-gradient(160deg,#182238,#151c2c);border:1px solid var(--border2);border-radius:16px;overflow:hidden}
+  .info-pv img{width:100%;max-height:260px;object-fit:cover;display:block}
+  .info-pv .ib{padding:18px 20px}
+  .info-pv h3{font-family:'Barlow Condensed',sans-serif;font-style:italic;font-weight:900;font-size:26px;line-height:1.05;color:#fff}
+  .info-pv p{margin-top:10px;font-size:14.5px;line-height:1.55;color:rgba(255,255,255,0.82);white-space:pre-wrap}
   .fp-adm-row{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--surf2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;font-size:14px}
   .fp-adm-row b{font-family:'Barlow Condensed',sans-serif;font-size:20px;color:var(--green);margin-left:auto}
   .bulk-tag{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--yellow);flex-shrink:0}
@@ -264,6 +269,7 @@
   <button class="tab" onclick="showTab('playoff',this)">Playoff</button>
   <button class="tab" onclick="showTab('pravila',this)">Pravila</button>
   <button class="tab" onclick="showTab('ferplej',this)">Glasanje</button>
+  <button class="tab" onclick="showTab('info',this)">Info</button>
   <button class="tab" onclick="showTab('log',this)">Log</button>
 </div>
 <main>
@@ -334,6 +340,22 @@
         <div id="pravila-preview"></div>
       </div>
     </div>
+  </div>
+
+  <div id="tab-info" class="section">
+    <div class="stitle">Info obaveštenje</div>
+    <label class="sw-row"><input type="checkbox" id="sw-info" onchange="infoOnOff(this.checked)"><span class="sw"></span><span id="sw-info-txt">Obaveštenje je isključeno</span></label>
+    <div class="card" style="display:flex;flex-direction:column;gap:12px">
+      <div><label>Naslov</label><input type="text" id="info-naslov" placeholder="npr. Važno: promena rasporeda" oninput="infoPregled()"></div>
+      <div><label>Tekst obaveštenja</label><textarea id="info-tekst" style="min-height:140px" placeholder="Tekst koji svi korisnici treba da pročitaju..." oninput="infoPregled()"></textarea></div>
+      <div><label>Slika (opciono)</label>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input type="file" id="info-slika-f" accept="image/*" onchange="infoSlika(this)" style="max-width:280px"><button class="btn btn-r" id="info-slika-x" onclick="infoUkloniSliku()" style="display:none">× Ukloni sliku</button></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn btn-g" onclick="sacuvajInfo()">Sačuvaj obaveštenje</button><span id="info-status" class="am-note"></span></div>
+      <div class="am-note">Kad je uključeno, sajt se zamuti i svaki posetilac mora da zatvori obaveštenje ("Razumem"). Posle zatvaranja ne prikazuje se ponovo istom posetiocu — dok ne sačuvaš izmenu ili ga ponovo uključiš.</div>
+    </div>
+    <div class="stitle" style="font-size:15px;margin-top:6px">Pregled</div>
+    <div id="info-pregled"></div>
   </div>
 
   <div id="tab-log" class="section">
@@ -598,6 +620,7 @@ function showTab(t,btn){
   document.body.classList.toggle('po-wide',t==='playoff'||t==='pravila');
   if(t==='pravila') loadPravila();
   if(t==='ferplej') loadFerPlejAdmin();
+  if(t==='info') loadInfo();
   if(t==='playoff') renderAdminPlayoff();
   if(t==='log') loadLog();
 }
@@ -951,6 +974,58 @@ async function resetujGlasanje(){
   if(error){ toast(/fp_reset/.test(error.message||'')?'Pokreni SQL za reset (fp_reset) iz readme-a':'Greška: '+error.message); return; }
   await logujAkciju('GLASANJE_RESET','Svi glasovi obrisani');
   toast('Glasanje resetovano'); loadFerPlejAdmin();
+}
+// ── Info obaveštenje: tabela pravila, red id=3, tekst = JSON {aktivno, naslov, tekst, slika (data URL), verzija} ──
+let INFO_SLIKA='', INFO_AKTIVNO=false;
+async function loadInfo(){
+  const{data,error}=await db.from('pravila').select('*').eq('id',3);
+  let o={}; try{ o=data&&data[0]&&data[0].tekst?JSON.parse(data[0].tekst):{}; }catch(e){}
+  document.getElementById('info-naslov').value=o.naslov||'';
+  document.getElementById('info-tekst').value=o.tekst||'';
+  INFO_SLIKA=o.slika||''; INFO_AKTIVNO=!!o.aktivno;
+  document.getElementById('sw-info').checked=INFO_AKTIVNO;
+  infoStatus(o); infoPregled();
+}
+function infoStatus(o){
+  document.getElementById('sw-info-txt').textContent=INFO_AKTIVNO?'Obaveštenje je UKLJUČENO na sajtu':'Obaveštenje je isključeno';
+  document.getElementById('info-status').textContent=o&&o.verzija?'Poslednja izmena: '+new Date(o.verzija).toLocaleString('sr-RS',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+  document.getElementById('info-slika-x').style.display=INFO_SLIKA?'':'none';
+}
+function infoPregled(){
+  const n=document.getElementById('info-naslov').value.trim(), t=document.getElementById('info-tekst').value.trim();
+  document.getElementById('info-pregled').innerHTML=(n||t||INFO_SLIKA)
+    ?`<div class="info-pv">${INFO_SLIKA?`<img src="${INFO_SLIKA}" alt="">`:''}<div class="ib">${n?`<h3>${escH(n)}</h3>`:''}${t?`<p>${escH(t)}</p>`:''}</div></div>`
+    :'<div class="empty" style="padding:0.5rem 0">Unesi naslov i tekst da vidiš pregled</div>';
+  document.getElementById('info-slika-x').style.display=INFO_SLIKA?'':'none';
+}
+function infoSlika(inp){
+  const f=inp.files&&inp.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{ const img=new Image(); img.onload=()=>{
+    const max=1000, k=Math.min(1,max/Math.max(img.width,img.height));
+    const c=document.createElement('canvas'); c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+    INFO_SLIKA=c.toDataURL('image/jpeg',0.82);
+    if(INFO_SLIKA.length>900000){ INFO_SLIKA=c.toDataURL('image/jpeg',0.6); }
+    infoPregled(); toast('Slika dodata — klikni Sačuvaj');
+  }; img.src=r.result; };
+  r.readAsDataURL(f); inp.value='';
+}
+function infoUkloniSliku(){ INFO_SLIKA=''; infoPregled(); toast('Slika uklonjena — klikni Sačuvaj'); }
+async function sacuvajInfo(aktivno){
+  const naslov=document.getElementById('info-naslov').value.trim(), tekst=document.getElementById('info-tekst').value.trim();
+  if(aktivno===undefined) aktivno=document.getElementById('sw-info').checked;
+  if(aktivno&&!naslov&&!tekst){ toast('Unesi naslov ili tekst pre uključivanja'); document.getElementById('sw-info').checked=false; return; }
+  const o={aktivno:!!aktivno,naslov,tekst,slika:INFO_SLIKA,verzija:Date.now()};
+  const{error}=await db.from('pravila').upsert({id:3,tekst:JSON.stringify(o),azurirano:new Date().toISOString()});
+  if(error){ toast('Greška: '+error.message); return; }
+  INFO_AKTIVNO=o.aktivno; document.getElementById('sw-info').checked=o.aktivno; infoStatus(o);
+  await logujAkciju('INFO_'+(o.aktivno?'UKLJUCENO':'SACUVANO'),`${naslov||'(bez naslova)'}${o.aktivno?' — prikazuje se na sajtu':''}`);
+  toast(o.aktivno?'Obaveštenje sačuvano i uključeno':'Obaveštenje sačuvano (isključeno)');
+}
+async function infoOnOff(on){
+  if(!on){ await sacuvajInfo(false); await logujAkciju('INFO_ISKLJUCENO','Obaveštenje isključeno'); return; }
+  await sacuvajInfo(true);
 }
 async function loadFerPlejAdmin(){
   ucitajPodesavanja().then(pod=>{const on=pod.glasanje!==false;const sw=document.getElementById('sw-glasanje');if(sw)sw.checked=on;const t=document.getElementById('sw-glasanje-txt');if(t)t.textContent=on?'Tab Glasanje je vidljiv na sajtu':'Tab Glasanje je sakriven na sajtu';});
