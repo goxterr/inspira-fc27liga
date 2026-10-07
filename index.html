@@ -1530,7 +1530,7 @@ function kljucImena(t){
   return String(t||'').replace(/[đĐ]/g,'dj').normalize('NFD').replace(/[\u0300-\u036f]/g,'')
     .toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().split(' ').filter(Boolean).sort().join(' ');
 }
-const FOTO_MAPA = {}; const FOTO_VERZIJA = '4';   // povećati kad se slike zamene, da browser ne prikazuje stare
+const FOTO_MAPA = {}; const FOTO_VERZIJA = '5';   // povećati kad se slike zamene, da browser ne prikazuje stare
 FOTO_IGRACA.forEach(f=>FOTO_MAPA[kljucImena(f.replace(/_/g,' '))]=f+'.webp?v='+FOTO_VERZIJA);
 function fotoIgraca(ime){
   if(FOTO_MAPA[kljucImena(ime)]) return FOTO_MAPA[kljucImena(ime)];
