@@ -127,7 +127,13 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 - Klik na rezultat ili "vs" (Poslednji/Sledeći mečevi), na rezultat odigranog meča ili bilo gde u redu meča (osim imena i polja za unos) na tabu Mečevi → pop-up sa slikama oba igrača, firmom, formama, zbirom pobeda/nerešenih i golova i listom svih međusobnih mečeva (liga + playoff, odigrani i neodigrani)
 - Elementi imaju `data-duel="domacinId-gostId"`; `otvoriDuel(a,b)`
 - Slike imaju senku dole i na strani okrenutoj ka protivniku (ka VS)
+- Ispod forme: rang tima (zvezdice + broj)
 - Nalepnica za 1.–4. mesto prošle sezone pored imena (manja nego u kartici igrača: 40px, telefon 30px)
+
+### Info obaveštenje (pop-up)
+- Kad je uključeno u adminu: sajt se zamuti (blur) i prikazuje se prozor sa slikom, naslovom i tekstom; zatvara se SAMO dugmetom "Razumem" (ne klikom van, ne swipe-om)
+- Posle zatvaranja ne prikazuje se ponovo istom posetiocu (localStorage `fc27_info_procitano` = verzija) — dok admin ne sačuva izmenu ili ga ponovo uključi
+- Učitava se zajedno sa pravilima (`pravila` id 1, 2, 3); realtime — ako se uključi dok je sajt otvoren, pojavljuje se odmah
 
 ### Kartica igrača (pop-up)
 - Fotografija igrača na vrhu kartice: fajl `Ime_Prezime.webp` u korenu repo-a bez kvačica (npr. `Goran_Bilic.webp`); redosled imena nije bitan za fajlove iz liste `FOTO_IGRACA`, a novi fajl imenovan kao u bazi radi i bez dopisivanja u listu. Nema slike → kartica bez fotografije
@@ -148,7 +154,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 ### Tabela
 - Kolone: #, Igrač (samo ime, bez zvezdica ranga), Forma (5, najnoviji levo sa prstenom), P, W, D, L, GF, GA, GD, Pts
 - Sortiranje: bodovi → gol razlika → dati golovi → ime
-- Zone: 1.–2. zelena (polufinale), 3.–6. teal (četvrtfinale), 7.–14. plava (doigravanje), 15.+ bez boje; bez linije između zona (samo boja); legenda ispod
+- Zone: 1.–4. zelena (direktno u četvrtfinale), 5.–12. plava (doigravanje), 13.+ bez boje; bez linije između zona (samo boja); legenda ispod
 - Hover: sloj `background-image` na `td` (vidi se i na obojenim zonama)
 
 ### Mečevi
@@ -162,18 +168,12 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 ### Timovi
 - Baner (zakrpe Inspira grupa + EA Sports FC 27) + 10 kartica rangova u 2 reda po 5 (5★ → 0.5★, linkovi na SoFIFA)
 
-### Playoff (4 runde, prvih 14 iz lige)
-- **1. Doigravanje**: 7.–14. mesto — A 7–14, B 8–13, C 9–12, D 10–11
-- **2. Četvrtfinale** (2 kola): 1. kolo — 3.–6. mesto ulaze: E 3–pD, F 4–pC, G 5–pB, H 6–pA; 2. kolo — I pF–pG, J pE–pH (2 kola jer u polufinale prolaze samo 2 uz 1. i 2.)
-- **3. Polufinale**: 1. i 2. mesto ulaze — K 1–pI, L 2–pJ
-- **4. Finale**: M pK–pL (+ zaseban meč za 3. mesto: poraženi K i L)
-- 15.–20. ne prolaze. Pozicija = mesto na tabeli (ne rang tima). Polovine: (B→G, C→F → I → K sa 1.) i (A→H, D→E → J → L sa 2.); 1. i 2. mogu se sresti samo u finalu. Kostur je fiksan
-- Pravila odigravanja: A–L do 3 utakmice (2 + odlučujuća ako je zbir golova jednak), M i 3M jedna utakmica, odlučujuća ne može nerešeno
-- Mečevi: `mecevi.playoff_runda` = 'A-1'…'L-3', 'M', '3M'; meč se računa samo ako igrači u redu odgovaraju trenutnim učesnicima
-- PROJEKCIJA vs ZVANIČNO: dok kostur nije formiran, prikazuje se projekcija iz trenutne tabele (unos nije moguć). Admin → Playoff → "Formiraj zvanični plej-of" čuva pozicije 1–14 (ID-jevi) u `pravila` id=2 JSON `{playoff:{nosioci:[…],formiran}}`; "Ponovo formiraj" briše plej-of rezultate (upozorenje)
-- Ispravke: admin računa koji naredni dueli dobijaju druge učesnike (`poZavisni`), prikazuje ih i posle potvrde briše SAMO tu granu
-- Prikaz: desktop — Doigravanje | Četvrtfinale (1. kolo, 2. kolo pod zajedničkim naslovom) | Polufinale | Finale + šampion, meč za 3. mesto ispod; uz igrača pozicija iz lige; tačka u zaglavlju duela: zelena = završen, teal = igra se, siva = čeka; nepoznati učesnik "Pobednik X". Telefon: 4 dugmeta (Doigravanje, Četvrtfinale, Polufinale, Finale)
-- Logika (`PO_DEF`, `poIzracunaj`) i prikaz (`poKartica`, `poBoardHtml`) su ISTI kod u index.html i admir.html
+### Playoff (12 igrača)
+- 1.–4. mesto direktno u četvrtfinale; 5.–12. igraju doigravanje za četvrtfinale (DO 7–10, 5–12, 6–11, 8–9); 13.+ ne prolaze
+- Četvrtfinale: 1 – pobednik 7/10, 4 – pobednik 5/12, 3 – pobednik 6/11, 2 – pobednik 8/9; polufinale; finale + meč za 3. mesto
+- Doigravanje, četvrtfinale i polufinale: 2 meča, pobednik po zbiru golova; 3. meč samo kod izjednačenog zbira. Finale i 3. mesto: 1 meč. Odlučujući meč ne može biti nerešen
+- Kostur se računa iz trenutne tabele (prvih 12 bez DNF); mečevi `playoff_runda` 'O1-1'…'P2-3', 'F', '3M'
+- Teniski prikaz, isti na sajtu i u adminu (`PO_DEF`, `poIzracunaj`, `poKartica`, `poBoardHtml`); desktop 4 kolone (Doigravanje, Četvrtfinale, Polufinale, Finale + pobednik), telefon izbor runde DO · 1/4 · SF · F / 3.
 
 ### Pravila
 - Tekst iz tabele `pravila` (fallback `PRAVILA_DEFAULT`), `pravilaHtml()` — isti kod u oba fajla
@@ -196,7 +196,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 Adresa: `/admir` (fajl `admir.html`; nema login — TODO). Stara adresa /admin više ne postoji
 
 ### Tabovi
-Igrači · Rezultati · Playoff · Pravila · Glasanje · Log
+Igrači · Rezultati · Playoff · Pravila · Glasanje · Info · Log
 
 ### Igrači — unos
 - Čuvaju se SAMO: Ime i prezime, Mejl, Rang (zvezdice)
@@ -216,10 +216,8 @@ Igrači · Rezultati · Playoff · Pravila · Glasanje · Log
 - Svi / Neodigrani / Odigrani; unos i reset rezultata (samo cifre)
 
 ### Playoff
-- Dugme "Formiraj zvanični plej-of iz trenutne tabele" (upozorenje ako liga nije završena; prikaz 14 pozicija na potvrdu) / "Ponovo formiraj" (briše sve plej-of rezultate, uz upozorenje)
-- Unos po mečevima (M1, M2, M3 / REZ) samo kad je kostur zvaničan i oba učesnika poznata; M2 posle M1, M3 samo kad je zbir izjednačen; ✓ nesnimljeno / × briše / 🔒 zaključano
-- Izmena/brisanje rezultata koje menja učesnike narednih duela: lista rezultata koji će biti poništeni + potvrda; briše se samo zavisna grana
-- Log: PLAYOFF_FORMIRAN, PLAYOFF_REZULTAT, PLAYOFF_POBEDNIK, PLAYOFF_REZULTAT_OBRISAN, PLAYOFF_RESETOVAN
+- Unos po mečevima (M1, M2, M3 / REZ); M2 posle M1, M3 samo kad je zbir izjednačen; ✓ nesnimljeno / × briše / 🔒 zaključano
+- Log: PLAYOFF_REZULTAT, PLAYOFF_POBEDNIK, PLAYOFF_REZULTAT_OBRISAN, PLAYOFF_RESETOVAN
 
 ### Pravila
 - Tekst + pregled uživo; Sačuvaj / Poništi izmene; upozorenje pri zatvaranju sa nesačuvanim izmenama
@@ -228,6 +226,11 @@ Igrači · Rezultati · Playoff · Pravila · Glasanje · Log
 - Prekidač "Tab Glasanje je vidljiv na sajtu" (log `GLASANJE_UKLJUCENO` / `GLASANJE_ISKLJUCENO`)
 - Dugme "Resetuj glasanje" (dve potvrde) briše sve glasove preko SQL funkcije `fp_reset()`; log `GLASANJE_RESET`
 - Broj glasova, rezultati (`fp_rezultati`), ko je glasao
+
+### Info
+- Pop-up obaveštenje za sajt: naslov, tekst, opciona slika (smanjuje se na max 1000px, JPEG, čuva se kao data URL), prekidač uključeno/isključeno, pregled
+- Čuva se u tabeli `pravila`, red `id=3`, tekst = JSON `{aktivno, naslov, tekst, slika, verzija}`; svako čuvanje = nova verzija
+- Log: INFO_SACUVANO, INFO_UKLJUCENO, INFO_ISKLJUCENO
 
 ### Log
 - Istorija svih izmena sa filterima i napomenama
@@ -239,7 +242,7 @@ Igrači · Rezultati · Playoff · Pravila · Glasanje · Log
 ### Paleta
 - Pozadina `#0f1420`, kartice `#161d2e`, sekundarne površine `#1c253a`
 - Zelena `#ADFF2F`, teal `#00C896`, crvena `#ff4060`, žuta `#ffc800`
-- Tabela: 1.–2. zelena, 3.–6. teal, 7.–14. plava `rgba(120,150,255,…)`
+- Tabela: 1.–4. zelena, 5.–12. plava `rgba(120,150,255,…)`
 
 ### Tipografija
 - Barlow Condensed (italic 800–900): naslovi, naziv lige, rezultati, bodovi
@@ -414,6 +417,47 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [18.11.2026] — Plej-of: zamenjeni parovi doigravanja 7–10 i 8–9
+
+**Urađeno:**
+- Pobednik 7–10 sada igra protiv 1. mesta (gornji duel), a pobednik 8–9 protiv 2. mesta (donji duel) — zamenjeni O1 i O4 u `PO_DEF` (isto na sajtu i u adminu)
+- Ako su već uneti rezultati za O1/O4 iz stare postavke, ne računaju se (igrači se ne poklapaju) → admin: Resetuj ceo playoff
+
+**Fajlovi:** `index.html` + `admir.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Nova fotografija: Nenad Gojković
+
+**Urađeno:**
+- `Nenad_Gojkovic.webp` zamenjen novom fotografijom (isto kadriranje); `FOTO_VERZIJA` povećana da browser povuče novu sliku
+
+**Fajlovi:** `index.html` + `Nenad_Gojkovic.webp` + `readme.md`
+
+---
+
+### [30.09.2026] — Info obaveštenje (pop-up)
+
+**Urađeno:**
+- Admin: tab Info (naslov, tekst, slika, prekidač, pregled)
+- Sajt: pop-up sa zamućenom pozadinom koji svaki posetilac mora da zatvori ("Razumem"); ponovo se prikazuje posle svake nove izmene
+
+**Fajlovi:** `index.html` + `admir.html` + `readme.md`
+
+---
+
+### [30.09.2026] — Plej-of vraćen na 12 igrača; rang u duelu
+
+**Urađeno:**
+- Plej-of vraćen na prvobitni kostur (1.–4. direktno u četvrtfinale, 5.–12. doigravanje); prva runda nazvana "Doigravanje"; uklonjeni 14-igrački kostur, zvanično formiranje i 2. kolo četvrtfinala
+- Tabela: zone 1.–4. (zelena), 5.–12. (plava), legenda vraćena; podrazumevani tekst pravila vraćen
+- Duel: rang tima ispod forme
+- Zadržano: tabela bez zvezdica, kartice bez zvezdica, uži redovi
+
+**Fajlovi:** `index.html` + `admir.html` + `readme.md`
+
 ---
 
 ### [30.09.2026] — Plej-of: 4 runde (Doigravanje, Četvrtfinale u 2 kola, Polufinale, Finale)
