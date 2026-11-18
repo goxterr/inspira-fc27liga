@@ -154,7 +154,7 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 ### Tabela
 - Kolone: #, Igrač (samo ime, bez zvezdica ranga), Forma (5, najnoviji levo sa prstenom), P, W, D, L, GF, GA, GD, Pts
 - Sortiranje: bodovi → gol razlika → dati golovi → ime
-- Zone: 1.–4. zelena (direktno u četvrtfinale), 5.–12. plava (doigravanje), 13.+ bez boje; bez linije između zona (samo boja); legenda ispod
+- Zone: 1.–2. zelena (direktno u polufinale), 3.–10. plava (četvrtfinale), 11.+ bez boje; bez linije između zona (samo boja); legenda ispod
 - Hover: sloj `background-image` na `td` (vidi se i na obojenim zonama)
 
 ### Mečevi
@@ -168,12 +168,14 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 ### Timovi
 - Baner (zakrpe Inspira grupa + EA Sports FC 27) + 10 kartica rangova u 2 reda po 5 (5★ → 0.5★, linkovi na SoFIFA)
 
-### Playoff (12 igrača)
-- 1.–4. mesto direktno u četvrtfinale; 5.–12. igraju doigravanje za četvrtfinale (DO 7–10, 5–12, 6–11, 8–9); 13.+ ne prolaze
-- Četvrtfinale: 1 – pobednik 7/10, 4 – pobednik 5/12, 3 – pobednik 6/11, 2 – pobednik 8/9; polufinale; finale + meč za 3. mesto
-- Doigravanje, četvrtfinale i polufinale: 2 meča, pobednik po zbiru golova; 3. meč samo kod izjednačenog zbira. Finale i 3. mesto: 1 meč. Odlučujući meč ne može biti nerešen
-- Kostur se računa iz trenutne tabele (prvih 12 bez DNF); mečevi `playoff_runda` 'O1-1'…'P2-3', 'F', '3M'
-- Teniski prikaz, isti na sajtu i u adminu (`PO_DEF`, `poIzracunaj`, `poKartica`, `poBoardHtml`); desktop 4 kolone (Doigravanje, Četvrtfinale, Polufinale, Finale + pobednik), telefon izbor runde DO · 1/4 · SF · F / 3.
+### Playoff (Top 10)
+- 1. i 2. mesto direktno u polufinale; 3.–10. igraju četvrtfinale: Q1 4–9, Q2 5–8, Q3 3–10, Q4 6–7; 11.+ ne prolaze
+- Iz četvrtfinala izlaze 4 pobednika, a u polufinalu su mesta za 2 → Baraž za polufinale: B1 pobednik Q1 – pobednik Q2, B2 pobednik Q3 – pobednik Q4
+- Polufinale: P1 1. mesto – pobednik B1, P2 2. mesto – pobednik B2; Finale P1–P2; meč za 3. mesto (poraženi P1 i P2)
+- Ako uvek pobedi bolje plasirani: ČF 4–9, 5–8, 3–10, 6–7 → baraž 4–5, 3–6 → PF 1–4, 2–3 → finale 1–2
+- Četvrtfinale, baraž i polufinale: 2 meča, pobednik po zbiru golova; 3. meč samo kod izjednačenog zbira. Finale i 3. mesto: 1 meč. Odlučujući meč ne može biti nerešen
+- Kostur se računa iz trenutne tabele (prvih 10 bez DNF); mečevi `playoff_runda` 'Q1-1'…'P2-3', 'F', '3M'
+- Teniski prikaz, isti na sajtu i u adminu (`PO_DEF`, `poIzracunaj`, `poKartica`, `poBoardHtml`); desktop 4 kolone (Četvrtfinale, Baraž za polufinale, Polufinale, Finale + pobednik), telefon 1/4 · Baraž · SF · F / 3.
 
 ### Pravila
 - Tekst iz tabele `pravila` (fallback `PRAVILA_DEFAULT`), `pravilaHtml()` — isti kod u oba fajla
@@ -242,7 +244,7 @@ Igrači · Rezultati · Playoff · Pravila · Glasanje · Info · Log
 ### Paleta
 - Pozadina `#0f1420`, kartice `#161d2e`, sekundarne površine `#1c253a`
 - Zelena `#ADFF2F`, teal `#00C896`, crvena `#ff4060`, žuta `#ffc800`
-- Tabela: 1.–4. zelena, 5.–12. plava `rgba(120,150,255,…)`
+- Tabela: 1.–2. zelena, 3.–10. plava `rgba(120,150,255,…)`
 
 ### Tipografija
 - Barlow Condensed (italic 800–900): naslovi, naziv lige, rezultati, bodovi
@@ -417,6 +419,20 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [18.11.2026] — Plej-of: Top 10, bez doigravanja
+
+**Urađeno:**
+- Doigravanje uklonjeno; Top 10: 1. i 2. direktno u polufinale, 3.–10. u četvrtfinale (4–9, 5–8, 3–10, 6–7), pa baraž za polufinale (2 duela), polufinale, finale + 3. mesto
+- Tabela: zone 1.–2. (zelena) i 3.–10. (plava), legenda; podrazumevani tekst pravila (sekcija 6) usklađen
+- Isti kod na sajtu i u adminu
+
+**Nije završeno:**
+- U adminu → Pravila ažurirati sekciju 6 sačuvanog teksta; stari plej-of rezultati (ako ih ima) obrisati sa "Resetuj ceo playoff"
+
+**Fajlovi:** `index.html` + `admir.html` + `readme.md`
+
 ---
 
 ### [18.11.2026] — Plej-of: zamenjeni parovi doigravanja 7–10 i 8–9
