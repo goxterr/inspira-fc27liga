@@ -384,6 +384,7 @@
   </div>
 
   <div id="tab-rezultati" class="section">
+    <label class="sw-row"><input type="checkbox" id="sw-liga" onchange="ligaOnOff(this.checked)"><span class="sw sw-red"></span><span id="sw-liga-txt">Regularni deo je otvoren — rezultati lige mogu da se unose</span></label>
     <div class="stat-row">
       <div class="ms"><div class="ms-l">Ukupno</div><div class="ms-v" id="r-total">0</div></div>
       <div class="ms"><div class="ms-l">Odigrano</div><div class="ms-v cg" id="r-played">0</div></div>
@@ -598,6 +599,7 @@ function pickerSelect(v){
 
 // ── Core ──────────────────────────────────────────────────────────────────
 async function loadAll(){
+  ucitajPodesavanja().then(p=>{ LIGA_ZAKLJ=!!p.liga_zakljucana; ligaPrikazi(); });
   const[a,b,c,k]=await Promise.all([
     db.from('igraci').select('*').order('id'),
     db.from('mecevi').select('*').is('playoff_runda',null).order('kolo').order('id'),
@@ -728,7 +730,24 @@ async function dopuniFirme(){
   return za.length>0;
 }
 // Zbirno brisanje: brišu se svi igrači, a sa njima (automatski) i svi njihovi mečevi, rezultati, playoff, mejlovi i glasovi
+// ── Zaključavanje regularnog dela (pravila id=2 JSON: liga_zakljucana) ──
+let LIGA_ZAKLJ=false;
+function ligaPoruka(){ toast('Regularni deo je zaključan — otključaj ga na tabu Rezultati'); }
+function ligaPrikazi(){
+  const sw=document.getElementById('sw-liga'); if(sw) sw.checked=LIGA_ZAKLJ;
+  const t=document.getElementById('sw-liga-txt'); if(t) t.textContent=LIGA_ZAKLJ?'🔒 Regularni deo je ZAKLJUČAN — rezultati lige ne mogu da se unose ni menjaju (ni na sajtu)':'Regularni deo je otvoren — rezultati lige mogu da se unose';
+}
+async function ligaOnOff(on){
+  if(on&&!confirm('Zaključati regularni deo?\n\nNa sajtu i u adminu više neće moći da se unose ni menjaju rezultati lige, pa se tabela i plej-of kostur neće menjati.')){ ligaPrikazi(); return; }
+  const pod=await ucitajPodesavanja(); pod.liga_zakljucana=!!on;
+  const{error}=await db.from('pravila').upsert({id:2,tekst:JSON.stringify(pod),azurirano:new Date().toISOString()});
+  if(error){ toast('Greška: '+error.message); ligaPrikazi(); return; }
+  LIGA_ZAKLJ=!!on; ligaPrikazi();
+  await logujAkciju(on?'LIGA_ZAKLJUCANA':'LIGA_OTKLJUCANA', on?'Regularni deo zaključan — unos rezultata lige onemogućen':'Regularni deo otključan');
+  toast(on?'Regularni deo zaključan':'Regularni deo otključan');
+}
 async function obrisiSveIgrace(){
+  if(LIGA_ZAKLJ){ligaPoruka();return;}
   if(!IG.length){toast('Nema igrača');return;}
   if(!confirm(`Obrisati SVE igrače (${IG.length})?\n\nSa njima se brišu i svi mečevi, rezultati, playoff, mejlovi i glasovi.`)) return;
   if(!confirm('Sigurno? Ovo ne može da se vrati.')) return;
@@ -780,6 +799,7 @@ async function sacuvajIzmenu(){
   if('sezona' in i) upd.sezona=Number(document.getElementById('am-sezona').value);
   if('diskvalifikovan' in i){
     upd.diskvalifikovan=document.getElementById('am-dq').checked;
+    if(LIGA_ZAKLJ&&upd.diskvalifikovan!==!!i.diskvalifikovan){ ligaPoruka(); return; }
     if(upd.diskvalifikovan&&!i.diskvalifikovan&&!confirm(`Diskvalifikovati igrača ${i.ime}?\n\nIde na začelje tabele (DNF), a protivnicima se brišu bodovi i golovi iz mečeva protiv njega.`)) return;
   }
   const mailEl=document.getElementById('am-mail'); const mail=mailEl?mailEl.value.trim().toLowerCase():'';
@@ -934,6 +954,7 @@ async function dodajZbirno(){
   renderBulkPreview();
 }
 async function ukloniIgraca(id){
+  if(LIGA_ZAKLJ){ligaPoruka();return;}
   if(!confirm('Ukloniti igrača?'))return;
   const igrac=IG.find(i=>i.id===id);
   await db.from('igraci').delete().eq('id',id);
@@ -1045,6 +1066,7 @@ async function loadFerPlejAdmin(){
 }
 // ── Raspored: dupli round-robin ───────────────────────────────────────────
 async function generisiRaspored(){
+  if(LIGA_ZAKLJ){ligaPoruka();return;}
   const potvrda = confirm(
     '⚠️ UPOZORENJE\n\n' +
     'Ova akcija će:\n' +
@@ -1089,6 +1111,7 @@ function setFilter(f,btn){
   filter=f;document.querySelectorAll('.fbtn[onclick^="setFilter"]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderRezultati();
 }
 async function resetujRezultat(id){
+  if(LIGA_ZAKLJ){ligaPoruka();return;}
   if(!confirm('Obrisati rezultat ovog meča?')) return;
   const igM={};IG.forEach(i=>igM[i.id]=i);
   const mec=ME.find(m=>m.id===id);
@@ -1099,6 +1122,7 @@ async function resetujRezultat(id){
 }
 
 async function sacuvajRezultat(id){
+  if(LIGA_ZAKLJ){ligaPoruka();return;}
   const hv=document.getElementById('h-'+id)?.value;
   const av=document.getElementById('a-'+id)?.value;
   if(hv===''||av===''||isNaN(hv)||isNaN(av)){toast('Unesite oba gola!');return;}

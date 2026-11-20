@@ -495,6 +495,8 @@
   .info-b p { margin-top: 12px; font-size: 15px; line-height: 1.6; color: rgba(255,255,255,0.85); white-space: pre-wrap; }
   .info-ok { margin-top: 18px; width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--green); color: #0b1008; font-family: 'Barlow', sans-serif; font-weight: 800; font-size: 15px; cursor: pointer; }
   .info-ok:hover { filter: brightness(1.08); }
+  .lock-banner { font-size: 14px; font-weight: 600; color: var(--yellow); background: rgba(255,200,0,0.07); border: 1px solid rgba(255,200,0,0.3); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; }
+  .mbox.mlock { font-size: 12px; font-weight: 600; color: var(--muted); white-space: nowrap; }
   footer { text-align: center; padding: 1.5rem 1rem; color: var(--muted); font-size: 13px; border-top: 1px solid var(--border); }
   footer a { color: rgba(173,255,47,0.4); text-decoration: none; }
   footer a:hover { color: var(--green); }
@@ -641,6 +643,7 @@
       </select>
 
     </div>
+    <div id="mecevi-lock" class="lock-banner" style="display:none">🔒 Regularni deo je završen — unos rezultata je zaključan. Igra se plej-of.</div>
     <div id="mecevi-info" style="font-size:13px;color:var(--muted);margin-bottom:10px"></div>
     <div id="mecevi-wrap" class="matches-grid"></div>
   </div>
@@ -731,6 +734,8 @@ const db = supabase.createClient(SB_URL, SB_KEY);
 let IG = [], ME = [], PO_MECEVI = [], PO_IZR = {}, PRAVILA_TEKST = null, LOG_UNOS = {};
 // Podešavanja sajta iz admina (tabela pravila, red id=2): { glasanje: true/false }
 let PODESAVANJA = {};
+// Regularni deo zaključan (admin → Rezultati): unos rezultata lige onemogućen, da se plej-of više ne menja
+function ligaZakljucana(){ return !!(PODESAVANJA && PODESAVANJA.liga_zakljucana); }
 // ── Info obaveštenje (uključuje se u adminu → Info): sajt se zamuti dok ga posetilac ne zatvori ──
 let INFO = {};
 function infoProcitano(){ try{ return localStorage.getItem('fc27_info_procitano'); }catch(e){ return null; } }
@@ -875,6 +880,7 @@ async function logujAkciju(akcija, detalji){
 }
 
 async function saveFromMecevi(id){
+  if(ligaZakljucana()){ alert('Regularni deo je završen — unos rezultata je zaključan.'); return; }
   { const mm=ME.find(x=>x.id===id); if(mm&&dqMec(mm)){ alert('Ovaj meč se ne igra — igrač je diskvalifikovan (DNF).'); return; } }
   const hv=document.getElementById('mh-'+id)?.value;
   const av=document.getElementById('ma-'+id)?.value;
@@ -1121,7 +1127,7 @@ function render() {
   const maxOdig=Math.max(0,...Object.values(odigI));
   const zaost=id=>maxOdig-(odigI[id]||0);
   const znZaost=id=>zaost(id)>=2?zaost(id):0;
-  const kand=MEv.filter(m=>m.gol_domacin===null)
+  const kand=MEv.filter(m=>m.gol_domacin===null&&!ligaZakljucana())
     .map(m=>({m,skor:znZaost(m.domacin)+znZaost(m.gost)}))
     .sort((x,y)=>y.skor-x.skor||x.m.kolo-y.m.kolo||x.m.id-y.m.id);
   const sled=[],zauzeti=new Set();
@@ -1148,7 +1154,9 @@ function render() {
       </div>
       <div class="rkolo">Kolo ${m.kolo}${Math.max(znZaost(m.domacin),znZaost(m.gost))?`<div class="rzaost">zaostaje ${Math.max(znZaost(m.domacin),znZaost(m.gost))}</div>`:''}</div>
     </div>`;
-  }).join(''):(ME.length
+  }).join(''):(ligaZakljucana()
+    ?`<div class="rempty"><div class="rempty-ico">🔒</div><div><div class="rempty-t">Regularni deo je završen</div><div class="rempty-s">Unos rezultata je zaključan — igra se plej-of.</div></div><button class="rlink" onclick="goTab('playoff')">Plej-of →</button></div>`
+    :ME.length
     ?`<div class="rempty"><div class="rempty-ico">🏁</div><div><div class="rempty-t">Svi mečevi lige su odigrani</div><div class="rempty-s">Konačni poredak je u tabeli.</div></div><button class="rlink" onclick="goTab('tabela')">Tabela →</button></div>`
     :`<div class="rempty"><div class="rempty-ico">📅</div><div><div class="rempty-t">Raspored još nije objavljen</div><div class="rempty-s">Mečevi se pojavljuju čim se generiše raspored.</div></div></div>`);
 
@@ -1183,6 +1191,7 @@ function resetFilters(){
 }
 
 function renderMecevi(){
+  { const lb=document.getElementById('mecevi-lock'); if(lb) lb.style.display=ligaZakljucana()?'':'none'; }
   const igM={};IG.forEach(i=>igM[i.id]=i);
   const id1=parseInt(document.getElementById('filter1')?.value||0)||null;
   MEC_FILTER=false;
@@ -1298,6 +1307,8 @@ function buildKolo(k,ms,igM){
           ?`<div class="mbox mdnf" title="Meč se ne računa — diskvalifikovan igrač (DNF)">${pl?`<s>${m.gol_domacin} : ${m.gol_gost}</s>`:'DNF'}</div>`
           :pl
           ?`<div class="mbox mplayed" data-duel="${m.domacin}-${m.gost}" title="Međusobni dueli">${m.gol_domacin} : ${m.gol_gost}</div>`
+          :ligaZakljucana()
+          ?`<div class="mbox mlock" title="Regularni deo je završen — unos je zaključan">🔒 nije odigran</div>`
           :`<div class="mrow-inputs">
               <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" autocomplete="off" class="mscore-inp" id="mh-${m.id}" placeholder="—" onfocus="setActive(${m.id})" oninput="samoBroj(this);checkFloatBtn()" onkeydown="if(event.key==='Enter')saveFromMecevi(${m.id})">
               <span class="mscore-sep">:</span>

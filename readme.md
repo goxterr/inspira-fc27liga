@@ -162,6 +162,9 @@ Pregled · Tabela · Mečevi · Strelci · Timovi · Playoff · Pravila · Glasa
 - Srednja kolona fiksne širine (150px desktop, 112px telefon) — imena na istim pozicijama i za unos i za odigran meč
 - Unos rezultata: samo cifre (`samoBroj`, max 2), numerička tastatura, Enter snima, plutajuće dugme SNIMI REZULTAT na telefonu (main ima 96px donjeg razmaka)
 
+### Zaključan regularni deo
+- Kad je u adminu zaključan: na tabu Mečevi traka "Regularni deo je završen…", neodigrani mečevi bez polja za unos ("🔒 nije odigran"), Sledeći mečevi na Pregledu: "Regularni deo je završen — igra se plej-of" sa linkom na Plej-of (`ligaZakljucana()`)
+
 ### Strelci
 - Samo igrači sa bar 1 golom, rang po datim golovima
 
@@ -213,6 +216,7 @@ Igrači · Rezultati · Playoff · Pravila · Glasanje · Info · Log
 - "Obriši sve igrače" (dve potvrde) — briše sve igrače; baza automatski briše i njihove mečeve, rezultate, playoff, mejlove i glasove (cascade); log `IGRACI_OBRISANI`. Istorija (Log) i pravila ostaju
 
 ### Rezultati
+- Prekidač "Regularni deo zaključan" (gore na tabu, potvrda pri uključivanju): čuva se u `pravila` id=2 JSON `liga_zakljucana`. Dok je uključen, NE MOGU: unos/brisanje rezultata lige (admin i sajt), generisanje rasporeda, brisanje igrača, promena DNF — da se tabela i plej-of kostur ne menjaju. Plej-of rezultati se unose normalno. Log: LIGA_ZAKLJUCANA / LIGA_OTKLJUCANA
 - Svi / Neodigrani / Odigrani; unos i reset rezultata (samo cifre)
 
 ### Playoff
@@ -417,6 +421,16 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [20.11.2026] — Zaključavanje regularnog dela
+
+**Urađeno:**
+- Admin → Rezultati: prekidač "Regularni deo zaključan"; blokira unos/brisanje rezultata lige, generisanje rasporeda, brisanje igrača i promenu DNF
+- Sajt: bez polja za unos neodigranih mečeva lige, traka na tabu Mečevi, poruka u Sledećim mečevima
+
+**Fajlovi:** `index.html` + `admir.html` + `readme.md`
+
 ---
 
 ### [18.11.2026] — Plej-of vraćen na Top 12 (verzija od 17.11.)
