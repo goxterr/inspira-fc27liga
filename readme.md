@@ -216,6 +216,7 @@ Igrači · Rezultati · Playoff · Pravila · Glasanje · Info · Log
 - "Obriši sve igrače" (dve potvrde) — briše sve igrače; baza automatski briše i njihove mečeve, rezultate, playoff, mejlove i glasove (cascade); log `IGRACI_OBRISANI`. Istorija (Log) i pravila ostaju
 
 ### Rezultati
+- Prekidač "Računaj golove iz 3:0" (`pravila` id=2 JSON `golovi_3_0`, podrazumevano ISKLJUČENO): rezultati 3:0 / 0:3 (službeni) računaju se kao pobeda (bodovi, W/L, forma), ali golovi ne ulaze u GF/GA/gol razliku, strelce, najbolji napad/odbranu, golove i najveću pobedu/poraz u kartici igrača i zbir golova u duelu. Funkcija `sluzbeni(m)` — ista u index.html i admir.html (tabela za plej-of je ista na oba mesta). Plej-of mečevi se ne menjaju
 - Prekidač "Regularni deo zaključan" (gore na tabu, potvrda pri uključivanju): čuva se u `pravila` id=2 JSON `liga_zakljucana`. Dok je uključen, NE MOGU: unos/brisanje rezultata lige (admin i sajt), generisanje rasporeda, brisanje igrača, promena DNF — da se tabela i plej-of kostur ne menjaju. Plej-of rezultati se unose normalno. Log: LIGA_ZAKLJUCANA / LIGA_OTKLJUCANA
 - Svi / Neodigrani / Odigrani; unos i reset rezultata (samo cifre)
 
@@ -421,6 +422,15 @@ Format unosa:
 ---
 
 ## Changelog / Projektni dnevnik
+---
+
+### [20.11.2026] — Službeni rezultati 3:0 bez golova
+
+**Urađeno:**
+- Admin → Rezultati: prekidač "Računaj golove iz 3:0" (podrazumevano isključen) — 3:0/0:3 daje bodove, ali golovi se ne računaju u gol razliku, strelce i statistiku
+
+**Fajlovi:** `index.html` + `admir.html` + `readme.md`
+
 ---
 
 ### [20.11.2026] — Zaključavanje regularnog dela

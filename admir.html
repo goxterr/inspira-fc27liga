@@ -384,6 +384,7 @@
   </div>
 
   <div id="tab-rezultati" class="section">
+    <label class="sw-row" style="margin-bottom:8px"><input type="checkbox" id="sw-g30" onchange="g30OnOff(this.checked)"><span class="sw"></span><span id="sw-g30-txt">3:0 rezultati se računaju samo kao pobeda — golovi ne ulaze u gol razliku ni strelce</span></label>
     <label class="sw-row"><input type="checkbox" id="sw-liga" onchange="ligaOnOff(this.checked)"><span class="sw sw-red"></span><span id="sw-liga-txt">Regularni deo je otvoren — rezultati lige mogu da se unose</span></label>
     <div class="stat-row">
       <div class="ms"><div class="ms-l">Ukupno</div><div class="ms-v" id="r-total">0</div></div>
@@ -599,7 +600,7 @@ function pickerSelect(v){
 
 // ── Core ──────────────────────────────────────────────────────────────────
 async function loadAll(){
-  ucitajPodesavanja().then(p=>{ LIGA_ZAKLJ=!!p.liga_zakljucana; ligaPrikazi(); });
+  { const p=await ucitajPodesavanja(); LIGA_ZAKLJ=!!p.liga_zakljucana; GOL_3_0=!!p.golovi_3_0; ligaPrikazi(); golPrikazi(); }
   const[a,b,c,k]=await Promise.all([
     db.from('igraci').select('*').order('id'),
     db.from('mecevi').select('*').is('playoff_runda',null).order('kolo').order('id'),
@@ -731,7 +732,22 @@ async function dopuniFirme(){
 }
 // Zbirno brisanje: brišu se svi igrači, a sa njima (automatski) i svi njihovi mečevi, rezultati, playoff, mejlovi i glasovi
 // ── Zaključavanje regularnog dela (pravila id=2 JSON: liga_zakljucana) ──
-let LIGA_ZAKLJ=false;
+let LIGA_ZAKLJ=false, GOL_3_0=false;
+// Službeni rezultat 3:0 / 0:3: računa se kao pobeda (bodovi), ali golovi NE ulaze u gol razliku ni strelce,
+// osim ako je u adminu uključeno "Računaj golove iz 3:0" (pravila id=2 JSON: golovi_3_0)
+function sluzbeni(m){ return !GOL_3_0 && ((m.gol_domacin===3&&m.gol_gost===0)||(m.gol_domacin===0&&m.gol_gost===3)); }
+function golPrikazi(){
+  const sw=document.getElementById('sw-g30'); if(sw) sw.checked=GOL_3_0;
+  const t=document.getElementById('sw-g30-txt'); if(t) t.textContent=GOL_3_0?'Golovi iz 3:0 rezultata SE RAČUNAJU u gol razliku i strelce':'3:0 rezultati se računaju samo kao pobeda — golovi ne ulaze u gol razliku ni strelce';
+}
+async function g30OnOff(on){
+  const pod=await ucitajPodesavanja(); pod.golovi_3_0=!!on;
+  const{error}=await db.from('pravila').upsert({id:2,tekst:JSON.stringify(pod),azurirano:new Date().toISOString()});
+  if(error){ toast('Greška: '+error.message); golPrikazi(); return; }
+  GOL_3_0=!!on; golPrikazi();
+  await logujAkciju('PODESAVANJE',on?'Golovi iz 3:0 rezultata se računaju':'Golovi iz 3:0 rezultata se NE računaju (službeni rezultati)');
+  toast('Sačuvano'); loadAll();
+}
 function ligaPoruka(){ toast('Regularni deo je zaključan — otključaj ga na tabu Rezultati'); }
 function ligaPrikazi(){
   const sw=document.getElementById('sw-liga'); if(sw) sw.checked=LIGA_ZAKLJ;
@@ -1301,8 +1317,9 @@ function calcTableAdmin(){
     const dqD=!!D.diskvalifikovan, dqG=!!G.diskvalifikovan;
     const d=(dqG&&!dqD)?null:D, g=(dqD&&!dqG)?null:G;
     const r=x.gol_domacin>x.gol_gost?'D':(x.gol_domacin<x.gol_gost?'G':'X');
-    if(d){ d.P++; d.GF+=x.gol_domacin; d.GA+=x.gol_gost; if(r==='D'){d.W++;d.Pts+=3;} else if(r==='G'){d.L++;} else {d.D++;d.Pts++;} d.GD=d.GF-d.GA; }
-    if(g){ g.P++; g.GF+=x.gol_gost; g.GA+=x.gol_domacin; if(r==='G'){g.W++;g.Pts+=3;} else if(r==='D'){g.L++;} else {g.D++;g.Pts++;} g.GD=g.GF-g.GA; }
+    const sl=sluzbeni(x);
+    if(d){ d.P++; if(!sl){ d.GF+=x.gol_domacin; d.GA+=x.gol_gost; } if(r==='D'){d.W++;d.Pts+=3;} else if(r==='G'){d.L++;} else {d.D++;d.Pts++;} d.GD=d.GF-d.GA; }
+    if(g){ g.P++; if(!sl){ g.GF+=x.gol_gost; g.GA+=x.gol_domacin; } if(r==='G'){g.W++;g.Pts+=3;} else if(r==='D'){g.L++;} else {g.D++;g.Pts++;} g.GD=g.GF-g.GA; }
   });
   Object.values(m).forEach(r=>r.dq=!!r.diskvalifikovan);
   return Object.values(m).sort((a,b)=>(a.dq-b.dq)||b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF||a.ime.localeCompare(b.ime));

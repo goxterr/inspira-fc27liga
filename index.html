@@ -735,6 +735,10 @@ let IG = [], ME = [], PO_MECEVI = [], PO_IZR = {}, PRAVILA_TEKST = null, LOG_UNO
 // Podešavanja sajta iz admina (tabela pravila, red id=2): { glasanje: true/false }
 let PODESAVANJA = {};
 // Regularni deo zaključan (admin → Rezultati): unos rezultata lige onemogućen, da se plej-of više ne menja
+let GOL_3_0 = false;
+// Službeni rezultat 3:0 / 0:3: računa se kao pobeda (bodovi), ali golovi NE ulaze u gol razliku ni strelce,
+// osim ako je u adminu uključeno "Računaj golove iz 3:0" (pravila id=2 JSON: golovi_3_0)
+function sluzbeni(m){ return !GOL_3_0 && ((m.gol_domacin===3&&m.gol_gost===0)||(m.gol_domacin===0&&m.gol_gost===3)); }
 function ligaZakljucana(){ return !!(PODESAVANJA && PODESAVANJA.liga_zakljucana); }
 // ── Info obaveštenje (uključuje se u adminu → Info): sajt se zamuti dok ga posetilac ne zatvori ──
 let INFO = {};
@@ -925,6 +929,7 @@ async function load() {
   prikaziInfo();
   const podRed = (!d.error && d.data) ? d.data.find(x=>x.id===2) : null;
   try { PODESAVANJA = podRed && podRed.tekst ? JSON.parse(podRed.tekst) : {}; } catch(err) { PODESAVANJA = {}; }
+  GOL_3_0 = !!(PODESAVANJA && PODESAVANJA.golovi_3_0);
   primeniPodesavanja();
   const firmaMejl={}; (kt&&!kt.error&&kt.data||[]).forEach(x=>firmaMejl[x.igrac_id]=firmaIzMejla(x.maska));
   IG = (a.data||[]).map(i=>({...i, firma: i.firma || firmaMejl[i.id] || FIRMA_PO_IMENU[kljucImena(i.ime)] || ''}));
@@ -1002,8 +1007,9 @@ function calcTable() {
     // meč protiv diskvalifikovanog igrača računa se samo njemu (zamrznuto), protivniku ne
     const d=(dqG&&!dqD)?null:D, g=(dqD&&!dqG)?null:G;
     const r=x.gol_domacin>x.gol_gost?'D':(x.gol_domacin<x.gol_gost?'G':'X');
-    if(d){ d.P++; d.GF+=x.gol_domacin; d.GA+=x.gol_gost; if(r==='D'){d.W++;d.Pts+=3;d.forma.push('W');} else if(r==='G'){d.L++;d.forma.push('L');} else {d.D++;d.Pts++;d.forma.push('D');} d.GD=d.GF-d.GA; }
-    if(g){ g.P++; g.GF+=x.gol_gost; g.GA+=x.gol_domacin; if(r==='G'){g.W++;g.Pts+=3;g.forma.push('W');} else if(r==='D'){g.L++;g.forma.push('L');} else {g.D++;g.Pts++;g.forma.push('D');} g.GD=g.GF-g.GA; }
+    const sl=sluzbeni(x);
+    if(d){ d.P++; if(!sl){ d.GF+=x.gol_domacin; d.GA+=x.gol_gost; } if(r==='D'){d.W++;d.Pts+=3;d.forma.push('W');} else if(r==='G'){d.L++;d.forma.push('L');} else {d.D++;d.Pts++;d.forma.push('D');} d.GD=d.GF-d.GA; }
+    if(g){ g.P++; if(!sl){ g.GF+=x.gol_gost; g.GA+=x.gol_domacin; } if(r==='G'){g.W++;g.Pts+=3;g.forma.push('W');} else if(r==='D'){g.L++;g.forma.push('L');} else {g.D++;g.Pts++;g.forma.push('D');} g.GD=g.GF-g.GA; }
   });
   Object.values(m).forEach(r=>r.dq=!!r.diskvalifikovan);
   return Object.values(m).sort((a,b)=>(a.dq-b.dq)||b.Pts-a.Pts||b.GD-a.GD||b.GF-a.GF||a.ime.localeCompare(b.ime));
@@ -1573,11 +1579,11 @@ function otvoriIgraca(id){
   const moji=ME.filter(m=>m.gol_domacin!==null&&(m.domacin===id||m.gost===id)&&(ig.diskvalifikovan||!dqMec(m))).map(m=>{
     const dom=m.domacin===id, za=dom?m.gol_domacin:m.gol_gost, pr=dom?m.gol_gost:m.gol_domacin;
     const prot=IG.find(x=>x.id===(dom?m.gost:m.domacin));
-    return {za,pr,raz:za-pr,prot:prot?prot.ime:'?'};
+    return {za,pr,raz:za-pr,prot:prot?prot.ime:'?',sl:sluzbeni(m)};
   });
-  const golovi=moji.reduce((a,x)=>a+x.za,0);
-  const pob=moji.filter(x=>x.raz>0).sort((a,b)=>b.raz-a.raz||b.za-a.za)[0];
-  const por=moji.filter(x=>x.raz<0).sort((a,b)=>a.raz-b.raz||b.pr-a.pr)[0];
+  const golovi=moji.reduce((a,x)=>a+(x.sl?0:x.za),0);
+  const pob=moji.filter(x=>x.raz>0&&!x.sl).sort((a,b)=>b.raz-a.raz||b.za-a.za)[0];
+  const por=moji.filter(x=>x.raz<0&&!x.sl).sort((a,b)=>a.raz-b.raz||b.pr-a.pr)[0];
   const mecBox=(naslov,x,boja)=>`<div class="pm-box"><div class="pm-l">${naslov}</div>${x?`<div class="pm-v"><b${boja?` style="color:${boja}"`:''}>${x.za}:${x.pr}</b></div><div class="pm-s">vs. ${esc(kratkoIme(x.prot))}</div>`:`<div class="pm-v">—</div><div class="pm-s">još nema</div>`}</div>`;
   const sez=sezonaIgraca(ig);
   const mesto=(n=>n&&n<=4?n:null)(mestoProsle(ig));
@@ -1615,7 +1621,7 @@ function otvoriDuel(aId,bId){
     const dom=m.domacin===aId?A:B, gos=m.domacin===aId?B:A;
     if(m.gol_domacin===null||m.gol_domacin===undefined) return `<div class="du-m"><span class="k">${lab}</span><div class="r"><span>${esc(dom.ime)}</span><span class="du-sc np">nije odigran</span><span style="text-align:right">${esc(gos.ime)}</span></div></div>`;
     const a=m.domacin===aId?m.gol_domacin:m.gol_gost, b=m.domacin===aId?m.gol_gost:m.gol_domacin;
-    gA+=a; gB+=b; if(a>b) wA++; else if(a<b) wB++; else dr++;
+    if(!sluzbeni(m)){ gA+=a; gB+=b; } if(a>b) wA++; else if(a<b) wB++; else dr++;
     const dw=m.gol_domacin>m.gol_gost?'w':(m.gol_domacin<m.gol_gost?'l':''), gw=m.gol_gost>m.gol_domacin?'w':(m.gol_gost<m.gol_domacin?'l':'');
     return `<div class="du-m"><span class="k">${lab}</span><div class="r"><span class="${dw}">${esc(dom.ime)}</span><span class="du-sc">${m.gol_domacin} : ${m.gol_gost}</span><span class="${gw}" style="text-align:right">${esc(gos.ime)}</span></div></div>`;
   }).join('');
@@ -1735,8 +1741,9 @@ function renderStrelci(){
   const sm={};IG.forEach(i=>sm[i.id]={...i,GF:0,GA:0,P:0});
   ME.forEach(m=>{
     if(m.gol_domacin===null||dqMec(m)) return;
-    if(sm[m.domacin]){sm[m.domacin].GF+=m.gol_domacin;sm[m.domacin].GA+=m.gol_gost;sm[m.domacin].P++;}
-    if(sm[m.gost]){sm[m.gost].GF+=m.gol_gost;sm[m.gost].GA+=m.gol_domacin;sm[m.gost].P++;}
+    const sl=sluzbeni(m);
+    if(sm[m.domacin]){ if(!sl){sm[m.domacin].GF+=m.gol_domacin;sm[m.domacin].GA+=m.gol_gost;} sm[m.domacin].P++; }
+    if(sm[m.gost]){ if(!sl){sm[m.gost].GF+=m.gol_gost;sm[m.gost].GA+=m.gol_domacin;} sm[m.gost].P++; }
   });
   const sr=Object.values(sm).filter(r=>r.GF>0&&!r.diskvalifikovan).sort((a,b)=>b.GF-a.GF||a.GA-b.GA);
   const mx=sr[0]?.GF||1;
